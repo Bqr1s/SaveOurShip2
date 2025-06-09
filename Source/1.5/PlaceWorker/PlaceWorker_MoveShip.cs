@@ -42,7 +42,13 @@ namespace SaveOurShip2
 						result = false;
 						break;
 					}
-					if (GenGrid.InNoBuildEdgeArea(vec, map) || current.IsSpawningBlocked(vec, map) || map.roofGrid.Roofed(vec) || (targetMapLarger && (vec.x > originMap.Size.x || vec.z > originMap.Size.z)))
+					Building building = vec.GetFirstBuilding(map);
+					Building toIgnore = null;
+					if (building != null && SmashableBuildingsDetector.IsSmashable(building.def.defName))
+					{
+						toIgnore = building;
+					}
+					if (GenGrid.InNoBuildEdgeArea(vec, map) || current.IsSpawningBlocked(vec, map, toIgnore) || map.roofGrid.Roofed(vec) || (targetMapLarger && (vec.x > originMap.Size.x || vec.z > originMap.Size.z)))
 					{
 						current.DrawGhost(vec, new Color(0.8f, 0.2f, 0.2f, 0.3f));
 						result = false;
@@ -52,7 +58,7 @@ namespace SaveOurShip2
 					{
 						if (t is Building b)
 						{
-							if (b.def.passability == Traversability.Impassable || b is Building_SteamGeyser)
+							if (!SmashableBuildingsDetector.IsSmashable(b.def.defName) && (b.def.passability == Traversability.Impassable || b is Building_SteamGeyser))
 							{
 								current.DrawGhost(vec, new Color(0.8f, 0.2f, 0.2f, 0.3f));
 								result = false;

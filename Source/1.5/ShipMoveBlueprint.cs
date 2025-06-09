@@ -36,20 +36,20 @@ namespace SaveOurShip2
 		{
 			shipSketch.DrawGhost(drawLoc.ToIntVec3(), Sketch.SpawnPosType.Unchanged, false, null);
 			if (conflictSketch != null)
-				DrawGhost(conflictSketch, ConflictColor, drawLoc.ToIntVec3(), Sketch.SpawnPosType.Unchanged, false, null);
+				DrawGhost(conflictSketch, ConflictColor, drawLoc.ToIntVec3(), Sketch.SpawnPosType.Unchanged, false);
 			if (extenderSketch != null)
-				DrawGhost(extenderSketch, ExtenderColor, drawLoc.ToIntVec3(), Sketch.SpawnPosType.Unchanged, false, null);
+				DrawGhost(extenderSketch, ExtenderColor, drawLoc.ToIntVec3(), Sketch.SpawnPosType.Unchanged, false);
 		}
 
 		public void DrawGhost(IntVec3 drawLoc, bool flip = false)
 		{
 			shipSketch.DrawGhost(drawLoc, Sketch.SpawnPosType.Unchanged, false, null);
 			if (conflictSketch != null)
-				DrawGhost(conflictSketch, ConflictColor, drawLoc, Sketch.SpawnPosType.Unchanged, false, null);
+				DrawGhost(conflictSketch, ConflictColor, drawLoc, Sketch.SpawnPosType.Unchanged, false);
 			if (extenderSketch != null)
-				DrawGhost(extenderSketch, ExtenderColor, drawLoc, Sketch.SpawnPosType.Unchanged, false, null);
+				DrawGhost(extenderSketch, ExtenderColor, drawLoc, Sketch.SpawnPosType.Unchanged, false);
 		}
-		public void DrawGhost(Sketch sketch, Color ghostColor, IntVec3 pos, SpawnPosType posType = SpawnPosType.Unchanged, bool placingMode = false, Thing thingToIgnore = null, Func<SketchEntity, IntVec3, List<Thing>, Map, bool> validator = null)
+		public void DrawGhost(Sketch sketch, Color ghostColor, IntVec3 pos, SpawnPosType posType = SpawnPosType.Unchanged, bool placingMode = false, Func<SketchEntity, IntVec3, List<Thing>, Map, bool> validator = null)
 		{
 			List<Thing> tmpSketchThings = new List<Thing>();
 			IntVec3 offset = sketch.GetOffset(pos, posType);
@@ -87,7 +87,13 @@ namespace SaveOurShip2
 			{
 				if ((placingMode || !entity2.IsSameSpawnedOrBlueprintOrFrame(entity2.pos + offset, currentMap)) && entity2.OccupiedRect.MovedBy(offset).InBounds(currentMap))
 				{
-					Color color = ((flag || (entity2.IsSpawningBlocked(entity2.pos + offset, currentMap, thingToIgnore) && !entity2.IsSameSpawnedOrBlueprintOrFrame(entity2.pos + offset, currentMap)) || (validator != null && !validator(entity2, offset, tmpSketchThings, Find.CurrentMap))) ? BlockedColor : ghostColor);
+					Building building = (entity2.pos + offset).GetFirstBuilding(currentMap);
+					Building toIgnore = null;
+					if (building != null && SmashableBuildingsDetector.IsSmashable(building.def.defName))
+					{
+						toIgnore = building;
+					}
+					Color color = ((flag || (entity2.IsSpawningBlocked(entity2.pos + offset, currentMap, toIgnore) && !entity2.IsSameSpawnedOrBlueprintOrFrame(entity2.pos + offset, currentMap)) || (validator != null && !validator(entity2, offset, tmpSketchThings, Find.CurrentMap))) ? BlockedColor : ghostColor);
 					if (cellRect.Contains(entity2.pos + offset))
 					{
 						entity2.DrawGhost(entity2.pos + offset, color);
