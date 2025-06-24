@@ -7,6 +7,7 @@ using RimWorld.Planet;
 using Verse;
 using Verse.AI;
 using Verse.Sound;
+using Unity.Collections;
 using HarmonyLib;
 using System.Text;
 using System.Reflection.Emit;
@@ -622,7 +623,7 @@ namespace SaveOurShip2
 			cameraDriver.Update();
 			worldRender.CheckActivateWorldCamera();
 			worldRender.DrawWorldLayers();
-			WorldRendererUtility.UpdateWorldShadersParams();
+			WorldRendererUtility.UpdateGlobalShadersParams();
 			//TODO replace this when interplanetary travel is ready
 			/*
 			foreach(WorldLayer layer in Find.World.renderer.layers)
@@ -645,7 +646,7 @@ namespace SaveOurShip2
 			worldRender.wantedMode = WorldRenderMode.None;
 			worldRender.CheckActivateWorldCamera();
 
-			if (!worldRender.layers.FirstOrFallback().ShouldRegenerate)
+			if (!worldRender.AllDrawLayers.FirstOrFallback().ShouldRegenerate)
 				worldComp.renderedThatAlready = true;
 		}
 	}
@@ -865,10 +866,10 @@ namespace SaveOurShip2
 			{
 				__instance.numCells++;
 				MapPastureNutritionCalculator.NutritionPerDayPerQuadrum other = new MapPastureNutritionCalculator.NutritionPerDayPerQuadrum();
-				other.quadrum[0] = 0;
-				other.quadrum[1] = 0;
-				other.quadrum[2] = 0;
-				other.quadrum[3] = 0;
+				other[0] = 0;
+				other[1] = 0;
+				other[2] = 0;
+				other[3] = 0;
 				__instance.nutritionPerDayPerQuadrum.AddFrom(other);
 				return false;
 			}
@@ -1172,7 +1173,8 @@ namespace SaveOurShip2
 			lock (mesh)
 			{
 				mesh.finalized = false;
-				mesh.Clear(MeshParts.UVs);
+				mesh.Clear(MeshParts.UVs1);
+				mesh.Clear(MeshParts.UVs2);
 				for (var i = 0; i < mesh.verts.Count; i++)
 				{
 					var xdiff = mesh.verts[i].x - SectionThreadManager.Center.x;
@@ -1184,7 +1186,8 @@ namespace SaveOurShip2
 						zfromEdge / SectionThreadManager.CellsHigh, 0.0f));
 				}
 
-				mesh.FinalizeMesh(MeshParts.UVs);
+				mesh.FinalizeMesh(MeshParts.UVs1);
+				mesh.FinalizeMesh(MeshParts.UVs2);
 			}
 		}
 	}
@@ -1356,14 +1359,14 @@ namespace SaveOurShip2
 			foreach (IntVec3 v in mapComp.MapShipCells.Keys)
 			{
 				int index = __instance.Map.cellIndices.CellToIndex(v);
-				if (__instance.Map.fogGrid.fogGrid[index])
+				if (__instance.Map.fogGrid.IsFogged(index))
 				{
 					ints.Add(index);
 				}
 			}
 			foreach (int i in ints)
 			{
-				__instance.Map.fogGrid.fogGrid[i] = false;
+				__instance.Map.fogGrid.fogGrid.Set(i, value: false);
 			}
 			__state = ints;
 			return true;
@@ -1373,7 +1376,7 @@ namespace SaveOurShip2
 
 			foreach (int i in __state)
 			{
-				__instance.Map.fogGrid.fogGrid[i] = true;
+				__instance.Map.fogGrid.fogGrid.Set(i, value:true);
 			}
 		}
 	}
@@ -1916,7 +1919,6 @@ namespace SaveOurShip2
 						return true;
 					//Log.Message(String.Format("Overriding roof at {0}. Set shipRoofDef instead of {1}", cellIndex, def.defName));
 					___roofGrid[cellIndex] = ResourceBank.RoofDefOf.RoofShip;
-					___map.glowGrid.DirtyCache(c);
 					Region validRegionAt_NoRebuild = ___map.regionGrid.GetValidRegionAt_NoRebuild(c);
 					if (validRegionAt_NoRebuild != null)
 					{
@@ -2469,7 +2471,7 @@ namespace SaveOurShip2
 		}
 	}
 
-	[HarmonyPatch(typeof(Projectile), "Launch", new Type[] {
+	/*[HarmonyPatch(typeof(Projectile), "Launch", new Type[] {
 		typeof(Thing), typeof(Vector3), typeof(LocalTargetInfo), typeof(LocalTargetInfo),
 		typeof(ProjectileHitFlags), typeof(bool), typeof(Thing), typeof(ThingDef) })] //td? move this into ship turret/launch code
 	public static class TransferAmplifyBonus
@@ -2482,7 +2484,7 @@ namespace SaveOurShip2
 				___weaponDamageMultiplier = 1 + turret.AmplifierDamageBonus;
 			}
 		}
-	}
+	}*/
 
 	//crypto
 	[HarmonyPatch(typeof(Building_CryptosleepCasket), "FindCryptosleepCasketFor")]
@@ -3248,12 +3250,12 @@ namespace SaveOurShip2
 
 			__result = DefDatabase<PawnKindDef>.AllDefs.Where(
 					(PawnKindDef x) => x.RaceProps.Animal &&
-					x.RaceProps.wildness < 0.35f &&
+					x.race.GetStatValueAbstract(StatDefOf.Wildness) < 0.35f &&
 					(!x.race?.tradeTags?.Contains("AnimalInsectSpace") ?? true) &&
 					map.mapTemperature.SeasonAndOutdoorTemperatureAcceptableFor(x.race) &&
 					(x.race.tradeTags?.Contains("AnimalFarm") ?? false) &&
 					!x.RaceProps.Dryad)
-				.TryRandomElementByWeight((PawnKindDef k) => 0.420000017f - k.RaceProps.wildness, out kind);
+				.TryRandomElementByWeight((PawnKindDef k) => 0.420000017f - k.race.GetStatValueAbstract(StatDefOf.Wildness), out kind);
 		}
 	}
 
@@ -3585,7 +3587,7 @@ namespace SaveOurShip2
 					if (Rand.Value < 0.4f)
 					{
 						float radius = __instance.fireSize * 3f;
-						SnowUtility.AddSnowRadial(__instance.Position, __instance.Map, radius, 0f - __instance.fireSize * 0.1f);
+						WeatherBuildupUtility.AddSnowRadial(__instance.Position, __instance.Map, radius, 0f - __instance.fireSize * 0.1f);
 					}
 					__instance.fireSize += 0.1f;
 					if (__instance.fireSize > 1.75f)
@@ -3909,9 +3911,9 @@ namespace SaveOurShip2
 			return;
 			bool TryGetSpaceQuest(bool incPop, out QuestScriptDef chosen)
 			{
-				return DefDatabase<QuestScriptDef>.AllDefs.Where((QuestScriptDef x) => x.IsRootRandomSelected && x.rootIncreasesPopulation == incPop && ShipInteriorMod2.allowedQuests.Contains(x.defName) && x.CanRun(points)).TryRandomElementByWeight((QuestScriptDef x) => NaturalRandomQuestChooser.GetNaturalRandomSelectionWeight(x, points, target.StoryState), out chosen);
+				return DefDatabase<QuestScriptDef>.AllDefs.Where((QuestScriptDef x) => x.IsRootRandomSelected && x.rootIncreasesPopulation == incPop && ShipInteriorMod2.allowedQuests.Contains(x.defName) && x.CanRun(points, target)).TryRandomElementByWeight((QuestScriptDef x) => NaturalRandomQuestChooser.GetNaturalRandomSelectionWeight(x, points, target.StoryState), out chosen);
 			}
-		}
+		} 
 	}
 
 	[HarmonyPatch(typeof(QuestGen_Get), "GetMap")] //called for some quests via TestRunInt in CanRun above
