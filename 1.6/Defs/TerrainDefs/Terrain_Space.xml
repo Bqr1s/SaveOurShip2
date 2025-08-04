@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-	<TerrainDef>
+	<TerrainDef ParentName="NaturalTerrainBase">
 		<defName>EmptySpace</defName>
 		<label>vacuum</label>
 		<texturePath>Terrain/Surfaces/Vacuum</texturePath>
@@ -12,7 +12,6 @@
 		</filthAcceptanceMask>
 		<fertility>0</fertility>
 		<avoidWander>true</avoidWander>
-		<changeable>false</changeable>
 		<holdSnowOrSand>false</holdSnowOrSand>
 		<affordances>
 			<li>Light</li>
@@ -23,11 +22,13 @@
 			<li>Space</li>
 		</tags>
 		<extinguishesFire>true</extinguishesFire>
+		<exposesToVacuum>true</exposesToVacuum>
 	</TerrainDef>
 	<TerrainDef Name="ShipFloorBase" Abstract="True">
 		<layerable>true</layerable>
 		<renderPrecedence>70</renderPrecedence>
 		<affordances>
+			<li>Walkable</li>
 			<li>Light</li>
 			<li>Medium</li>
 			<li>Heavy</li>
@@ -113,6 +114,7 @@
 			<li>Ship</li>
 		</tags>
 		<affordances>
+			<li>Walkable</li>
 			<li>Light</li>
 			<li>Medium</li>
 			<li>Heavy</li>

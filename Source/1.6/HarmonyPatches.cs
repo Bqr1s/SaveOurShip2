@@ -742,10 +742,16 @@ namespace SaveOurShip2
 						___cachedOpenRoofCount = 1;
 						return ___cachedOpenRoofCount;
 					}
+					var terrain = tile.GetTerrain(__instance.Map);
+					if (terrain.exposesToVacuum)
+					{
+						___cachedOpenRoofCount = 1;
+						return ___cachedOpenRoofCount;
+					}
 				}
 				try
 				{
-					foreach (IntVec3 vec in __instance.BorderCells)
+					foreach (IntVec3 vec in __instance.BorderCellsCardinal)
 					{
 						bool hasShipPart = false;
 						foreach (Thing t in vec.GetThingList(__instance.Map))
@@ -753,7 +759,7 @@ namespace SaveOurShip2
 							if (t is Building b)
 							{
 								var shipPart = b.TryGetComp<CompShipCachePart>();
-								if (b.def.mineable || (shipPart != null && shipPart.Props.hermetic))
+								if ((shipPart != null && shipPart.Props.hermetic) || !b.ExchangeVacuum)
 								{
 									hasShipPart = true;
 									break;

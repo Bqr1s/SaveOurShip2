@@ -494,20 +494,7 @@ namespace SaveOurShip2
 		/// <returns></returns>
 		public static bool IsRoofDefAirtight(RoofDef roof)
 		{
-			if (roof == null)
-				return false;
-			if (roof == ResourceBank.RoofDefOf.RoofShip || roof == RoofDefOf.RoofRockThick)
-				return true;
-			if (compatibleAirtightRoofs != null)
-			{
-				// I do not expect a lot of values here.
-				foreach (var r in compatibleAirtightRoofs)
-				{
-					if (roof == r)
-						return true;
-				}
-			}
-			return false;
+			return roof != null;
 		}
 		public static int FindWorldTile()
 		{
