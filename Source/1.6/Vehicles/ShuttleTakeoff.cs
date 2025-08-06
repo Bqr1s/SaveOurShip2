@@ -60,6 +60,13 @@ namespace SaveOurShip2.Vehicles
 					}
 				}
 			}
+            if (mp is Site site)
+            {
+                yield return new ArrivalOption(
+                    "VisitSettlement".Translate(site.Label),
+                    new ArrivalAction_LandToCaravan(vehicle)
+                );
+            }
             List<ArrivalOption> baseOptions = new List<ArrivalOption>(base.GetArrivalOptions(target));
             // In this case, framework only allows to form caravan at the tile with map parent, which is nether site, nor settlement
             bool vehicleCaravanCondition = WorldVehiclePathGrid.Instance.Passable(target.Tile, vehicle.VehicleDef) &&
