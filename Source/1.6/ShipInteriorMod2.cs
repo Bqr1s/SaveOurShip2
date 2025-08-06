@@ -523,29 +523,6 @@ namespace SaveOurShip2
 
 		// Can override world tile selection in dev Launch sommmand, launching ship over specified tile
 		public static PlanetTile worldTileOverride = PlanetTile.Invalid;
-		public static PlanetTile FindWorldTilePlayer() //slower, will find tile nearest to ship object pos
-		{
-			float bestAbsLatitude = float.MaxValue;
-			PlanetTile bestTile = PlanetTile.Invalid;
-			var tiles = (Find.World.grid.Orbit ?? Find.World.grid.Surface).Tiles;
-			for (int i = 0; i < tiles.Count; i+=10)
-			{
-				var tile = tiles[i].tile;
-				if (Find.World.worldObjects.AnyWorldObjectAt(tile) || !TileFinder.IsValidTileForNewSettlement(tile))
-					continue;
-				float absLatitude = Math.Abs(Find.WorldGrid.LongLatOf(tile).y);
-				if (absLatitude < bestAbsLatitude)
-				{
-					bestAbsLatitude = absLatitude;
-					bestTile = tile;
-				}
-			}
-			if (bestTile == PlanetTile.Invalid) //fallback
-			{
-				bestTile = FindWorldTile();
-			}
-			return bestTile;
-		}
 		public static Map GeneratePlayerShipMap(IntVec3 size)
 		{
 			if (Current.ProgramState != ProgramState.MapInitializing)
@@ -559,7 +536,7 @@ namespace SaveOurShip2
 			orbiter.SetFaction(Faction.OfPlayer);
 			if (worldTileOverride == PlanetTile.Invalid)
 			{
-				orbiter.Tile = FindWorldTilePlayer();
+				orbiter.Tile = FindWorldTile();
 			}
 			else
 			{

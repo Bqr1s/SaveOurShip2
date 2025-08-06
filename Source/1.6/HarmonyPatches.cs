@@ -4185,7 +4185,7 @@ namespace SaveOurShip2
 				List<Building> cores = new List<Building>();
 				if (ShipInteriorMod2.FindPlayerShipMap() != null)
 				{
-					map = GetOrGenerateMapUtility.GetOrGenerateMap(ShipInteriorMod2.FindWorldTilePlayer(), new IntVec3(250, 1, 250), ResourceBank.WorldObjectDefOf.ShipEnemy);
+					map = GetOrGenerateMapUtility.GetOrGenerateMap(ShipInteriorMod2.FindWorldTile(), new IntVec3(250, 1, 250), ResourceBank.WorldObjectDefOf.ShipEnemy);
 					map.GetComponent<ShipMapComp>().ShipMapState = ShipMapState.isGraveyard;
 					((WorldObjectOrbitingShip)map.Parent).Radius = 150f;
 					((WorldObjectOrbitingShip)map.Parent).Theta = -3 - 0.1f + 0.002f * Rand.Range(0, 20);
