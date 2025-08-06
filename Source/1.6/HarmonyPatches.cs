@@ -5659,6 +5659,25 @@ namespace SaveOurShip2
 		}
 	}
 
+	[HarmonyPatch(typeof(GenCelestial), nameof(GenCelestial.CelestialSunGlow), new[] {typeof(Map), typeof(int)})]
+	public static class FixGenCelestialToMapParentPosition
+	{
+		public static bool Prefix(Map map, int ticksAbs, ref float __result)
+		{
+			if (!map.IsSpace() || map.Parent == null)
+			{
+				return true;
+			}
+
+			var pos = map.Parent.DrawPos;
+			// Code from original GenCelestial.CelestialSunGlow
+			float x = Mathf.Atan2(pos.x, -pos.z) * 180f / Mathf.PI;
+			float y = Mathf.Asin(pos.y / pos.magnitude) * 180f / Mathf.PI;
+			__result = GenCelestial.CelestialSunGlowPercent(y, GenDate.DayOfYear(ticksAbs, x), GenDate.DayPercent(ticksAbs, x));
+			return false;
+		}
+	}
+
 	/*[HarmonyPatch(typeof(ActiveDropPod),"PodOpen")]
 	public static class ActivePodFix{
 		public static bool Prefix (ref ActiveDropPod __instance)
