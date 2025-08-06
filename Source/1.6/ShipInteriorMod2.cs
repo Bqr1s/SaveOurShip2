@@ -1958,9 +1958,17 @@ namespace SaveOurShip2
 
 			//vars1
 			var mapPar = (WorldObjectOrbitingShip)map.Parent;
-			mapPar.drawPos = originMap.Parent.DrawPos;
-			mapPar.originDrawPos = originMap.Parent.DrawPos;
-			mapPar.targetDrawPos = mapPar.NominalPos;
+			Vector3 originPos = originMap.Parent.DrawPos;
+			Vector3 targetPos = Rand.PointOnSphereCap(originPos, 20).normalized * mapPar.Radius;
+			WorldObjectMath.GetSphericalFromCartesian(targetPos, out float phi, out float theta, out float radius);
+			mapPar.Phi = phi;
+			mapPar.Theta = theta;
+			mapPar.Radius = radius;
+
+			mapPar.drawPos = originPos;
+			mapPar.originDrawPos = originPos;
+			mapPar.targetDrawPos = targetPos;
+
 			mapComp.Heading = 1;
 			mapComp.Altitude = altitudeLand; //startup altitude
 			mapComp.Takeoff = true;

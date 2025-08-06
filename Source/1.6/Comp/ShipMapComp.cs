@@ -2204,7 +2204,6 @@ namespace SaveOurShip2
 					}
 					else //arriving on spacehome
 					{
-						((WorldObjectOrbitingShip)map.Parent).SetNominalPos();
 						ShipMapState = ShipMapState.nominal;
 						Find.LetterStack.ReceiveLetter(TranslatorFormattedStringExtensions.Translate("SoS.OrbitAchieved"), TranslatorFormattedStringExtensions.Translate("SoS.OrbitAchievedDesc"), LetterDefOf.PositiveEvent);
 					}
