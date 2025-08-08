@@ -4153,7 +4153,7 @@ namespace SaveOurShip2
 				List<Building> cores = new List<Building>();
 				if (ShipInteriorMod2.FindPlayerShipMap() != null)
 				{
-					map = GetOrGenerateMapUtility.GetOrGenerateMap(ShipInteriorMod2.FindWorldTilePlayer(), new IntVec3(250, 1, 250), ResourceBank.WorldObjectDefOf.ShipEnemy);
+					map = GetOrGenerateMapUtility.GetOrGenerateMap(ShipInteriorMod2.FindWorldTile(), new IntVec3(250, 1, 250), ResourceBank.WorldObjectDefOf.ShipEnemy);
 					map.GetComponent<ShipMapComp>().ShipMapState = ShipMapState.isGraveyard;
 					((WorldObjectOrbitingShip)map.Parent).Radius = 150f;
 					((WorldObjectOrbitingShip)map.Parent).Theta = -3 - 0.1f + 0.002f * Rand.Range(0, 20);
@@ -5650,6 +5650,25 @@ namespace SaveOurShip2
 			{
 				worldComp.MinorBreakThresholds.Add(__instance.pawn, __result);
 			}
+		}
+	}
+
+	[HarmonyPatch(typeof(GenCelestial), nameof(GenCelestial.CelestialSunGlow), new[] {typeof(Map), typeof(int)})]
+	public static class FixGenCelestialToMapParentPosition
+	{
+		public static bool Prefix(Map map, int ticksAbs, ref float __result)
+		{
+			if (!map.IsSpace() || map.Parent == null)
+			{
+				return true;
+			}
+
+			var pos = map.Parent.DrawPos;
+			// Code from original GenCelestial.CelestialSunGlow
+			float x = Mathf.Atan2(pos.x, -pos.z) * 180f / Mathf.PI;
+			float y = Mathf.Asin(pos.y / pos.magnitude) * 180f / Mathf.PI;
+			__result = GenCelestial.CelestialSunGlowPercent(y, GenDate.DayOfYear(ticksAbs, x), GenDate.DayPercent(ticksAbs, x));
+			return false;
 		}
 	}
 
