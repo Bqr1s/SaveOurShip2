@@ -264,6 +264,22 @@
 					</value>
 				</li>
 
+				<!-- Jump Pack Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="Apparel_PackJump"]/description</xpath>
+					<value>
+						<description>A single-person burst rocket for short-ranged flight. With its integrated harness and guidance assistant, the jump pack allows anyone to leap long distances at high speed, even over obstacles. It must be recharged after several uses.\n\nSome spacer tech militaries have melee combat specialists who use jump packs to bypass obstacles and rapidly close with the enemy. Also allows for ease of movement in space with its thrusters.</description>
+					</value>
+				</li>
+				
+				<!-- Locust Armor Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorLocust"]/description</xpath>
+					<value>
+						<description>A variant of recon armor with an integrated burst rocket for short-ranged flight. Locust armor is slightly less protective than standard recon armor. Each jump consumes a burst of fuel, so the armor must be reloaded after several uses.\n\nUnlike most ultratech military units, locusts train primarily with melee weapons. They usually avoid static shootouts, preferring to jump straight into enemy fortifications and fight hand-to-hand. They do poorly in static defense or confined quarters, but excel in mixed cover or shipcracking operations. Also allows for ease of movement in space with its thrusters.</description>
+					</value>
+				</li>
+				
 				<!-- traders -->
 				<li Class="PatchOperationAdd">
 					<xpath>Defs/TraderKindDef[defName="Orbital_Empire" or defName="Empire_Caravan_TraderGeneral"]/stockGenerators</xpath>
