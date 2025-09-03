@@ -300,7 +300,7 @@
 	<ThingDef ParentName="BodyPartArchotechBase">
 		<defName>SoSArchotechLung</defName>
 		<label>archotech lung</label>
-		<description>An artifical lung built by an archotech. It can extract trace amounts of oxygen from planetary atmospheres that would kill a baseline human, and is immune to caustic gases. Even underwater or in a vacuum, a vanometrically-powered scrubber recycles carbon dioxide into oxygen. It looks and feels like natural flesh, but it's harder to damage than plasteel. Even if it is harmed, it repairs itself over time. Its internal workings are a mystery to all human minds.</description>
+		<description>An artifical lung built by an archotech. It can extract trace amounts of oxygen from planetary atmospheres that would kill a baseline human, and is immune to caustic gases. Even underwater or in a vacuum, a vanometrically-powered scrubber recycles carbon dioxide into oxygen. It looks and feels like natural flesh, but it's harder to damage than plasteel. Even if it is harmed, it repairs itself over time. Its internal workings are a mystery to all human minds. This implant does not provide decompression protection.</description>
 		<descriptionHyperlinks>
 			<RecipeDef>SoSInstallArchotechLung</RecipeDef>
 		</descriptionHyperlinks>
@@ -641,7 +641,7 @@
 	<ThingDef ParentName="BodyPartArchotechBase">
 		<defName>SoSArchotechSkin</defName>
 		<label>archotech skin</label>
-		<description>This small patch of artificial skin quickly spreads to cover the user's body. Archotech skin resists pressure changes and offers complete immunity to vaccum depressurization, as well as providing significant armor and temperature insulation. In conjunction with archotech lungs, it offers the ability to survive vacuum indefinitely. It looks and feels like natural flesh, but is harder to damage than plasteel. Even if it is harmed, it repairs itself over time. Its internal workings are a mystery to all human minds.</description>
+		<description>This small patch of artificial skin quickly spreads to cover the user's body. Archotech skin resists pressure changes and offers complete immunity to vaccum depressurization, as well as providing significant armor and temperature insulation. In conjunction with archotech lungs, it offers the ability to survive vacuum indefinitely. It looks and feels like natural flesh, but is harder to damage than plasteel. Even if it is harmed, it repairs itself over time. Its internal workings are a mystery to all human minds. This implant does not provide hypoxia protection.</description>
 		<descriptionHyperlinks>
 			<RecipeDef>InstallSoSArchotechSkin</RecipeDef>
 		</descriptionHyperlinks>
