@@ -811,6 +811,13 @@
 						<DecompressionResistance>1</DecompressionResistance>
 					</value>
 				</li>
+				<!-- Breathless Gene Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/GeneDef[defName="VacuumResistance_Total"]/description</xpath>
+					<value>
+						<description>Carriers of this gene can store concentrated oxygen in their bodies. Their cells consume much less oxygen, meaning they rarely need to breathe. These adaptations make them immune to the harmful effects of space, as well as environmental toxins, tox gas, acidic smog, and rot stink. This gene provides no decompression protection.</description>
+					</value>
+				</li>
 				<!-- Vacuum Resistant Gene -->
 				<li Class="PatchOperationAdd">
 					<xpath>Defs/GeneDef[defName="VacuumResistance_Partial"]/statOffsets</xpath>
@@ -818,11 +825,32 @@
 						<DecompressionResistance>0.75</DecompressionResistance>
 					</value>
 				</li>
+				<!-- Vacuum Resistant Gene Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/GeneDef[defName="VacuumResistance_Partial"]/description</xpath>
+					<value>
+						<description>Carriers of this gene have skin that releases a waxy substance when air pressure is low, preventing vacuum burns and allowing them to survive longer when exposed to vacuum. This gene provides no hypoxia protection.</description>
+					</value>
+				</li>
 				<!-- Vacskin Gland -->
 				<li Class="PatchOperationAdd">
 					<xpath>Defs/HediffDef[defName="VacskinGland"]/stages/li/statOffsets</xpath>
 					<value>
 						<DecompressionResistance>0.75</DecompressionResistance>
+					</value>
+				</li>
+				<!-- Vacskin Gland Thing Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="VacskinGland"]/description</xpath>
+					<value>
+						<description>This bionic gland releases a waxy substance that forms an insulating barrier on the skin, preventing vacuum burns but restricting movement. The gland also regulates blood oxygen levels, allowing longer survival in the vacuum of space. This implant provides no hypoxia protection.</description>
+					</value>
+				</li>
+				<!-- Vacskin Gland Installed Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/HediffDef[defName="VacskinGland"]/description</xpath>
+					<value>
+						<description>An installed vacskin gland. Releases a waxy substance that forms an insulating barrier on the skin, preventing vacuum burns but restricting movement. The gland also regulates blood oxygen levels, allowing longer survival in the vacuum of space. This implant provides no hypoxia protection.</description>
 					</value>
 				</li>
 				<!-- Odyssey Space Headgear -->
