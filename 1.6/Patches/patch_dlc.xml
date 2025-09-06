@@ -824,6 +824,20 @@
 						<DecompressionResistance>0.75</DecompressionResistance>
 					</value>
 				</li>
+				<!-- Vacskin Gland Thing Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="VacskinGland"]/description</xpath>
+					<value>
+						<description>This bionic gland releases a waxy substance that forms an insulating barrier on the skin, preventing vacuum burns but restricting movement. The gland also regulates blood oxygen levels, allowing longer survival in the vacuum of space. This implant provides no hypoxia protection.</description>
+					</value>
+				</li>
+				<!-- Vacskin Gland Hediff Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/HediffDef[defName="VacskinGland"]/description</xpath>
+					<value>
+						<description>An installed vacskin gland. Releases a waxy substance that forms an insulating barrier on the skin, preventing vacuum burns but restricting movement. The gland also regulates blood oxygen levels, allowing longer survival in the vacuum of space. This implant provides no hypoxia protection.</description>
+					</value>
+				</li>
 				<!-- Archotech Skin -->
 				<li Class="PatchOperationAdd">
 					<xpath>Defs/HediffDef[defName="SoSArchotechSkin"]/stages/li</xpath>
