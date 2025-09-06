@@ -810,6 +810,13 @@
 						<HypoxiaResistance>1</HypoxiaResistance>
 					</value>
 				</li>
+				<!-- Breathless Gene Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/GeneDef[defName="VacuumResistance_Total"]/description</xpath>
+					<value>
+						<description>Carriers of this gene can store concentrated oxygen in their bodies. Their cells consume much less oxygen, meaning they rarely need to breathe. These adaptations make them immune to the harmful effects of space, as well as environmental toxins, tox gas, acidic smog, and rot stink. This gene provides no decompression protection.</description>
+					</value>
+				</li>
 				<!-- Vacuum Resistant Gene -->
 				<li Class="PatchOperationAdd">
 					<xpath>Defs/GeneDef[defName="VacuumResistance_Partial"]/statOffsets</xpath>
