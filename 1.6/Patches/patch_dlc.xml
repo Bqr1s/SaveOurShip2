@@ -817,6 +817,13 @@
 						<DecompressionResistance>0.75</DecompressionResistance>
 					</value>
 				</li>
+				<!-- Vacuum Resistant Gene Description -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/GeneDef[defName="VacuumResistance_Partial"]/description</xpath>
+					<value>
+						<description>Carriers of this gene have skin that releases a waxy substance when air pressure is low, preventing vacuum burns and allowing them to survive longer when exposed to vacuum. This gene provides no hypoxia protection.</description>
+					</value>
+				</li>
 				<!-- Vacskin Gland -->
 				<li Class="PatchOperationAdd">
 					<xpath>Defs/HediffDef[defName="VacskinGland"]/stages/li/statOffsets</xpath>
