@@ -332,6 +332,71 @@
 						<li>PirateWaster</li>
 					</value>
 				</li>
+				<!-- EVA description -->
+				<li Class="PatchOperationConditional">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet" or defName="Apparel_MechlordSuit"][not(comps)]</xpath>
+					<match Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet" or defName="Apparel_MechlordSuit"][not(comps)]</xpath>
+						<value>
+							<comps />
+						</value>
+					</match>
+				</li>	
+				<li Class="PatchOperationConditional">
+					<xpath>Defs/ThingDef[defName="Apparel_MechlordSuit"]/comps[not(li/compClass="SaveOurShip2.CompEVA")]</xpath>
+					<match Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_MechlordSuit"]/comps[not(li/compClass="SaveOurShip2.CompEVA")]</xpath>
+						<value>
+							<li>
+								<compClass>SaveOurShip2.CompEVA</compClass>
+							</li>
+						</value>
+					</match>
+				</li>	
+				<!-- Armor DecompressionResistance -->
+				<li Class="PatchOperationConditional">
+					<xpath>Defs/ThingDef[defName="Apparel_MechlordSuit"]/equippedStatOffsets[not(DecompressionResistance)]</xpath>
+					<match Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_MechlordSuit"]/equippedStatOffsets[not(DecompressionResistance)]</xpath>
+						<value>
+							<DecompressionResistance>0.75</DecompressionResistance>
+						</value>
+					</match>
+				</li>
+				<!-- Helmets DecompressionResistance -->
+				<li Class="PatchOperationConditional">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet"]/equippedStatOffsets[not(DecompressionResistance)]</xpath>
+					<match Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet"]/equippedStatOffsets[not(DecompressionResistance)]</xpath>
+						<value>
+							<DecompressionResistance>0.25</DecompressionResistance>
+						</value>
+					</match>
+				</li>
+				<!-- Helmets HypoxiaResistance -->
+				<li Class="PatchOperationConditional">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet"]/equippedStatOffsets[not(HypoxiaResistance)]</xpath>
+					<match Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet"]/equippedStatOffsets[not(HypoxiaResistance)]</xpath>
+						<value>
+							<HypoxiaResistance>1</HypoxiaResistance>
+						</value>
+					</match>
+				</li>
+				<!-- Mechlord Suit Armor Insulation_Cold -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="Apparel_MechlordSuit"]/statBases/Insulation_Cold</xpath>
+						<value>
+							<Insulation_Cold>100</Insulation_Cold>
+						</value>
+				</li>	
+				<!-- Mech Helmets Insulation_Cold -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet"]/statBases/Insulation_Cold</xpath>
+						<value>
+							<Insulation_Cold>25</Insulation_Cold>
+						</value>
+				</li>
 			</operations>
 		</match>
 	</Operation>
