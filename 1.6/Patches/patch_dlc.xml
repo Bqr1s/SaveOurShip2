@@ -902,6 +902,20 @@
 						<GravshipRange>40</GravshipRange>
 					</value>
 				</li>
+				<!-- Recon Helmet VacuumResistance -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[@Name="ApparelArmorHelmetReconBase"]/equippedStatOffsets/VacuumResistance</xpath>
+					<value>
+						<VacuumResistance>0.7</VacuumResistance>
+					</value>
+				</li>
+				<!-- Marine Helmet VacuumResistance -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[@Name="ApparelArmorHelmetPowerBase"]/equippedStatOffsets/VacuumResistance</xpath>
+					<value>
+						<VacuumResistance>0.7</VacuumResistance>
+					</value>
+				</li>
 			</operations>
 		</match>
 	</Operation>
