@@ -246,6 +246,20 @@
 					</match>
 				</li>
 
+				<!-- Gunlink Fixes -->
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_Gunlink"]/equippedStatOffsets</xpath>
+						<value>
+							<DecompressionResistance>0</DecompressionResistance>
+						</value>
+				</li>	
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_Gunlink"]/equippedStatOffsets</xpath>
+						<value>
+							<HypoxiaResistance>0</HypoxiaResistance>
+						</value>
+				</li>	
+
 				<!-- Locust Armor VacuumSpeedMultiplier -->
 				<li Class="PatchOperationConditional">
 					<xpath>Defs/ThingDef[defName="Apparel_ArmorLocust" or defName="Apparel_PackJump"]/equippedStatOffsets[not(VacuumSpeedMultiplier)]</xpath>
