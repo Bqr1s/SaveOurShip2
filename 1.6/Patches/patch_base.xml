@@ -141,15 +141,24 @@
 	</Operation>
 
 	<Operation Class="PatchOperationConditional">
-		<xpath>Defs/ThingDef[@ParentName="ApparelArmorReconBase" or @ParentName="ApparelArmorPowerBase" or @ParentName="ApparelArmorHelmetPowerBase" or @ParentName="ApparelArmorHelmetReconBase"]/comps[not(li/compClass="SaveOurShip2.CompEVA")]</xpath>
+		<xpath>Defs/ThingDef[@ParentName="ApparelArmorReconBase" or @ParentName="ApparelArmorPowerBase"]/comps[not(li/compClass="SaveOurShip2.CompEVA")]</xpath>
 		<match Class="PatchOperationAdd">
-			<xpath>Defs/ThingDef[@ParentName="ApparelArmorReconBase" or @ParentName="ApparelArmorPowerBase" or @ParentName="ApparelArmorHelmetPowerBase" or @ParentName="ApparelArmorHelmetReconBase"]/comps[not(li/compClass="SaveOurShip2.CompEVA")]</xpath>
+			<xpath>Defs/ThingDef[@ParentName="ApparelArmorReconBase" or @ParentName="ApparelArmorPowerBase"]/comps[not(li/compClass="SaveOurShip2.CompEVA")]</xpath>
 			<value>
 				<li>
 					<compClass>SaveOurShip2.CompEVA</compClass>
 				</li>
 			</value>
 		</match>
+	</Operation>
+
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThingDef[defName="Apparel_PowerArmorHelmet" or defName="Apparel_ArmorHelmetRecon"]/comps</xpath>
+		<value>
+		<li>
+			<compClass>SaveOurShip2.CompEVA</compClass>
+		</li>
+		</value>
 	</Operation>
 
 	<!-- EVA stats -->
