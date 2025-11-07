@@ -246,6 +246,30 @@
 					</match>
 				</li>
 
+				<!-- Gunlink Fixes -->
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_Gunlink"]/equippedStatOffsets</xpath>
+						<value>
+							<DecompressionResistance>0</DecompressionResistance>
+						</value>
+				</li>	
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_Gunlink"]/equippedStatOffsets</xpath>
+						<value>
+							<HypoxiaResistance>0</HypoxiaResistance>
+						</value>
+				</li>	
+				
+				<!-- SaveOurShip2 comp for helmets -->
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetReconPrestige"]/comps</xpath>
+						<value>
+							<li>
+								<compClass>SaveOurShip2.CompEVA</compClass>
+							</li>
+						</value>
+				</li>
+				
 				<!-- Locust Armor VacuumSpeedMultiplier -->
 				<li Class="PatchOperationConditional">
 					<xpath>Defs/ThingDef[defName="Apparel_ArmorLocust" or defName="Apparel_PackJump"]/equippedStatOffsets[not(VacuumSpeedMultiplier)]</xpath>
@@ -401,7 +425,16 @@
 						<value>
 							<Insulation_Cold>25</Insulation_Cold>
 						</value>
-				</li>				
+				</li>			
+				<!-- SaveOurShip2 comp for helmets -->
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander" or defName="Apparel_ArmorHelmetMechlordHelmet"]/comps</xpath>
+						<value>
+							<li>
+								<compClass>SaveOurShip2.CompEVA</compClass>
+							</li>
+						</value>
+				</li>
 			</operations>
 		</match>
 	</Operation>
@@ -1017,6 +1050,24 @@
 					<value>
 						<VacuumResistance>0.3</VacuumResistance>
 					</value>
+				</li>
+				<!-- SaveOurShip2 comp for helmets -->
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_VacsuitHelmet"]/comps</xpath>
+						<value>
+							<li>
+								<compClass>SaveOurShip2.CompEVA</compClass>
+							</li>
+						</value>
+				</li>
+				<!-- SaveOurShip2 comp for suits -->
+				<li Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Apparel_Vacsuit" or defName="Apparel_VacsuitChildren"]/comps</xpath>
+						<value>
+							<li>
+								<compClass>SaveOurShip2.CompEVA</compClass>
+							</li>
+						</value>
 				</li>
 			</operations>
 		</match>
