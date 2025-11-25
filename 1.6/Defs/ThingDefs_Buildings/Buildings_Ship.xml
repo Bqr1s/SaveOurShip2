@@ -81,9 +81,8 @@
 			<supportsWallAttachments>true</supportsWallAttachments>
 		</building>
 		<costList>
-			<Steel>14</Steel>
+			<Steel>7</Steel>
 			<Plasteel>3</Plasteel>
-			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<researchPrerequisites>
 			<li>ShipBasics</li>
@@ -150,9 +149,8 @@
 			<supportsWallAttachments>true</supportsWallAttachments>
 		</building>
 		<costList>
-			<Steel>16</Steel>
+			<Steel>8</Steel>
 			<Plasteel>4</Plasteel>
-			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<researchPrerequisites>
 			<li>ShipBasics</li>
@@ -212,7 +210,6 @@
 			<MaxHitPoints>500</MaxHitPoints>
 		</statBases>
 		<costList>
-			<Steel>8</Steel>
 			<Plasteel>2</Plasteel>
 		</costList>
 	</ThingDef>
@@ -241,7 +238,6 @@
 			<MaxHitPoints>1000</MaxHitPoints>
 		</statBases>
 		<costList>
-			<Steel>16</Steel>
 			<Plasteel>4</Plasteel>
 		</costList>
 		<size>(1,2)</size>
@@ -273,7 +269,6 @@
 			<MaxHitPoints>1500</MaxHitPoints>
 		</statBases>
 		<costList>
-			<Steel>24</Steel>
 			<Plasteel>6</Plasteel>
 		</costList>
 		<size>(1,3)</size>
@@ -334,9 +329,9 @@
 		</statBases>
 		<selectable>true</selectable>
 		<costList>
-			<Steel>150</Steel>
+			<Steel>50</Steel>
 			<Plasteel>25</Plasteel>
-			<ComponentSpacer>1</ComponentSpacer>
+			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<building>
 			<shipPart>true</shipPart>
@@ -427,9 +422,9 @@
 		</statBases>
 		<selectable>true</selectable>
 		<costList>
-			<Steel>30</Steel>
+			<Steel>15</Steel>
 			<Plasteel>5</Plasteel>
-			<ComponentIndustrial>2</ComponentIndustrial>
+			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
 		<resourcesFractionWhenDeconstructed>0.5</resourcesFractionWhenDeconstructed>
@@ -508,9 +503,9 @@
 		</graphicData>
 		<uiIconPath>Things/Building/Door/Autodoor_MenuIcon</uiIconPath>
 		<costList>
-			<Steel>40</Steel>
-			<ComponentSpacer>1</ComponentSpacer>
-			<Plasteel>25</Plasteel>
+			<Steel>20</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+			<Plasteel>15</Plasteel>
 		</costList>
 		<comps>
 			<li Class="SaveOurShip2.CompProps_ShipCachePart">
@@ -618,9 +613,9 @@
 		</statBases>
 		<selectable>true</selectable>
 		<costList>
-			<Steel>50</Steel>
-			<Plasteel>25</Plasteel>
-			<ComponentSpacer>1</ComponentSpacer>
+			<Steel>25</Steel>
+			<Plasteel>15</Plasteel>
+			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<building>
 			<shipPart>true</shipPart>
@@ -762,7 +757,7 @@
 		</statBases>
 		<description>Spaceworthy hull plating. Designates this tile (and any objects built on it) as part of a ship. Must be placed inside an outer hull.</description>
 		<costList>
-			<Steel>3</Steel>
+			<Steel>1</Steel>
 			<Plasteel>1</Plasteel>
 		</costList>
 		<comps>
@@ -851,7 +846,7 @@
 		</statBases>
 		<costList>
 			<Steel>5</Steel>
-			<ComponentSpacer>1</ComponentSpacer>
+			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<size>(1,1)</size>
 	</ThingDef>
@@ -868,7 +863,7 @@
 		<costList>
 			<Steel>20</Steel>
 			<Plasteel>10</Plasteel>
-			<ComponentSpacer>1</ComponentSpacer>
+			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
 		<size>(2,2)</size>
 	</ThingDef>
@@ -885,7 +880,7 @@
 		<costList>
 			<Steel>40</Steel>
 			<Plasteel>20</Plasteel>
-			<ComponentSpacer>2</ComponentSpacer>
+			<ComponentIndustrial>2</ComponentIndustrial>
 		</costList>
 		<size>(3,3)</size>
 	</ThingDef>
@@ -902,7 +897,7 @@
 		<costList>
 			<Steel>80</Steel>
 			<Plasteel>40</Plasteel>
-			<ComponentSpacer>4</ComponentSpacer>
+			<ComponentIndustrial>4</ComponentIndustrial>
 		</costList>
 		<size>(4,4)</size>
 	</ThingDef>
@@ -983,7 +978,7 @@
 			<shipPart>true</shipPart>
 		</building>
 		<costList>
-			<Steel>100</Steel>
+			<Steel>50</Steel>
 			<Plasteel>20</Plasteel>
 			<ComponentIndustrial>6</ComponentIndustrial>
 		</costList>
@@ -1061,7 +1056,7 @@
 			<shipPart>true</shipPart>
 		</building>
 		<costList>
-			<Steel>200</Steel>
+			<Steel>100</Steel>
 			<Plasteel>40</Plasteel>
 			<ComponentIndustrial>12</ComponentIndustrial>
 		</costList>
@@ -1140,7 +1135,7 @@
 			<shipPart>true</shipPart>
 		</building>
 		<costList>
-			<Steel>600</Steel>
+			<Steel>300</Steel>
 			<Plasteel>120</Plasteel>
 			<ComponentIndustrial>12</ComponentIndustrial>
 			<ComponentSpacer>8</ComponentSpacer>
@@ -1189,7 +1184,7 @@
 			<paintable>true</paintable>
 		</building>
 		<costList>
-			<Steel>50</Steel>
+			<Steel>25</Steel>
 			<Plasteel>10</Plasteel>
 			<ComponentIndustrial>3</ComponentIndustrial>
 		</costList>
@@ -1251,7 +1246,6 @@
 			<shipPart>true</shipPart>
 		</building>
 		<costList>
-			<Steel>100</Steel>
 			<Plasteel>200</Plasteel>
 			<Uranium>120</Uranium>
 			<ComponentSpacer>12</ComponentSpacer>
@@ -1313,7 +1307,6 @@
 			<shipPart>true</shipPart>
 		</building>
 		<costList>
-			<Steel>250</Steel>
 			<Plasteel>500</Plasteel>
 			<Uranium>300</Uranium>
 			<ComponentSpacer>30</ComponentSpacer>
@@ -1425,7 +1418,7 @@
 		<designationCategory>Ship</designationCategory>
 		<costList>
 			<Steel>20</Steel>
-			<ComponentSpacer>1</ComponentSpacer>
+			<ComponentIndustrial>2</ComponentIndustrial>
 		</costList>
 		<comps>
 			<li Class="SaveOurShip2.CompProps_ShipCachePart"/>
@@ -1492,7 +1485,7 @@
 		<designationCategory>Ship</designationCategory>
 		<costList>
 			<Steel>20</Steel>
-			<ComponentSpacer>1</ComponentSpacer>
+			<ComponentIndustrial>2</ComponentIndustrial>
 		</costList>
 		<comps>
 			<li Class="SaveOurShip2.CompProps_ShipCachePart"/>
@@ -1572,8 +1565,8 @@
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
 		</placeWorkers>
 		<costList>
-			<Steel>150</Steel>
-			<ComponentSpacer>6</ComponentSpacer>
+			<Steel>75</Steel>
+			<ComponentSpacer>3</ComponentSpacer>
 			<Gold>20</Gold>
 		</costList>
 		<designationHotKey>Misc3</designationHotKey>
@@ -1627,7 +1620,7 @@
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
 		</placeWorkers>
 		<costList>
-			<Steel>150</Steel>
+			<Steel>75</Steel>
 			<ComponentSpacer>4</ComponentSpacer>
 			<Gold>70</Gold>
 			<AIPersonaCore>1</AIPersonaCore>
@@ -1681,10 +1674,10 @@
 		</comps>
 		<rotatable>false</rotatable>
 		<costList>
-			<Steel>140</Steel>
+			<Steel>70</Steel>
 			<Gold>4</Gold>
-			<ComponentIndustrial>6</ComponentIndustrial>
-			<ComponentSpacer>6</ComponentSpacer>
+			<ComponentIndustrial>3</ComponentIndustrial>
+			<ComponentSpacer>3</ComponentSpacer>
 		</costList>
 		<placeWorkers>
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
@@ -1729,9 +1722,9 @@
 		</comps>
 		<rotatable>false</rotatable>
 		<costList>
-			<Steel>480</Steel>
+			<Steel>240</Steel>
 			<Gold>16</Gold>
-			<ComponentSpacer>24</ComponentSpacer>
+			<ComponentSpacer>12</ComponentSpacer>
 		</costList>
 		<placeWorkers>
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
@@ -1794,9 +1787,9 @@
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
 		</placeWorkers>
 		<costList>
-			<Steel>120</Steel>
-			<Plasteel>60</Plasteel>
-			<ComponentSpacer>12</ComponentSpacer>
+			<Steel>60</Steel>
+			<Plasteel>30</Plasteel>
+			<ComponentSpacer>4</ComponentSpacer>
 		</costList>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
@@ -1857,9 +1850,9 @@
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
 		</placeWorkers>
 		<costList>
-			<Steel>40</Steel>
-			<Plasteel>20</Plasteel>
-			<ComponentSpacer>18</ComponentSpacer>
+			<Steel>20</Steel>
+			<Plasteel>10</Plasteel>
+			<ComponentSpacer>6</ComponentSpacer>
 		</costList>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
@@ -1974,7 +1967,7 @@
 		<costList>
 			<Steel>50</Steel>
 			<Plasteel>150</Plasteel>
-			<ComponentSpacer>16</ComponentSpacer>
+			<ComponentSpacer>14</ComponentSpacer>
 		</costList>
 		<comps>
 			<li Class="CompProperties_Battery">
@@ -2236,9 +2229,9 @@
 			<isEdifice>false</isEdifice>
 		</building>
 		<costList>
-			<Steel>250</Steel>
-			<Plasteel>50</Plasteel>
-			<ComponentSpacer>6</ComponentSpacer>
+			<Steel>125</Steel>
+			<Plasteel>25</Plasteel>
+			<ComponentSpacer>3</ComponentSpacer>
 		</costList>
 		<tickerType>Normal</tickerType>
 		<comps>
@@ -2310,9 +2303,9 @@
 			<isEdifice>false</isEdifice>
 		</building>
 		<costList>
-			<Steel>350</Steel>
-			<Plasteel>75</Plasteel>
-			<ComponentSpacer>8</ComponentSpacer>
+			<Steel>175</Steel>
+			<Plasteel>40</Plasteel>
+			<ComponentSpacer>4</ComponentSpacer>
 		</costList>
 		<tickerType>Normal</tickerType>
 		<comps>
@@ -2387,9 +2380,9 @@
 			<isEdifice>false</isEdifice>
 		</building>
 		<costList>
-			<Steel>250</Steel>
-			<Plasteel>50</Plasteel>
-			<ComponentSpacer>6</ComponentSpacer>
+			<Steel>125</Steel>
+			<Plasteel>25</Plasteel>
+			<ComponentSpacer>3</ComponentSpacer>
 		</costList>
 		<comps>
 			<li Class="SaveOurShip2.CompProps_ShipCachePart"/>
@@ -2591,10 +2584,10 @@
 			<isPlayerEjectable>true</isPlayerEjectable>
 		</building>
 		<costList>
-			<Steel>180</Steel>
+			<Steel>90</Steel>
 			<Uranium>5</Uranium>
-			<ComponentIndustrial>4</ComponentIndustrial>
-			<ComponentSpacer>2</ComponentSpacer>
+			<ComponentIndustrial>2</ComponentIndustrial>
+			<ComponentSpacer>1</ComponentSpacer>
 		</costList>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<designationHotKey>Misc2</designationHotKey>
@@ -2701,10 +2694,10 @@
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
 		<costList>
-			<Steel>150</Steel>
+			<Steel>75</Steel>
 			<Plasteel>10</Plasteel>
 			<Uranium>5</Uranium>
-			<ComponentIndustrial>4</ComponentIndustrial>
+			<ComponentIndustrial>2</ComponentIndustrial>
 			<ComponentSpacer>1</ComponentSpacer>
 		</costList>
 		<comps>
@@ -2753,11 +2746,10 @@
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
 		<costList>
-			<Steel>400</Steel>
-			<Plasteel>40</Plasteel>
+			<Plasteel>80</Plasteel>
 			<Uranium>20</Uranium>
-			<ComponentIndustrial>16</ComponentIndustrial>
-			<ComponentSpacer>4</ComponentSpacer>
+			<ComponentIndustrial>8</ComponentIndustrial>
+			<ComponentSpacer>2</ComponentSpacer>
 		</costList>
 		<comps>
 			<li Class="CompProperties_Explosive">
@@ -2805,9 +2797,9 @@
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
 		<costList>
-			<Steel>80</Steel>
+			<Steel>40</Steel>
 			<Uranium>3</Uranium>
-			<ComponentIndustrial>5</ComponentIndustrial>
+			<ComponentIndustrial>2</ComponentIndustrial>
 		</costList>
 		<comps>
 			<li Class="CompProperties_Explosive">
@@ -2879,10 +2871,9 @@
 		</comps>
 		<defaultPlacingRot>North</defaultPlacingRot>
 		<costList>
-			<Steel>40</Steel>
 			<Plasteel>80</Plasteel>
-			<ComponentIndustrial>4</ComponentIndustrial>
-			<ComponentSpacer>6</ComponentSpacer>
+			<ComponentIndustrial>2</ComponentIndustrial>
+			<ComponentSpacer>3</ComponentSpacer>
 		</costList>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<constructionSkillPrerequisite>8</constructionSkillPrerequisite>
@@ -2947,9 +2938,9 @@
 			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
 		</placeWorkers>
 		<costList>
-			<Steel>80</Steel>
-			<Plasteel>40</Plasteel>
-			<ComponentSpacer>4</ComponentSpacer>
+			<Steel>40</Steel>
+			<Plasteel>20</Plasteel>
+			<ComponentSpacer>2</ComponentSpacer>
 		</costList>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
