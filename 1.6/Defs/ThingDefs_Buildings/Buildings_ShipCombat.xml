@@ -1504,7 +1504,8 @@
 					<canTargetLocations>true</canTargetLocations>
 				</targetParams>
 				<defaultProjectile>Proj_ShipTurretPlasma</defaultProjectile>
-				<spawnDef>Bullet_Fake_Plasma</spawnDef>
+				<!--<spawnDef>Bullet_Fake_Plasma</spawnDef>-->
+				<spawnDef>Proj_ShipTurretPlasma</spawnDef>
 				<rangedFireRulepack>Combat_RangedFire_Thrown</rangedFireRulepack>
 			</li>
 		</verbs>
