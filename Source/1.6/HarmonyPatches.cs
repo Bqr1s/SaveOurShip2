@@ -6006,6 +6006,55 @@ namespace SaveOurShip2
 			return true;
 		}
 	}
+
+	public static class IntVec3Extension
+	{
+		public static Building GetFirstNonPlatingBuilding(this IntVec3 c, Map map)
+		{
+			foreach (Thing t in map.thingGrid.ThingsListAt(c))
+			{
+				if (t is Building b)
+				{
+					bool isPlating = b.TryGetComp<CompShipCachePart>()?.Props?.isPlating ?? false;
+					if (!isPlating)
+					{
+						return b;
+					}
+				}
+			}
+			return null;
+		}
+	}
+
+	[HarmonyPatch(typeof(Verb_LaunchProjectileStaticOneUse), "ValidateTarget")]
+	public static class AllowValidateTargetOnShipHull
+	{
+		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			// Replace call for GetFirstBuilding which will result in forbidding targeting hull plating
+			// with call to the funtion variant ingoring hull plating to allow targeting there.
+			foreach (var instruction in instructions)
+			{
+				bool replacedNow = false;
+				if (instruction.opcode == OpCodes.Call)
+                {
+					if(instruction.operand is MethodInfo targetMetod)
+                    {
+						if (targetMetod == AccessTools.Method(typeof(Verse.GridsUtility), nameof(Verse.GridsUtility.GetFirstBuilding)))
+						{
+							replacedNow = true;
+							yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(IntVec3Extension), nameof(IntVec3Extension.GetFirstNonPlatingBuilding)));
+						}
+                    }
+                }
+				if (!replacedNow)
+                {
+					yield return instruction;
+                }
+			}
+		}
+	}
+
 	/*[HarmonyPatch(typeof(ActiveDropPod),"PodOpen")]
 	public static class ActivePodFix{
 		public static bool Prefix (ref ActiveDropPod __instance)
