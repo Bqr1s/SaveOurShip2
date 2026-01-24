@@ -247,7 +247,7 @@
 			<li>
 				<key>EngineThrusters</key>
 				<label>Auxiliary Thrusters</label>
-				<description>Installing additional thrusters improves the shuttle's chance of dodging enemy point-defense systems.\n&lt;color=#bb8f04&gt;+15% ship combat dodge chance, +5 fuel consumption rate&lt;/color&gt;</description>
+				<description>Installing additional thrusters improves the shuttle's chance of dodging enemy point-defense systems.\n&lt;color=#bb8f04&gt;+10% ship combat dodge chance, +5 fuel consumption rate&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/EngineThrusters</icon>
 				<work>8000</work>
 				<gridCoordinate>(4,4)</gridCoordinate>
@@ -256,7 +256,7 @@
 						<vehicleStats>
 							<li>
 								<def>SoS2CombatDodgeChance</def>
-								<value>25</value>
+								<value>20</value>
 								<type>Add</type>
 							</li>
 						</vehicleStats>
@@ -559,7 +559,7 @@
 			<li>
 				<key>CargoCloaking</key>
 				<label>Cloaking Device</label>
-				<description>Install a miniaturized cloaking device to improve dodge chance in combat. Its heatsinks also slightly boost shield capacity. When Odyssey is active, this device will also act as a signal jammer.\n&lt;color=#bb8f04&gt;+25% ship combat dodge chance, +50 heatsink, -500 cargo capacity&lt;/color&gt;</description>
+				<description>Install a miniaturized cloaking device to improve dodge chance in combat. Its heatsinks also slightly boost shield capacity. When Odyssey is active, this device will also act as a signal jammer.\n&lt;color=#bb8f04&gt;+15% ship combat dodge chance, +50 heatsink, -500 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/CargoCloaking</icon>
 				<work>12000</work>
 				<gridCoordinate>(4,10)</gridCoordinate>
@@ -573,7 +573,7 @@
 							</li>
 							<li>
 								<def>SoS2CombatDodgeChance</def>
-								<value>50</value>
+								<value>30</value>
 								<type>Add</type>
 							</li>
 						</vehicleStats>
