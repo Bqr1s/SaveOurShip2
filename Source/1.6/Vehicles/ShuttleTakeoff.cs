@@ -55,8 +55,12 @@ namespace SaveOurShip2.Vehicles
 					}
 					else //target is player ship
 					{
-						yield return ArrivalOption_ReturnFromEnemy(target.Tile);
-					}
+                        foreach (ArrivalOption option in base.GetArrivalOptions(target))
+                        {
+                            yield return option;
+                        }
+                        yield break;
+                    }
 				}
 			}
             List<ArrivalOption> baseOptions = new List<ArrivalOption>(base.GetArrivalOptions(target));

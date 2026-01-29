@@ -381,6 +381,7 @@
 	<SoS.ShuttleMissionFloatIntercept>Mission: Intercept Torpedoes/Fighters</SoS.ShuttleMissionFloatIntercept>
 	<SoS.ShuttleMissionFloatStrafe>Mission: Strafe Enemy Ship</SoS.ShuttleMissionFloatStrafe>
 	<SoS.ShuttleMissionFloatTorpedo>Mission: Torpedo Enemy Ship</SoS.ShuttleMissionFloatTorpedo>
+	<!-- Return to ship from some out of combat location. Not used. Standard Vehicle Framework option to zoom in and chose location isa used instead -->
 	<SoS.ShuttleMissionFloatReturn>Return to Ship</SoS.ShuttleMissionFloatReturn>
 	<SoS.ShuttleRetreat>Your shuttle is retreating due to damaged hull!</SoS.ShuttleRetreat>
 	<SoS.EnemyShuttleRetreat>Enemy shuttle is retreating due to damaged hull!</SoS.EnemyShuttleRetreat>
