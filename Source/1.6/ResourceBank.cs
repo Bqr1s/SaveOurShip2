@@ -139,6 +139,7 @@ namespace SaveOurShip2
 			public static ThingDef Weapon_GrenadeMechanite;
 			public static ThingDef Apparel_SpaceSuitHelmet;
 			public static ThingDef Apparel_SpaceSuitBody;
+			public static ThingDef JTDriveSalvage;
 			//vanilla defs
 			public static ThingDef Turret_Autocannon;
 			public static ThingDef Turret_Sniper;
@@ -341,6 +342,13 @@ namespace SaveOurShip2
 		public static class ShipDefOf
         {
 			public static ShipDef MechPsychicAmp;
+		}
+
+		public static bool IsGravEngine(ThingDef def)
+		{
+			const string VGEHulkEngineDefName = "VGE_GravhulkEngine";
+			const string VGEJumperEngineDefName = "VGE_GravjumperEngine";
+			return def == ThingDefOf.GravEngine || def.defName == VGEHulkEngineDefName || def.defName == VGEJumperEngineDefName;
 		}
 	}
 }

@@ -86,9 +86,10 @@ namespace SaveOurShip2
 			Scribe_Values.Look(ref difficultySoS, "difficultySoS", 1.0);
 			Scribe_Values.Look(ref frequencySoS, "frequencySoS", 1.0);
 			Scribe_Values.Look(ref navyShipChance, "navyShipChance", 0.4);
-			Scribe_Values.Look(ref fleetChance, "fleetChance", 0.3);
+            Scribe_Values.Look(ref fleetChance, "fleetChance", 0.3);
+            Scribe_Values.Look(ref dodgeSkillImpact, "dodgeSkillImpact", 1);
 
-			Scribe_Values.Look(ref easyMode, "easyMode", false);
+            Scribe_Values.Look(ref easyMode, "easyMode", false);
 			Scribe_Values.Look(ref shipMapPhysics, "shipMapPhysics", false);
 			//Scribe_Values.Look(ref useVacuumPathfinding, "useVacuumPathfinding", true);
 			Scribe_Values.Look(ref renderPlanet, "renderPlanet", true);
@@ -112,7 +113,8 @@ namespace SaveOurShip2
 			difficultySoS = 1,
 			frequencySoS = 1,
 			navyShipChance = 0.4,
-			fleetChance = 0.3;
+			fleetChance = 0.3,
+			dodgeSkillImpact = 1;
 		public static bool
 			easyMode = false,
 			shipMapPhysics = false,
@@ -146,7 +148,7 @@ namespace SaveOurShip2
 		{
 			base.GetSettings<ModSettings_SoS>();
 		}
-		public const string SOS2version = "GithubV2.8.63";
+		public const string SOS2version = "GithubV2.8.94";
 		public const int SOS2ReqCurrentMinor = 5;
 		// 1.5.4063 public build (4062 constant) was not enough as there is no AnomalyUtility.TryDuplicatePawn_NewTemp method to harmony patch it.
 		// Historical builds are not available, so for sure can be increased just to next build, 4066
@@ -183,21 +185,6 @@ namespace SaveOurShip2
 			set
 			{
 				WorldComp.MoveShipFlag = value;
-			}
-		}
-
-		public static bool SlowTimeFlag
-		{
-			get
-			{
-				return WorldComp?.SlowTimeFlag ?? false;
-			}
-			set
-			{
-				if (WorldComp != null)
-				{
-					WorldComp.SlowTimeFlag = value;
-				}
 			}
 		}
 
@@ -286,7 +273,9 @@ namespace SaveOurShip2
 			difficultySoS = options.Slider((float)difficultySoS, 0.1f, 10f);
 			options.Label("SoS.Settings.FrequencySoS".Translate("0", "10", "1", Math.Round(frequencySoS, 1).ToString()), -1f, "SoS.Settings.FrequencySoS.Desc".Translate());
 			frequencySoS = options.Slider((float)frequencySoS, 0f, 10f);
-			options.Label("SoS.Settings.NavyShipChance".Translate("0", "1", "0.2", Math.Round(navyShipChance, 1).ToString()), -1f, "SoS.Settings.NavyShipChance.Desc".Translate());
+            options.Label("SoS.Settings.DodgeSkillImpact".Translate("0", "3", "1", Math.Round(dodgeSkillImpact, 1).ToString()), -1f, "SoS.Settings.DodgeSkillImpact.Desc".Translate());
+            dodgeSkillImpact = options.Slider((float)dodgeSkillImpact, 0f, 3f);
+            options.Label("SoS.Settings.NavyShipChance".Translate("0", "1", "0.2", Math.Round(navyShipChance, 1).ToString()), -1f, "SoS.Settings.NavyShipChance.Desc".Translate());
 			navyShipChance = options.Slider((float)navyShipChance, 0f, 1f);
 			options.Label("SoS.Settings.FleetChance".Translate("0", "1", "0.3", Math.Round(fleetChance, 1).ToString()), -1f, "SoS.Settings.FleetChance.Desc".Translate());
 			fleetChance = options.Slider((float)fleetChance, 0f, 1f);
@@ -1129,9 +1118,16 @@ namespace SaveOurShip2
 			if (shipDef.saveSysVer == 2)
 			{
 				if (offsetX < 0 || offsetZ < 0) //unset offset, use offset from shipdef
-					offset = new IntVec3(shipDef.offsetX, 0, shipDef.offsetZ);
+				{
+                    // Center ship on map if no custom offset specified (like in fleet generation)
+					int centeredOffsetX = Mathf.Max(0, (map.Size.x - shipDef.sizeX) / 2);
+                    int centeredOffsetZ = Mathf.Max(0, (map.Size.z - shipDef.sizeZ) / 2);
+                    offset = new IntVec3(centeredOffsetX, 0, centeredOffsetZ);
+                }
 				else
+				{
 					offset = new IntVec3(offsetX, 0, offsetZ);
+				}
 			}
 			else //old system, from center
 				offset = map.Center;
@@ -2171,27 +2167,39 @@ namespace SaveOurShip2
 			}
 			return true;
 		}
-		public static bool CanPlaceShipOnVec(IntVec3 v, Map map, bool excludePlayer = false)
+		public static bool CanPlaceShipOnVec(IntVec3 v, Map map, bool excludePlayer = false, bool ignoreErrors = false)
 		{
 			RoofDef roof = map.roofGrid.RoofAt(v);
 			if (v.InNoBuildEdgeArea(map))
 			{
-				Log.Error("[SoS2] Ship unable to land on cell " + v + ": it is outside the build area");
+				if (!ignoreErrors)
+				{
+					Log.Error("[SoS2] Ship unable to land on cell " + v + ": it is outside the build area");
+				}
 				return false;
 			}
 			else if (roof != null && roof.isThickRoof)
             {
-				Log.Error("[SoS2] Ship unable to land on cell " + v + ": it is under a mountain");
+				if (!ignoreErrors)
+				{
+					Log.Error("[SoS2] Ship unable to land on cell " + v + ": it is under a mountain");
+				}
 				return false;
 			}
 			else if (!v.GetTerrain(map).affordances.Contains(TerrainAffordanceDefOf.Heavy))
             {
-				Log.Error("[SoS2] Ship unable to land on cell " + v + ": it does not support heavy buildings");
+				if (!ignoreErrors)
+				{
+					Log.Error("[SoS2] Ship unable to land on cell " + v + ": it does not support heavy buildings");
+				}
 				return false;
 			}
 			else if (v.GetThingList(map).Any(t => t is Building b && b.def.passability!=Traversability.Standable && (!excludePlayer || b.Faction != Faction.OfPlayer)))
             {
-				Log.Error("[SoS2] Ship unable to land on cell " + v + ": it contains a non-player building");
+				if (!ignoreErrors)
+				{
+					Log.Error("[SoS2] Ship unable to land on cell " + v + ": it contains a non-player building");
+				}
 				return false;
 			}
 			return true;
@@ -2237,26 +2245,29 @@ namespace SaveOurShip2
 
 			//vars1
 			var mapParent = (WorldObjectOrbitingShip)map.Parent;
-			/*mapPar.drawPos = originMap.Parent.DrawPos;
-			mapPar.originDrawPos = originMap.Parent.DrawPos;
-			mapPar.targetDrawPos = mapPar.NominalPos;*/
-			Vector3 originPos = originMap.Tile.Layer.Origin + Find.WorldGrid.GetTileCenter(originMap.Tile);
-			// originMap.Parent.DrawPos;
-			Vector3 targetPos = map.Tile.Layer.Origin + Find.WorldGrid.GetTileCenter(map.Tile);
-			//map.Tile.Layer.GetTileCenter(map.Tile.tileId);
-			Log.Warning("Target pos for launch: " + targetPos);
-			WorldObjectMath.GetSphericalFromCartesian(targetPos, out float phi, out float theta, out float radius);
-			mapParent.Phi = phi;
+            /*mapPar.drawPos = originMap.Parent.DrawPos;
+            mapPar.originDrawPos = originMap.Parent.DrawPos;
+            mapPar.targetDrawPos = mapPar.NominalPos;*/
+            Vector3 originPos = originMap.Tile.Layer.Origin + Find.WorldGrid.GetTileCenter(originMap.Tile);
+            // originMap.Parent.DrawPos;
+            Vector3 targetPos = map.Tile.Layer.Origin + Find.WorldGrid.GetTileCenter(map.Tile);
+            //map.Tile.Layer.GetTileCenter(map.Tile.tileId);
+            Log.Warning("Target pos for launch: " + targetPos);
+            WorldObjectMath.GetSphericalFromCartesian(targetPos, out float phi, out float theta, out float radius);
+
+            mapParent.Phi = phi;
 			mapParent.Theta = theta;
 			mapParent.Radius = radius;
 			mapParent.OrbitSet();
-			Log.Warning("Launched to orbit with radius: " + mapParent.Radius.ToString("F2"));
-			Log.Warning("Theta: " + theta);
-			Log.Warning("Phi: " + phi);
+            mapParent.drawPos = originPos;
+            mapParent.originDrawPos = originPos;
+            mapParent.targetDrawPos = targetPos;
 
-			mapParent.drawPos = originPos;
-			mapParent.originDrawPos = originPos;
-			mapParent.targetDrawPos = targetPos;
+            //map.Tile.Layer.GetTileCenter(map.Tile.tileId);
+            Log.Message("Target pos for launch: " + targetPos);
+            Log.Message("Launched to orbit with radius: " + mapParent.Radius.ToString("F2"));
+			Log.Message("Theta: " + theta);
+			Log.Message("Phi: " + phi);
 
 			mapComp.Heading = 1;
 			mapComp.Altitude = altitudeLand; //startup altitude
@@ -2346,7 +2357,7 @@ namespace SaveOurShip2
 			{
 				sourceMapComp.UndockAllFrom(shipIndex);
 			}
-			// Have to uninstall in separatre loop over tiles, as uninstalling can create minified thing it other tile if current on already contains items.
+			// Have to uninstall in separatre loop over tiles, as uninstalling can create minified thing it *other* tile if current is already occupied.
 			List<Building> toUninstall = new List<Building>();
 			List<MinifiedThing> toInstallAfterMove = new List<MinifiedThing>();
 			foreach (IntVec3 pos in sourceArea)

@@ -175,10 +175,12 @@ namespace SaveOurShip2
         }
 		public float MaxTakeoff = 0;
 		public float ThrustRaw = 0;
-		public float ThrustRatio => 14 * ThrustRaw * 500f / Mathf.Pow(MassSum, 1.2f);
+		public float ThrustRatio => ThrustRaw * TWRMath.TWRSmallMultiplier * TWRMath.TWRLargeMultiplier / Mathf.Pow(MassSum, 1.2f);
 		public int Rot => Engines.First().parent.Rotation.AsInt;
 		public bool IsWreck => Core == null; //not a real ship
 		public bool IsStuck => IsWreck || Bridges.All(b => b.TacCon) || Engines.NullOrEmpty(); //ship but cant move on its own
+		// A cache for persistent UI to avoid intorducing extra data structures
+		public string cachedTooltip;
 		public bool CanFire() //ship has any engine that can fire
 		{
 			if (IsStuck)
@@ -851,7 +853,16 @@ namespace SaveOurShip2
 				if (heatComp != null)
 				{
 					ThreatRaw += heatComp.Props.threat;
-					if (b is Building_ShipTurret turret)
+					Building_ShipTurret turret = null;
+					if (b is Building_ShipTurret)
+					{
+						turret = b as Building_ShipTurret;
+					}
+					else if (ModIntegration.IsCEEnabled() && ShipHeatNet.IsCompatibleCETurret(b))
+					{
+						turret = ShipHeatNet.CESafeCastToTurret(b);
+					}
+					if (turret != null)
 					{
 						Turrets.Add(turret);
 						if (turret.spinalComp != null)
@@ -893,7 +904,7 @@ namespace SaveOurShip2
 				{
 					Mass += b.def.Size.x * b.def.Size.z * 3;
 				}
-				if (b.def == ResourceBank.ThingDefOf.GravEngine)
+				if (ResourceBank.IsGravEngine(b.def))
                 {
 					HasGravEngine = true;
                 }
@@ -1010,7 +1021,7 @@ namespace SaveOurShip2
 					Mass -= b.def.Size.x * b.def.Size.z * 3;
 				}
 				// Only one should exist, so removal nmeans no grav engines left
-				if (b.def == ResourceBank.ThingDefOf.GravEngine)
+				if (ResourceBank.IsGravEngine(b.def))
 				{
 					HasGravEngine = false;
 				}

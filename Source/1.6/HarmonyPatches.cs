@@ -36,10 +36,22 @@ namespace SaveOurShip2
 
 	//GUI
 	[HarmonyPatch(typeof(ColonistBar), "ColonistBarOnGUI")]
+	[StaticConstructorOnStartup]
 	public static class ShipCombatOnGUI
 	{
-		public static void Postfix(ColonistBar __instance)
+		private const int tooltipUpdateInterval = GenTicks.TicksPerRealSecond;
+		private static string rulerTooltip;
+
+		static ShipCombatOnGUI()
 		{
+
+		}
+        public static void Postfix(ColonistBar __instance)
+		{
+			if (Event.current.type == EventType.Layout)
+			{
+				return;
+			}
 			if (ModSettings_SoS.debugMode)
 			{
 				Map currentMap = Find.CurrentMap;
@@ -119,38 +131,56 @@ namespace SaveOurShip2
 			float screenHalf = (float)UI.screenWidth / 2 + ModSettings_SoS.offsetUIx - 200;
 			//player heat & energy bars
 			float baseY = __instance.Size.y + 40 + ModSettings_SoS.offsetUIy;
-			foreach (int i in playerMapComp.ShipsOnMap.Keys)
+			int playerShipCount = 0;
+            foreach (int i in playerMapComp.ShipsOnMap.Keys)
 			{
-				var bridge = playerMapComp.ShipsOnMap[i].Core;
+                var bridge = playerMapComp.ShipsOnMap[i].Core;
+				if (bridge != null)
+				{
+					playerShipCount += 1;
+				}
+            }
+            foreach (int i in playerMapComp.ShipsOnMap.Keys)
+			{
+				SpaceShipCache ship = playerMapComp.ShipsOnMap[i];
+                var bridge = ship.Core;
 				if (bridge == null)
 					continue;
 
 				baseY += 45;
-				string str = bridge.ShipName;
-				int strSize = 5 + str.Length * 8;
+				string shipName = bridge.ShipName;
+				float strSize = 5 + Text.CalcSize(shipName).x;
 				Rect rect2 = new Rect(screenHalf - 430 - strSize, baseY - 40, 395 + strSize, 35);
 				Widgets.DrawMenuSection(rect2);
-				Widgets.Label(rect2.ContractedBy(6), str);
+				Widgets.Label(rect2.ContractedBy(6), shipName);
 
 				DrawPower(screenHalf - 220, baseY, bridge);
 				DrawHeat(screenHalf - 415, baseY, bridge);
 
 				if (Mouse.IsOver(rect2))
 				{
-					StringBuilder stringBuilder = new StringBuilder();
-					stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipCombatRating", bridge.Ship.Threat));
-					stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipMass", bridge.Ship.MassActual));
-					stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipCombatThrust", bridge.Ship.ThrustRatio.ToString("F3")));
-					if (bridge.heatComp.myNet.Depletion > 0)
+					if (ship.cachedTooltip.NullOrEmpty() || bridge.IsHashIntervalTick(tooltipUpdateInterval))
 					{
-						stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipHeatMaximum", bridge.heatComp.myNet.StorageCapacityRaw));
-					}
-					if (bridge.heatCap == 0 || bridge.powerCap == 0)
-					{
-						stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.BridgeConnectTooltip"));
-					}
-
-					TooltipHandler.TipRegion(rect2, stringBuilder.ToString());
+						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipCombatRating", bridge.Ship.Threat));
+						stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipMass", bridge.Ship.MassActual));
+						stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipCombatThrust", bridge.Ship.ThrustRatio.ToString("F3")));
+						if (playerShipCount > 1)
+						{
+							float thrustRatio = playerMapComp.SlowestThrustToWeightCached() * TWRMath.TWRLargeMultiplier;
+                            stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipCombatMapThrust", thrustRatio.ToString("F3")));
+						}
+						if (bridge.heatComp.myNet.Depletion > 0)
+						{
+							stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.StatsShipHeatMaximum", bridge.heatComp.myNet.StorageCapacityRaw));
+						}
+						if (bridge.heatCap == 0 || bridge.powerCap == 0)
+						{
+							stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.BridgeConnectTooltip"));
+						}
+                        ship.cachedTooltip = stringBuilder.ToString();
+                    }
+					TooltipHandler.TipRegion(rect2, ship.cachedTooltip);
 				}
 			}
 			Text.Font = GameFont.Tiny;
@@ -163,13 +193,16 @@ namespace SaveOurShip2
 			{
 				ShuttleMissionData mission = missionsSorted[i];
 				baseY += 30;
-				string str = "SoS.Combat.PlayerShuttleInfo".Translate(
-					mission.shuttle.Name != null ? mission.shuttle.Name.ToString() : mission.shuttle.def.label,
-					ShuttleMissionData.MissionGerund(mission.mission));
-				int strSize = 5 + str.Length * 6;
+				if (mission.UIPlayerShuttleInfo.NullOrEmpty() || mission.shuttle.IsHashIntervalTick(GenTicks.TicksPerRealSecond))
+				{
+					mission.UIPlayerShuttleInfo = "SoS.Combat.PlayerShuttleInfo".Translate(
+						mission.shuttle.Name != null ? mission.shuttle.Name.ToString() : mission.shuttle.def.label,
+						ShuttleMissionData.MissionGerund(mission.mission));
+				}
+				int strSize = 5 + (int)Text.CalcSize(mission.UIPlayerShuttleInfo).x;
 				Rect rect2 = new Rect(screenHalf - 380 - strSize, baseY - 40, 295 + strSize, 25);
 				Widgets.DrawMenuSection(rect2);
-				Widgets.Label(rect2.ContractedBy(3), str);
+				Widgets.Label(rect2.ContractedBy(3), mission.UIPlayerShuttleInfo);
 
 				DrawShuttleHealth(screenHalf - 220, baseY, mission.shuttle);
 				DrawShuttleHeat(screenHalf - 365, baseY, mission.shuttle);
@@ -215,13 +248,16 @@ namespace SaveOurShip2
 				if (mission.shuttle.Faction == Faction.OfPlayer)
 				{
 					baseY += 30;
-					string str = "SoS.Combat.PlayerShuttleInfo2".Translate(
-						mission.shuttle.Name != null ? mission.shuttle.Name.ToString() : mission.shuttle.def.label,
-						ShuttleMissionData.MissionGerund(mission.mission));
-					int strSize = 5 + str.Length * 6;
+					if (mission.UIPlayerShuttleInfo2.NullOrEmpty() || mission.shuttle.IsHashIntervalTick(GenTicks.TicksPerRealSecond))
+					{
+                        mission.UIPlayerShuttleInfo2 = "SoS.Combat.PlayerShuttleInfo2".Translate(
+							mission.shuttle.Name != null ? mission.shuttle.Name.ToString() : mission.shuttle.def.label,
+							ShuttleMissionData.MissionGerund(mission.mission));
+                    }
+					int strSize = 5 + (int)Text.CalcSize(mission.UIPlayerShuttleInfo2).x;
 					Rect rect2 = new Rect(screenHalf - 430 - strSize, baseY - 40, 295 + strSize, 25);
 					Widgets.DrawMenuSection(rect2);
-					Widgets.Label(rect2.ContractedBy(3), str);
+					Widgets.Label(rect2.ContractedBy(3), mission.UIPlayerShuttleInfo2);
 
 					DrawShuttleHealth(screenHalf - 220, baseY, mission.shuttle);
 					DrawShuttleHeat(screenHalf - 365, baseY, mission.shuttle);
@@ -229,14 +265,17 @@ namespace SaveOurShip2
 				else
 				{
 					baseY += 30;
-					string str = "SoS.Combat.ShuttleInfo".Translate(
-						mission.shuttle.Name != null ? mission.shuttle.Name.ToString() : mission.shuttle.def.label,
-						ShuttleMissionData.MissionGerund(mission.mission));
-					int strSize = 5 + str.Length * 6;
+					if (mission.UIShuttleInfo.NullOrEmpty() || mission.shuttle.IsHashIntervalTick(GenTicks.TicksPerRealSecond))
+					{
+						mission.UIShuttleInfo = "SoS.Combat.ShuttleInfo".Translate(
+							mission.shuttle.Name != null ? mission.shuttle.Name.ToString() : mission.shuttle.def.label,
+							ShuttleMissionData.MissionGerund(mission.mission));
+					}
+					int strSize = 5 + (int)Text.CalcSize(mission.UIShuttleInfo).x;
 					Rect rect2 = new Rect(screenHalf + 490, baseY - 40, 300 + strSize, 25);
 					Widgets.DrawMenuSection(rect2);
 					Rect rect3 = new Rect(screenHalf + 785, baseY - 40, 300 + strSize, 25);
-					Widgets.Label(rect3.ContractedBy(3), str);
+					Widgets.Label(rect3.ContractedBy(3), mission.UIShuttleInfo);
 					DrawShuttleHealth(screenHalf + 505, baseY, mission.shuttle);
 					DrawShuttleHeat(screenHalf + 650, baseY, mission.shuttle);
 				}
@@ -351,11 +390,11 @@ namespace SaveOurShip2
 			}*/
 			if (Mouse.IsOver(rect))
 			{
-				string iconTooltipText = "SoS.CombatTooltip".Translate();
-				if (!iconTooltipText.NullOrEmpty())
+				if (rulerTooltip.NullOrEmpty())
 				{
-					TooltipHandler.TipRegion(rect, iconTooltipText);
-				}
+                    rulerTooltip = "SoS.CombatTooltip".Translate();
+                }
+				TooltipHandler.TipRegion(rect, rulerTooltip);
 			}
 		}
 		private static void DrawPower(float offset, float baseY, Building_ShipBridge bridge)
@@ -365,11 +404,8 @@ namespace SaveOurShip2
 			rect.y += 7;
 			rect.x = offset;
 			rect.height = Text.LineHeight;
-			if (bridge.powerCap > 0)
-				Widgets.Label(rect, TranslatorFormattedStringExtensions.Translate("SoS.Combat.Energy", bridge.power.ToString("N0"), bridge.powerCap.ToString("N0")));
-			else
-				Widgets.Label(rect, TranslatorFormattedStringExtensions.Translate("SoS.Combat.NoEnergy"));
-		}
+			Widgets.Label(rect, bridge.GetPowerString());
+        }
 		private static void DrawHeat(float offset, float baseY, Building_ShipBridge bridge)
 		{
 			Rect rect = new Rect(offset - 15, baseY - 40, 200, 35);
@@ -377,10 +413,7 @@ namespace SaveOurShip2
 			rect.y += 7;
 			rect.x = offset;
 			rect.height = Text.LineHeight;
-			if (bridge.heatCap > 0)
-				Widgets.Label(rect, TranslatorFormattedStringExtensions.Translate("SoS.Combat.Heat", Mathf.Floor(bridge.heat).ToString("N0"), bridge.heatCap.ToString("N0")));
-			else
-				Widgets.Label(rect, TranslatorFormattedStringExtensions.Translate("SoS.Combat.NoHeat"));
+            Widgets.Label(rect, bridge.GetHeatString());
 		}
 		private static void DrawShuttleHealth(float offset, float baseY, VehiclePawn shuttle)
 		{
@@ -389,7 +422,7 @@ namespace SaveOurShip2
 			rect.y += 5;
 			rect.x = offset;
 			rect.height = Text.LineHeight;
-			Widgets.Label(rect, "SoS.Combat.Hull".Translate(Mathf.Round(shuttle.statHandler.GetStatValue(VehicleStatDefOf.BodyIntegrity) * 100f)));
+			Widgets.Label(rect, "SoS.Combat.Hull".Translate(shuttle.statHandler.GetStatValue(VehicleStatDefOf.BodyIntegrity).ToString("P0")));
 		}
 		private static void DrawShuttleHeat(float offset, float baseY, VehiclePawn shuttle)
 		{
@@ -406,7 +439,7 @@ namespace SaveOurShip2
 			rect.y += 5;
 			rect.x = offset;
 			rect.height = Text.LineHeight;
-			Widgets.Label(rect, "SoS.Combat.Shields".Translate(heatMax == 0 ? "SoS.NA".Translate().ToString() : ((1f - heatCurrent / heatMax) * 100f).ToString("F0")));
+			Widgets.Label(rect, "SoS.Combat.Shields".Translate(heatMax == 0 ? "SoS.NA".Translate().ToString() : (1f - heatCurrent / heatMax).ToString("P0")));
 		}
 		public static Rect FillableBarWithDepletion(Rect rect, float fillPercent, float fillDepletion, Texture2D fillTex, Texture2D depletionTex)
 		{
@@ -606,6 +639,11 @@ namespace SaveOurShip2
 	{
 		public static void Prefix()
 		{
+			// Use Odyssey planet rendering instead if it is active
+			if (ModsConfig.OdysseyActive)
+			{
+				return;
+			}
 			var worldComp = ShipInteriorMod2.WorldComp;
 			Map map = Find.CurrentMap;
 			if ((worldComp.renderedThatAlready && !ModSettings_SoS.renderPlanet) || !map.IsSpace())
@@ -667,6 +705,10 @@ namespace SaveOurShip2
 	{
 		public static bool Prefix(SectionLayer __instance, MeshParts tags)
 		{
+			if (ModsConfig.OdysseyActive)
+			{
+				return true;
+			}
 			if (__instance.GetType().Name != "SectionLayer_Terrain")
 				return true;
 
@@ -877,32 +919,6 @@ namespace SaveOurShip2
 		}
 	}
 
-	//Time
-	[HarmonyPatch(typeof(TickManager), "get_TickRateMultiplier")]
-	public static class SlowTimeForDodge
-	{
-		public static void Postfix(ref float __result)
-		{
-			if (ShipInteriorMod2.SlowTimeFlag)
-			{
-				__result = 0.33f;
-			}
-		}
-	}
-
-	//Disable slow time when leaving devmode
-	[HarmonyPatch(typeof(Prefs), "set_DevMode")]
-	public static class AutoDisableSlowTime
-	{
-		public static void Postfix(bool value)
-		{
-			if (!value)
-			{
-				ShipInteriorMod2.SlowTimeFlag = false;
-			}
-		}
-	}
-
 	[HarmonyPatch(typeof(PenFoodCalculator), "ProcessTerrain")]
 	public static class SpaceHasNoWildPlants
 	{
@@ -1090,6 +1106,11 @@ namespace SaveOurShip2
 	{
 		public static void Postfix(SectionLayer __instance, Section ___section)
 		{
+			// Not using custom planet rendering with Odyssey.
+			if (ModsConfig.OdysseyActive)
+			{
+				return;
+			}
 			if (!___section.map.IsSpace()) return;
 
 			MeshRecalculateHelper.RecalculatePlanetLayer(__instance);
@@ -1356,10 +1377,19 @@ namespace SaveOurShip2
 	{
 		public static void Prefix(RoofCollapseBufferResolver __instance)
 		{
+			// Those checks looks wired, but NRE was reported in modded game, so it looks like some strange cases with buffer are possible
+			if (__instance.map == null || __instance.map.roofCollapseBuffer == null || __instance.map.roofGrid == null)
+			{
+				return;
+			}
 			RoofCollapseBuffer buffer = __instance.map.roofCollapseBuffer;
+			if (buffer.CellsMarkedToCollapse == null)
+			{
+				return;
+			}
 			for (int i = buffer.CellsMarkedToCollapse.Count - 1; i >= 0; i--)
 			{
-				if (!__instance.map.roofGrid.RoofAt(buffer.CellsMarkedToCollapse[i]).canCollapse)
+				if (!(__instance.map.roofGrid.RoofAt(buffer.CellsMarkedToCollapse[i])?.canCollapse ?? true))
 				{
 					buffer.CellsMarkedToCollapse.RemoveAt(i);
 				}
@@ -1750,18 +1780,20 @@ namespace SaveOurShip2
 				//pay bounty, gray if not enough money
 				if (bounty > 1)
 				{
-					DiaOption diaOption3 = new DiaOption(TranslatorFormattedStringExtensions.Translate("SoS.TradePayBounty", 2500 * bounty));
+					int bountyPayment = ShipInteriorMod2.WorldComp.BountyPayment;
+                    DiaOption diaOption3 = new DiaOption(TranslatorFormattedStringExtensions.Translate("SoS.TradePayBounty", bountyPayment));
+
 					diaOption3.action = delegate
 					{
-						TradeUtility.LaunchThingsOfType(ThingDefOf.Silver, 2500 * bounty, __instance.Map, null);
+						TradeUtility.LaunchThingsOfType(ThingDefOf.Silver, bountyPayment, __instance.Map, null);
 						bounty = 0;
 						ShipInteriorMod2.WorldComp.PlayerFactionBounty = bounty;
 					};
 					diaOption3.resolveTree = true;
 					diaNode.options.Add(diaOption3);
-					if (AmountSendableSilver(__instance.Map) < 2500 * bounty)
+					if (AmountSendableSilver(__instance.Map) < bountyPayment)
 					{
-						diaOption3.Disable(TranslatorFormattedStringExtensions.Translate("SoS.NotEnoughForBounty", 2500 * bounty));
+						diaOption3.Disable(TranslatorFormattedStringExtensions.Translate("SoS.NotEnoughForBounty", bountyPayment));
 					}
 				}
 			}
@@ -1847,8 +1879,9 @@ namespace SaveOurShip2
 			// Now 5% of normall takoff cost or 100% of grav takeoff is extremely rough approximation. Gravlike uses such huge nubmer 
 			// because of different design with < 1 TWR.
 			// This check is not good, but previous check was even worse and requuired waay too much when grav engine is involved
-			if (ship.FuelNeeded(true) < Mathf.Min(ship.MassActual * 1.05f, ship.MassTakeoff * 2.0f))
-				newResult.Add("SoS.NeedsMoreFuel".Translate(ship.FuelNeeded(true), ship.MassActual));
+			float veryRoughMassEstimation = Mathf.Min(ship.MassActual * 1.05f, ship.MassTakeoff * 2.0f);
+            if (ship.FuelNeeded(true) < veryRoughMassEstimation)
+				newResult.Add("SoS.NeedsMoreFuel".Translate(ship.FuelNeeded(true), veryRoughMassEstimation));
 			if (ship.Sensors.NullOrEmpty())
 				newResult.Add("ShipReportMissingPart".Translate() + ": " + ThingDefOf.Ship_SensorCluster.label);
 			if (!ship.HasMannedBridge())
@@ -2736,6 +2769,10 @@ namespace SaveOurShip2
 				return;
 			}
 			Pawn pawn = selectedPawns.First();
+			if (!c.InBounds(pawn.Map))
+			{
+				return;
+			}
 			if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
 			{
 				foreach (Thing current in c.GetThingList(pawn.Map))
@@ -5125,7 +5162,7 @@ namespace SaveOurShip2
 	{
 		public static void Postfix(VehiclePawn __instance, Pawn pawn, ref bool __result)
 		{
-			if (pawn.Faction == Faction.OfPlayer && SoS2VehicleUtility.IsShuttle(__instance) && __instance.Faction != Faction.OfPlayer && __result)
+			if (pawn.Faction == Faction.OfPlayer && SoS2VehicleUtility.IsSOS2Shuttle(__instance) && __instance.Faction != Faction.OfPlayer && __result)
 			{
 				__instance.SetFaction(Faction.OfPlayer);
 			}
@@ -5368,7 +5405,7 @@ namespace SaveOurShip2
 	{
 		public static void Postfix(IThingHolder holder, Thing forThing, ref float temperature, ref bool __result)
 		{
-			if (holder is VehiclePawn vehicle && SoS2VehicleUtility.IsShuttle(vehicle))
+			if (holder is VehiclePawn vehicle && SoS2VehicleUtility.IsSOS2Shuttle(vehicle))
 			{
 				if (forThing is Pawn)
 				{
@@ -5381,6 +5418,25 @@ namespace SaveOurShip2
 					temperature = -10f;
 					__result = true;
 				}
+			}
+		}
+	}
+
+	[HarmonyPatch(typeof(LandingTargeter), "TryCancelTargeter")]
+	public static class CorrectLocalLaunchCancel
+	{
+		public static bool Prefix(LandingTargeter __instance)
+		{
+			// "Local flight" command allows picking destination for vehicle parked on local map, not for vehicle arriving from the world
+			// So it certainly needs different cancellation as the vehicle will be thrown out to the world map without pilot with existing cancellation sequence
+			if (SoS2VehicleUtility.IsSOS2Shuttle(__instance.vehicle) && __instance.vehicle.Spawned)
+			{
+				__instance.StopTargeting();
+				return false;
+			}
+			else
+			{
+				return true;
 			}
 		}
 	}
@@ -5638,100 +5694,29 @@ namespace SaveOurShip2
 		}
 	}
 
-	// Cached mental break thresholds, becuse they negatively affect performance at Starship Bow with extreme psychic droners
-	// Those values change super-rarely and even never change on many pawns in Vanilla, so can be safely cached for a short time period
-	[HarmonyPatch(typeof(MentalBreaker), "get_BreakThresholdExtreme")]
-	public static class CacheMentalBreakThresholdExtereme
+	// By default, deconstruct only designates 1 building per tile for deconstruction. Which is rarely reproduced minor inconvenience in vbase game
+	// but not handy for ship deconstruction, so gotta be fixed here
+	[HarmonyPatch(typeof(Designator_Deconstruct), "DesignateSingleCell")]
+	public static class SinglePassDeconstruct
 	{
-		public static bool Prefix(MentalBreaker __instance, ref float __result)
+		private static AcceptanceReport acceptanceReport;
+		public static void Postfix(Designator_Deconstruct __instance, IntVec3 loc)
 		{
-			ShipWorldComp worldComp = Find.World.GetComponent<ShipWorldComp>();
-			if (worldComp.ExtremeBreakThresholds.ContainsKey(__instance.pawn) && Find.TickManager.TicksGame % 60 != 0)
+			if (__instance.Map.IsSpace())
 			{
-				__result = worldComp.ExtremeBreakThresholds[__instance.pawn];
-				return false;
+				// Just repeat designation few more times to cover hull plating, normal building and possible attachment(s) 
+				for (int i = 0; i < 5; ++i)
+				{
+					Thing nextDeconstructible = __instance.TopDeconstructibleInCell(loc, out acceptanceReport);
+					if (nextDeconstructible == null)
+					{
+						return;
+					}
+                    __instance.DesignateThing(nextDeconstructible);
+                }
 			}
-			else
-			{
-				return true;
-			}
-		}
-
-		public static void Postfix(MentalBreaker __instance, ref float __result)
-		{
-			ShipWorldComp worldComp = Find.World.GetComponent<ShipWorldComp>();
-			if (worldComp.ExtremeBreakThresholds.ContainsKey(__instance.pawn))
-			{
-				worldComp.ExtremeBreakThresholds[__instance.pawn] = __result;
-			}
-			else
-			{
-				worldComp.ExtremeBreakThresholds.Add(__instance.pawn, __result);
-			}
-		}
-	}
-
-	[HarmonyPatch(typeof(MentalBreaker), "get_BreakThresholdMajor")]
-	public static class CacheMentalBreakThresholdMajor
-	{
-		public static bool Prefix(MentalBreaker __instance, ref float __result)
-		{
-			ShipWorldComp worldComp = Find.World.GetComponent<ShipWorldComp>();
-			if (worldComp.MajorBreakThresholds.ContainsKey(__instance.pawn) && Find.TickManager.TicksGame % 60 != 0)
-			{
-				__result = worldComp.MajorBreakThresholds[__instance.pawn];
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-
-		public static void Postfix(MentalBreaker __instance, ref float __result)
-		{
-			ShipWorldComp worldComp = Find.World.GetComponent<ShipWorldComp>();
-			if (worldComp.MajorBreakThresholds.ContainsKey(__instance.pawn))
-			{
-				worldComp.MajorBreakThresholds[__instance.pawn] = __result;
-			}
-			else
-			{
-				worldComp.MajorBreakThresholds.Add(__instance.pawn, __result);
-			}
-		}
-	}
-
-	[HarmonyPatch(typeof(MentalBreaker), "get_BreakThresholdMinor")]
-	public static class CacheMentalBreakThresholdMinor
-	{
-		public static bool Prefix(MentalBreaker __instance, ref float __result)
-		{
-			ShipWorldComp worldComp = Find.World.GetComponent<ShipWorldComp>();
-			if (worldComp.MinorBreakThresholds.ContainsKey(__instance.pawn) && Find.TickManager.TicksGame % 60 != 0)
-			{
-				__result = worldComp.MinorBreakThresholds[__instance.pawn];
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-
-		public static void Postfix(MentalBreaker __instance, ref float __result)
-		{
-			ShipWorldComp worldComp = Find.World.GetComponent<ShipWorldComp>();
-			if (worldComp.MinorBreakThresholds.ContainsKey(__instance.pawn))
-			{
-				worldComp.MinorBreakThresholds[__instance.pawn] = __result;
-			}
-			else
-			{
-				worldComp.MinorBreakThresholds.Add(__instance.pawn, __result);
-			}
-		}
-	}
+        }
+    }
 
 	// Odyssey
 	[HarmonyPatch(typeof(ListerThings), "AnyThingWithDef")]
@@ -6055,7 +6040,135 @@ namespace SaveOurShip2
 		}
 	}
 
-	/*[HarmonyPatch(typeof(ActiveDropPod),"PodOpen")]
+    [HarmonyPatch(typeof(World), "WorldUpdate")]
+    public static class WorldUpdateRadiusHandler
+	{
+		private static float normalRadius = -1f;
+		private static float normalCametraOffset = -1f;
+
+		const float spaceLayerRadiusForBackground = 101f;
+		const float defaultSpaceLayerRadius = 130f;
+		const float defaultCameraOffset = 160f;
+
+		private static PlanetLayer Orbit
+		{
+			get
+			{
+				return Find.World?.grid?.Surface?.zoomOutToLayer;
+            }
+		}
+		// This is to prevent layer radius being persistent in the scope of whole program run.
+		// At least, creating new game or loading a save will discard saved settings.
+		public static void PrurgeLayerRadiusSettings()
+		{
+			if (Orbit == null)
+			{
+				return;
+			}
+			// Restore settings
+			if (normalRadius >= 0)
+			{
+				Orbit.radius = normalRadius;
+				Orbit.backgroundWorldCameraOffset = normalCametraOffset;
+            }
+			normalRadius = -1f;
+			normalCametraOffset = -1f;
+        }
+		public static void Prefix()
+		{
+            if (Orbit == null)
+            {
+                return;
+            }
+            if (normalRadius < 0)
+			{
+                normalRadius = Orbit.radius;
+                normalCametraOffset = Orbit.backgroundWorldCameraOffset;
+            }
+			Map map = Find.CurrentMap;
+			if( map == null || !map.IsSpace())
+			{
+                Orbit.radius = normalRadius;
+                Orbit.backgroundWorldCameraOffset = normalCametraOffset;
+            }
+			else
+			{
+                Orbit.radius = spaceLayerRadiusForBackground;
+                const float spaceOffset = 1000f;
+                ShipMapComp mapComp = Find.CurrentMap.GetComponent<ShipMapComp>();
+                if (mapComp.ShipMapState == ShipMapState.inTransit)
+                {
+                    // At ratio = 0 it looks as decent close-up view of planet surface
+                    Orbit.backgroundWorldCameraOffset = spaceOffset * mapComp.AltitudeRatio;
+                }
+                else
+                {
+                    Orbit.backgroundWorldCameraOffset = spaceOffset;
+                }
+            }
+		}
+		public static void Postfix()
+		{
+			if (Orbit == null)
+			{
+				return;
+			}
+			Orbit.radius = normalRadius;
+			// Retroactive fix, for change applied to Orbit.radius globally and saved into a save file.
+			// In this case, rollback change as nicely as possible based on the fact that setting radius to 101 globally
+			// (not just for background) doesn't look nice, so no mod is expected to do that intentionally.
+			if (Mathf.Approximately(Orbit.radius,spaceLayerRadiusForBackground) && WorldRendererUtility.WorldSelected)
+			{
+				normalRadius = defaultSpaceLayerRadius;
+				normalCametraOffset = defaultCameraOffset;
+				Orbit.radius = defaultSpaceLayerRadius;
+				Orbit.backgroundWorldCameraOffset = defaultCameraOffset;
+			}
+		}
+    }
+
+    // Due to base game not handling biome diseases correctly and still causing random disease 
+    // to sickly pawn in a biome without diseases, this has to be fixed, considering
+    // disease caused is apparently always organ decay, which is waay to rough.
+    // Changing to sickly pawn has nowhere to get infection from when put into sterile spacedship environment
+    [HarmonyPatch(typeof(IncidentWorker_Disease), "ApplyToPawns")]
+    public static class NoRandomOrganDecayInSpace
+    {
+        public static bool Prefix(IncidentWorker_Disease __instance, IEnumerable<Pawn> pawns)
+        {
+            // Sickly trait causes incident on exactly one pawn
+            if (pawns.Count() != 1)
+            {
+                return true;
+            }
+            Pawn pawn = pawns.First();
+            if (pawn.Spawned)
+            {
+                if (!(pawn.Map?.IsSpace() ?? false))
+                {
+                    return true;
+                }
+            }
+            if (__instance.def.diseaseIncident == HediffDefOf.OrganDecay)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Shield belts are active on pawns off-map, but base game doesn't have ways to harm those pawns with ranged weapons.
+    // If ranged damage is applied in mods to those pawns, will try to show related visuals on null map, causing errors.
+    [HarmonyPatch(typeof(FleckMaker), "Static", new Type[] { typeof(Vector3), typeof(Map), typeof(FleckDef), typeof(float) })]
+    public static class PreventFlecksOffMap
+    {
+        public static bool Prefix(Map map)
+        {
+            return map != null;
+        }
+    }
+
+    /*[HarmonyPatch(typeof(ActiveDropPod),"PodOpen")]
 	public static class ActivePodFix{
 		public static bool Prefix (ref ActiveDropPod __instance)
 		{
@@ -6098,7 +6211,7 @@ namespace SaveOurShip2
 			return true;
 		}
 	}*/
-	/*[HarmonyPatch(typeof(Pawn))]
+    /*[HarmonyPatch(typeof(Pawn))]
 	[HarmonyPatch("IsColonist",MethodType.Getter)]
 	public static class GizmoFix{
 		public static void Postfix(Pawn __instance, ref bool __result)
@@ -6115,7 +6228,7 @@ namespace SaveOurShip2
 		}
 	}*/
 
-	/*No longer necessary in 1.4
+    /*No longer necessary in 1.4
 	[HarmonyPatch(typeof(Pawn), "GetGizmos")]
 	public static class AnimalsHaveGizmosToo
 	{
@@ -6130,7 +6243,7 @@ namespace SaveOurShip2
 			}
 		}
 	}*/
-	/*[HarmonyPatch(typeof(TileFinder), "TryFindNewSiteTile")] //changed destructive patch, unsure if this is even needed anymore
+    /*[HarmonyPatch(typeof(TileFinder), "TryFindNewSiteTile")] //changed destructive patch, unsure if this is even needed anymore
 	public static class NoQuestsNearTileZero
 	{
 		public static bool Prefix(out int tile, int minDist, int maxDist, bool allowCaravans,
@@ -6174,7 +6287,7 @@ namespace SaveOurShip2
 		}
 	}*/
 
-	/*[HarmonyPatch(typeof(CompShipPart),"PostSpawnSetup")]
+    /*[HarmonyPatch(typeof(CompShipPart),"PostSpawnSetup")]
 	public static class RemoveVacuum{
 		public static void Postfix (CompShipPart __instance)
 		{
@@ -6182,7 +6295,7 @@ namespace SaveOurShip2
 				__instance.parent.Map.terrainGrid.SetTerrain (__instance.parent.Position,TerrainDef.Named("FakeFloorInsideShip"));
 		}
 	}*/
-	/*[HarmonyPatch(typeof(GenConstruct), "BlocksConstruction")]
+    /*[HarmonyPatch(typeof(GenConstruct), "BlocksConstruction")]
 	public static class HullTilesDontWipe
 	{
 		public static void Postfix(Thing constructible, Thing t, ref bool __result)
@@ -6212,8 +6325,8 @@ namespace SaveOurShip2
 		}
 	}*/
 
-	//Space crib - disabled, good transpiler example
-	/*[HarmonyPatch(typeof(GenTemperature), "TryGetTemperatureForCell")]
+    //Space crib - disabled, good transpiler example
+    /*[HarmonyPatch(typeof(GenTemperature), "TryGetTemperatureForCell")]
 	public static class BabiesAreSafeInSpaceCaskets
 	{
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
@@ -6275,8 +6388,8 @@ namespace SaveOurShip2
 		}
 	}*/
 
-	// explosion patch disabled till fixed
-	/*[HarmonyPatch(typeof(DamageWorker))]
+    // explosion patch disabled till fixed
+    /*[HarmonyPatch(typeof(DamageWorker))]
 	[HarmonyPatch("ExplosionCellsToHit", new Type[] { typeof(IntVec3), typeof(Map), typeof(float), typeof(IntVec3), typeof(IntVec3) })]
 	public static class FasterExplosions
 	{
@@ -6349,7 +6462,7 @@ namespace SaveOurShip2
 		}
 	}
 	*/
-	/*[HarmonyPatch(typeof(Building), "Destroy")] //obs by newcache
+    /*[HarmonyPatch(typeof(Building), "Destroy")] //obs by newcache
 	public static class NotifyCombatManager
 	{
 		public static bool Prefix(Building __instance, DestroyMode mode, out Tuple<IntVec3, Faction, Map> __state)
@@ -6394,7 +6507,7 @@ namespace SaveOurShip2
 			}
 		}
 	}*/
-	/*vacuum pathfinding - disabled, not working
+    /*vacuum pathfinding - disabled, not working
 	[HarmonyPatch(typeof(PathFinder), "FindPath", typeof(IntVec3), typeof(LocalTargetInfo), typeof(TraverseParms),
 		typeof(PathEndMode), typeof(PathFinderCostTuning))]
 	public static class H_Vacuum_PathFinder
@@ -6542,8 +6655,8 @@ namespace SaveOurShip2
 		}
 	}*/
 
-	//OBSOLETE - shuttle patches
-	/*[HarmonyPatch(typeof(FlyShipLeaving), "LeaveMap")]
+    //OBSOLETE - shuttle patches
+    /*[HarmonyPatch(typeof(FlyShipLeaving), "LeaveMap")]
 	public static class LeavingPodFix
 	{
 		public static bool Prefix(ref FlyShipLeaving __instance)

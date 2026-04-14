@@ -30,9 +30,10 @@
 	<SoS.TraderScan>Trade ship detected</SoS.TraderScan>
 	<SoS.TraderScanDesc>Using your ship's sensors, {0} has detected a nearby trade ship. You can hail the ship using a communications console to initiate trade, or use your bridge to attack it.</SoS.TraderScanDesc>
 	<SoS.EnemyScan>Ship detected</SoS.EnemyScan>
-	<SoS.EnemyScanDesc>Using your ship's sensors, {0} has detected a nearby ship. The ship appears to be {1}. It does not respond to hails, but makes no move to attack. You can use your bridge to order an attack, or wait for it to leave peaceably.</SoS.EnemyScanDesc>
+	<SoS.EnemyScanDesc>Using your ship's sensors, {0} has detected a nearby ship. The ship appears to be {1}. It does not respond to hails, but makes no move to attack.\n\nThe command to attack this ship is available from either your pilot console or AI/Drone core. Ships are tracked for a limited amount of time, typically 1 day. After that time passes, ship signal will be lost.</SoS.EnemyScanDesc>
 	<SoS.DerelictScan>Derelict detected</SoS.DerelictScan>
-	<SoS.DerelictScanDesc>Using your ship's sensors, {0} has detected a nearby derelict. The ship appears to be {1}. It does not respond to hails and appears to be powered down. You can use your bridge to order an investigation, or wait for it to burn up in the atmosphere.</SoS.DerelictScanDesc>
+	<SoS.DerelictScanDesc>Using your ship's sensors, {0} has detected a nearby derelict. The ship appears to be {1}. It does not respond to hails and appears to be powered down.
+	\n\nThe command to approach this derelict for investigation is available from either your pilot console or AI/Drone core. After approaching, derelict map will be generated and location will appear on the world map so that shuttles can be sent there or your salvage bay can be used to retrieve derelict to your player ship map. Derelicts have unstable orbits and will burn up in the atmosphere in about 1 day.</SoS.DerelictScanDesc>
 	<SoS.ContentPackDescription>\nThe ship was identified to be coming from: {0}</SoS.ContentPackDescription>
 	<SoS.FoundOrbitalSite>Starship bow detected!</SoS.FoundOrbitalSite>
 	<SoS.FoundSiteAI>its AI</SoS.FoundSiteAI>
@@ -79,7 +80,7 @@
 	<!-- impact site -->
 	<SoS.HibernatableHibernating>Momentum buildup critical</SoS.HibernatableHibernating>
     <SoS.HibernatableStartingUp>Discharging</SoS.HibernatableStartingUp>
-	<SoS.HibernateWarningStandalone>The drive is ready to begin discharging its stored momentum. Once this is done, your colonists will be able to safely disassemble the drive and retrieve its Entanglement Manifold.\n\nThe process will take about 15 days, and the energy signature will be detectable from a long distance away. This sort of energy signature indicates interstellar flight capability, and will attract gangs of desperate raiders and swarms of deadly mechanoids.\n\nYou will be assaulted with an intensity you've never seen. Make sure your defenses are prepared first.</SoS.HibernateWarningStandalone>
+	<SoS.HibernateWarningStandalone>The drive is ready to begin discharging its stored momentum. Once this is done, your colonists will be able to safely disassemble the drive and retrieve its Entanglement Manifold.\n\nThe process will take about 15 days, and the energy signature will be detectable from a long distance away. This sort of energy signature indicates interstellar flight capability, and will attract gangs of desperate raiders and swarms of deadly mechanoids.\n\nYou will be assaulted with an intensity you've never seen. Make sure your defenses are prepared first. Raiders will only attack the Johnson-Tanaka drive on the ground. There will be no ship attacks related to the JT drive discharge.</SoS.HibernateWarningStandalone>
     <SoS.CommandShipStartup>Begin discharge</SoS.CommandShipStartup>
     <SoS.CommandShipStartupDesc>Discharge the drive's stored momentum.</SoS.CommandShipStartupDesc>
 	<SoS.CommandShipStartupDisableReason>Claim the drive before discharging.</SoS.CommandShipStartupDisableReason>

@@ -162,7 +162,8 @@
 	<SoS.StatsShipHeatMaximumShort>maximum</SoS.StatsShipHeatMaximumShort>
 	<SoS.StatsShipHeatMaximum>Heat maximum: {0}</SoS.StatsShipHeatMaximum>
 	<SoS.StatsShipCombatRating>Combat rating: {0}</SoS.StatsShipCombatRating>
-	<SoS.StatsShipCombatThrust>Thrust/Weight ratio: {0}</SoS.StatsShipCombatThrust>
+	<SoS.StatsShipCombatThrust>Ship Thrust/Weight ratio: {0}</SoS.StatsShipCombatThrust>
+	<SoS.StatsShipCombatMapThrust>Fleet Thrust/Weight ratio: {0}</SoS.StatsShipCombatMapThrust>
 	<SoS.ReportInterReady>Ready for interstellar travel.</SoS.ReportInterReady>
 	<SoS.ReportInterNotReady>Not ready for interstellar travel:</SoS.ReportInterNotReady>
 	<SoS.ReportNeedPilot>Ship requires either a pilot or an AI core.</SoS.ReportNeedPilot>
@@ -197,8 +198,11 @@
 	<SoS.MoveFailFuel>Not enough fuel to move ship, required {0} fuel</SoS.MoveFailFuel>
 	<SoS.MoveFailFaction>Ship from another faction next to target area. Move aborted.</SoS.MoveFailFaction>
 	<SoS.MoveFailCombat>Main ship map is in battle.</SoS.MoveFailCombat>
-	<SoS.Land>Land ship</SoS.Land>
-	<SoS.LandDesc>Land this ship near </SoS.LandDesc>
+	<SoS.Land>Land ship ({0})</SoS.Land>
+	<SoS.LandDesc>Land this ship near {0}</SoS.LandDesc>
+	<!-- Used in 2 above strings as key filler when there in actual location to land available -->
+	<SoS.LandSomewhere>somewhere</SoS.LandSomewhere>
+	<SoS.LandNoTargetTile>There is no surface map to land on. Observe planet surface tile with ship scanner or science console.</SoS.LandNoTargetTile>
 	<SoS.Rebuild>Rebuild ship parts</SoS.Rebuild>
 	<SoS.RebuildDesc>Places blueprints for destroyed buildings on this ship.</SoS.RebuildDesc>
 	<SoS.BridgeConnectTooltip>Bridge is not connected! Make sure this is hooked up to both heat and power networks.</SoS.BridgeConnectTooltip>
@@ -462,6 +466,11 @@
 	<!-- satellite -->
 	<SoS.SatelliteRepair>Repair</SoS.SatelliteRepair>
 	<SoS.SatelliteHack>Hack</SoS.SatelliteHack>
+
+	<!-- notorietuy alert -->
+	<SoS.Alert.NotoriertyLabel>Notoriety: {0}</SoS.Alert.NotoriertyLabel>
+	<SoS.Alert.NotoriertyLowDesc>Because of pirating trade ships and/or because of using Orbital Bombardment (submod), player ship got notorious. Not too much yet, but continued piracy or bombardment will make it higher and attract bounty hunters.</SoS.Alert.NotoriertyLowDesc>
+	<SoS.Alert.NotoriertyHighDesc>Because of pirating trade ships and/or because of using Orbital Bombardment (submod), player ship got very notorious and is chased by bounty hunters. Attacks will happen roughly evey {0} days.</SoS.Alert.NotoriertyHighDesc>
 
 	<!-- This scetion and lower were added during major translation upgrade -->
 	<!-- Archotech and endgame stuff -->

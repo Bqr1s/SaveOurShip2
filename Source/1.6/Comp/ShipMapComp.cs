@@ -906,8 +906,14 @@ namespace SaveOurShip2
 				Log.Warning("SOS2: ".Colorize(Color.cyan) + map + " Error: Unable to start ship encounter.");
 				return;
 			}
-			//origin vars
-			ShipFaction = map.Parent.Faction;
+            Log.Message("Notoriery at ship battle start: " + ShipInteriorMod2.WorldComp.PlayerFactionBounty);
+			Building_ShipCloakingDevice activeCloak = GetActiveCloak();
+			if (activeCloak != null)
+			{
+				Log.Message("Active cloak at ship battle start: " + activeCloak.ThingID);
+			}
+            //origin vars
+            ShipFaction = map.Parent.Faction;
 			attackedTradeship = false;
 			//target or create map + spawn ships
 			ShipCombatOriginMap = map;
@@ -1123,6 +1129,22 @@ namespace SaveOurShip2
 			{
 				int mapX = Math.Max(250, (ModSettings_SoS.enemyMapSize + 100) / 2);
 				mapSize = new IntVec3(mapX, 1, ModSettings_SoS.enemyMapSize);
+			}
+
+			Map playerMap = ShipInteriorMod2.FindPlayerShipMap();
+			if (playerMap != null)
+			{
+				int playerMapSize = Mathf.Max(playerMap.Size.x, playerMap.Size.z);
+				if (playerMapSize > Mathf.Max(mapSize.z, mapSize.x))
+				{
+					// When player map is larger than enemy map, retrieving wrecks to the part of the map that is larger will
+					// be disabled because it auses some complicated bug in legacy ShipMove code.
+					// To prevent major inconvenience, try increasing eneny map size to match player map, but with certain limits
+					// Because don't want to consume too much resources with multiple enemy maps.
+					const int enemyMapAutoIncreaseLimit = 300;
+					mapSize.x = Mathf.Max(mapSize.x, Mathf.Min(enemyMapAutoIncreaseLimit, playerMap.Size.x));
+                    mapSize.z = Mathf.Max(mapSize.z, Mathf.Min(enemyMapAutoIncreaseLimit, playerMap.Size.z));
+                }
 			}
 
 			newMap = GetOrGenerateMapUtility.GetOrGenerateMap(ShipInteriorMod2.FindWorldTile(), mapSize, ResourceBank.WorldObjectDefOf.ShipEnemy);
@@ -1583,7 +1605,6 @@ namespace SaveOurShip2
 											{
 												Projectile dummyProjectile = (Projectile)ThingMaker.MakeThing(ResourceBank.ThingDefOf.Shuttle_Laser);
 												shuttleHit.GetComp<CompShipHeatShield>().HitShield(dummyProjectile);
-												dummyProjectile.Destroy();
 											}
 											else
 											{
@@ -1695,15 +1716,16 @@ namespace SaveOurShip2
 					ShipInteriorMod2.WorldComp.renderedThatAlready = false;
 				//move WO
 				//max 1000 = 150, min 130 = 100
-				float ratio = (Altitude - ShipInteriorMod2.altitudeLand) / (ShipInteriorMod2.altitudeNominal - ShipInteriorMod2.altitudeLand);
-				if (!Takeoff) //reverse scaling - altitude always points up
-				{
-					ratio = 1 - ratio;
-				}
+				float ratio = AltitudeRatio;
+                if (!Takeoff) //reverse scaling - altitude always points up
+                {
+                    ratio = 1 - ratio;
+                }
 				//vec to target - vec to origin, scale by altitude
 				//td get a math wizard to make this a curve and point it at equator orbit or around planet to ground
 				Vector3 d = mapParent.targetDrawPos - mapParent.originDrawPos;
 				mapParent.drawPos = mapParent.originDrawPos + new Vector3(d.x * ratio, d.y * ratio, d.z * ratio);
+
 			}
 			if (callSlowTick) //origin only: call both slow ticks
 			{
@@ -1715,6 +1737,14 @@ namespace SaveOurShip2
 			{
 				SlowTick(tick);
 			}
+		}
+
+		public float AltitudeRatio
+		{
+			get
+			{
+                return (Altitude - ShipInteriorMod2.altitudeLand) / (ShipInteriorMod2.altitudeNominal - ShipInteriorMod2.altitudeLand);
+            }
 		}
 
 		public void RecalculateThreat()
@@ -1779,14 +1809,30 @@ namespace SaveOurShip2
 					{
 						if (IsPlayerShipMap)
 						{
-							if (ShipInteriorMod2.WorldComp.PlayerFactionBounty > 20 && tick - LastBountyRaidTick > Mathf.Max(600000f / Mathf.Sqrt(ShipInteriorMod2.WorldComp.PlayerFactionBounty), 60000f))
-							{
+							// Check for bounty hunters attack
+							if (ShipInteriorMod2.WorldComp.NotorietyActive && tick - LastBountyRaidTick > ShipInteriorMod2.WorldComp.TicksBetweenNotorietyAttacks)
+                            {
 								LastBountyRaidTick = tick;
 								Building_ShipBridge bridge = MapRootListAll.FirstOrDefault();
-								if (bridge == null)
-									return;
-								StartShipEncounter(bounty: true);
+								if (bridge != null)
+								{
+                                    Log.Message("Ship battle starting because of bounty");
+                                    StartShipEncounter(bounty: true);
+                                }
 							}
+							// Check for lazy storyteller
+							else if (ShipBattleRecommendedIntervalExpired() && GetActiveCloak() == null)
+							{
+                                Building_ShipBridge bridge = MapRootListAll.FirstOrDefault();
+								// It's not ideal to return from ticking method on start ship encounter, but changing that may cause issues.
+								// If anything was skipped, it will still be handled on next call already in battle.
+								if (bridge != null)
+								{
+                                    Log.Message("Ship battle starting because of reqired frequency");
+                                    LastAttackTick = Find.TickManager.TicksGame;
+                                    StartShipEncounter();
+                                }
+                            }
 						}
 					}
 					//auto claim
@@ -2472,7 +2518,7 @@ namespace SaveOurShip2
 			}
 		}
 		//find worst t/w ship. Internal value, not final, different from what is shown in the UI.
-		public float SlowestThrustToWeight() //find worst t/w ship
+		public float SlowestThrustToWeight()
 		{
 			if (ShipsOnMap.NullOrEmpty())
 				return 0f;
@@ -2490,10 +2536,24 @@ namespace SaveOurShip2
 				if (currPower < enginePower)
 					enginePower = currPower;
 			}
-			return enginePower * 14;
+			return enginePower * TWRMath.TWRSmallMultiplier;
 		}
-		//find worst t/w ship, getting final value, same as T/W shown in UI. 
-		public float SlowestThrustRatio() 
+
+		private float slowestThrustToWeightCached = -1f;
+
+        // For frequent UI updates
+		public float SlowestThrustToWeightCached()
+		{
+			// For properly observing ship battle state when paused after some engine destruction, need to update this duting pause too
+			if (slowestThrustToWeightCached < 0 || Time.frameCount % GenTicks.TicksPerRealSecond == 0)
+			{
+				slowestThrustToWeightCached = SlowestThrustToWeight();
+            }
+			return slowestThrustToWeightCached;
+		}
+
+        //find worst t/w ship, getting final value, same as T/W shown in UI. 
+        public float SlowestThrustRatio()
 		{
 			if (ShipsOnMap.NullOrEmpty())
 				return 0f;
@@ -2649,8 +2709,6 @@ namespace SaveOurShip2
 			if (loser.GetComponent<ShipMapComp>().ShipMapState != ShipMapState.inCombat)
 				return;
 			Log.Message("SOS2: ".Colorize(Color.cyan) + loser + " Lost ship battle!".Colorize(Color.red));
-			// In case slow time was enabled, it is now no longer needed
-			ShipInteriorMod2.SlowTimeFlag = false;
 			//tgtMap is opponent of origin
 			Map tgtMap = OriginMapComp.ShipCombatTargetMap;
 			var tgtMapComp = OriginMapComp.TargetMapComp;
@@ -3005,7 +3063,10 @@ namespace SaveOurShip2
 			public float weaponCooldown;
 			public bool liftedOffYet;
 			public int uniqueID;
-
+            // For caching UI strings
+            public string UIPlayerShuttleInfo;
+            public string UIPlayerShuttleInfo2;
+            public string UIShuttleInfo;
             public void ExposeData()
             {
 				Scribe_References.Look<VehiclePawn>(ref shuttle, "shuttle");
@@ -3180,5 +3241,42 @@ namespace SaveOurShip2
 			}
 			return false;
 		}
-	}
+		// No ship battles should happen if mandatory interval is not expired. Except for bounty hunters based on notoriety
+		public bool ShipBattleMandatoryIntervalExpired()
+		{
+			// Old code was: Find.TickManager.TicksGame < mapComp.LastAttackTick + 300000 / ModSettings_SoS.frequencySoS
+			// Which means baseline interval between ship battles is 5 days.
+			if (Mathf.Approximately((float)ModSettings_SoS.frequencySoS, 0f))
+			{
+				return false;
+			}
+			return Find.TickManager.TicksGame > LastAttackTick + GenDate.TicksPerDay * 5 / (float)ModSettings_SoS.frequencySoS;
+        }
+		// If recommended interval is expired, ship battle should be triggered manully, not relying on storyteller, that can be lazy
+		public bool ShipBattleRecommendedIntervalExpired()
+		{
+            if (Mathf.Approximately((float)ModSettings_SoS.frequencySoS, 0f))
+            {
+                return false;
+            }
+            int baselineInterval = (int)(GenDate.TicksPerDay * 5 / (float)ModSettings_SoS.frequencySoS);
+			// Ensure random is the same for every check performed after specific last battle
+			float randomMultiplier = Mathf.Lerp(0.8f, 1.15f, Rand.ValueSeeded(LastAttackTick));
+			// normal interval at 100 or lower threat, 3x interval at 1500 or higher - for less frequent battles at bigger CRs
+			float threatParameter = Mathf.Clamp01((MapThreat() - 100) / 1400f);
+			float crMultiplier = Mathf.Lerp(1f, 3f, threatParameter);
+			int interval = (int)(baselineInterval * randomMultiplier * crMultiplier);
+			return Find.TickManager.TicksGame > Mathf.Max(LastAttackTick,  map.generationTick) + interval;
+        }
+
+		public Building_ShipCloakingDevice GetActiveCloak()
+		{
+            foreach (Building_ShipCloakingDevice cloak in Cloaks)
+            {
+                if (cloak.active)
+                    return cloak;
+            }
+            return null;
+        }
+    }
 }
