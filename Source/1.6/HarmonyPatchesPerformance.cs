@@ -127,6 +127,16 @@ namespace SaveOurShip2
                 }
                 return false;
             }
+
+            if (diedThing is Building b)
+            {
+                ShipMapComp mapComp = map.GetComponent<ShipMapComp>();
+                if (mapComp.LeavingsCalculaor?.ShouldUseFastLeavings(b) ?? false)
+                {
+                    mapComp.LeavingsCalculaor.DoLeavingsForDestroyedBuilding(b, map, leavingsRect);
+                    return false;
+				}
+            }
             return true;
         }
     }
