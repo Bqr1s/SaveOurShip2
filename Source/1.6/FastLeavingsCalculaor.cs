@@ -19,8 +19,6 @@ namespace SaveOurShip2
 		// Also players can remove mods mid-save, so recalculate after save-load will be more robust as well
 		Map map;
 		ShipMapComp mapComp;
-		//Map targetMap;
-		//ShipMapComp targetMapComp;
 		private ConcurrentDictionary<string, ThingOwner<Thing>> cachedLeavings = new ConcurrentDictionary<string, ThingOwner<Thing>>();
 		public FastLeavingsCalculaor(Map map)
 		{
@@ -31,8 +29,18 @@ namespace SaveOurShip2
 				Log.Error("SOS 2: Fast leavings used for non-combat map");
 				return;
 			}
-			//targetMap = originMapComp.ShipCombatTargetMap;
-			//targetMapComp = targetMap.GetComponent<ShipMapComp>();
+			LongEventHandler.QueueLongEvent(PreCalculateLeavingsAsync, "", doAsynchronously: true, null);
+		}
+
+		private void PreCalculateLeavingsAsync()
+		{
+			foreach (SpaceShipCache ship in mapComp.ShipsOnMap.Values)
+			{
+				foreach (Building b in ship.Buildings)
+				{
+					CalculateLeavingsFor(b);
+				}
+			}
 		}
 
 		public bool ShouldUseFastLeavings(Building destroyedBuilding)
