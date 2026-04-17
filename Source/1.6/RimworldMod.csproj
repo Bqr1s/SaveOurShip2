@@ -121,6 +121,7 @@
     <Compile Include="Def\DodgeChanceSubmodScaleDef.cs" />
     <Compile Include="Def\GlobalUnlockDef.cs" />
     <Compile Include="Designator_RestoreHull.cs" />
+    <Compile Include="FastLeavingsCalculaor.cs" />
     <Compile Include="GenAdjExtension.cs" />
     <Compile Include="HarmonyCustomPatches.cs" />
     <Compile Include="HarmonyPatchesPerformance.cs" />

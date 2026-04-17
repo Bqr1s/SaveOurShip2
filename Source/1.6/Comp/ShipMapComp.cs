@@ -71,6 +71,14 @@ namespace SaveOurShip2
 			}
 		}
 
+		FastLeavingsCalculaor leavingsCalculaor;
+		public FastLeavingsCalculaor LeavingsCalculaor
+		{
+			get
+			{
+				return leavingsCalculaor;
+			}
+		}
 		public bool HasGravEngine
         {
 			get
@@ -371,10 +379,19 @@ namespace SaveOurShip2
 
 				Scribe_Collections.Look<Projectile>(ref incomingProjectiles, "incomingProjectiles", LookMode.Reference);
 			}
-			if (Scribe.mode == LoadSaveMode.LoadingVars)
+			if (Scribe.mode == LoadSaveMode.PostLoadInit)
 			{
 				// this cache has to be static - so clear it on load
 				bedsCache.Clear();
+				// See comments in FastLeavingsCalculaor
+				if (ShipMapState == ShipMapState.inCombat)
+				{
+					leavingsCalculaor = new FastLeavingsCalculaor(map);
+				}
+				else
+				{
+					leavingsCalculaor = null;
+				}
 			}
 		}
 		//SC only - both maps
@@ -1303,6 +1320,7 @@ namespace SaveOurShip2
 				RangeToKeep = Range;
 			}
 			InvaderLord = null;
+			leavingsCalculaor = new FastLeavingsCalculaor(map);
 		}
 		private void DetermineInitialRange(bool ambush)
 		{
@@ -2868,6 +2886,7 @@ namespace SaveOurShip2
 			OriginMapComp.ShipCombatTargetMap = null;
 			OriginMapComp.originMapComp = null;
 			OriginMapComp.targetMapComp = null;
+			leavingsCalculaor = null;
 		}
 		
 		//proj
