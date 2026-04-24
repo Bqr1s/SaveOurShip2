@@ -2259,10 +2259,6 @@
 			</li>
 			<li Class="SaveOurShip2.CompProps_GraphicOnOff"/>
 		</comps>
-		<placeWorkers>
-			<li>SaveOurShip2.PlaceWorker_ShipBay</li>
-			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
-		</placeWorkers>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
 	</ThingDef>
@@ -2333,10 +2329,6 @@
 			</li>
 			<li Class="SaveOurShip2.CompProps_GraphicOnOff"/>
 		</comps>
-		<placeWorkers>
-			<li>SaveOurShip2.PlaceWorker_ShipBay</li>
-			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
-		</placeWorkers>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
 	</ThingDef>
