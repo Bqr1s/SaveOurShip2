@@ -1444,9 +1444,6 @@
 		<building>
 			<isSittable>true</isSittable>
 		</building>
-		<placeWorkers>
-			<li>SaveOurShip2.PlaceWorker_OnShipHull</li>
-		</placeWorkers>
 		<researchPrerequisites>
 			<li>ShipPilotSeat</li>
 		</researchPrerequisites>
