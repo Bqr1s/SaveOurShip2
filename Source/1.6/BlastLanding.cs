@@ -116,10 +116,10 @@ namespace SaveOurShip2
 		}
 
 		// --- the bombardment ---
-		// One salvo of the bombardment - fired about once a second across the ~60s descent, so the
-		// barrage plays out as a spectacle rather than an instant dump. Target side: a few glassing
-		// rounds rain on the LZ. Ship side: the plasma turrets fire (FireShipTurrets).
-		public static void BlastSalvo(Map targetMap, HashSet<IntVec3> footprint, SpaceShipCache ship)
+		// The target-map half of one salvo - a few glassing rounds rain on the LZ, plus scattered
+		// flames. ShipMapComp delivers this ~10s after the ship-side FireShipTurrets that launched it,
+		// simulating the distance the plasma must cross.
+		public static void BlastTargetSalvo(Map targetMap, HashSet<IntVec3> footprint)
 		{
 			if (targetMap != null && footprint != null && footprint.Count > 0)
 			{
@@ -153,8 +153,12 @@ namespace SaveOurShip2
 				}
 			}
 			ScatterFlames(targetMap, footprint);
-			FireShipTurrets(ship);
 		}
+
+		static SoundDef plasmaFireSound;
+		// Plasma turrets carry their fire sound on the verb (soundCast ShipCombatPlasma), not on the
+		// heat comp's singleFireSound - which is null for them, hence the silent turrets.
+		static SoundDef PlasmaFireSound => plasmaFireSound ?? (plasmaFireSound = DefDatabase<SoundDef>.GetNamedSilentFail("ShipCombatPlasma"));
 
 		// Ship side of the bombardment: the ship's plasma turrets visibly fire. The camera sits on the
 		// ship by default; the two maps can't be seen at once, so this needn't sync with the rain on
@@ -177,7 +181,7 @@ namespace SaveOurShip2
 				t.SetBlastAim(new LocalTargetInfo(t.Position + dir * 30));
 				if (!Rand.Chance(0.6f)) //only some turrets loose a bolt each salvo
 					continue;
-				t.heatComp?.Props?.singleFireSound?.PlayOneShot(t);
+				(t.heatComp?.Props?.singleFireSound ?? PlasmaFireSound)?.PlayOneShot(t);
 				FleckMaker.ThrowFireGlow(t.Position.ToVector3Shifted(), map, 2f);
 				if (bolt != null)
 				{
@@ -206,8 +210,9 @@ namespace SaveOurShip2
 			StripRoof(map, c);
 			foreach (Thing t in c.GetThingList(map).ToList())
 			{
-				//never destroy live pawns, geysers, or the ship's own install blueprint/frames
-				if (t is Pawn || t is Building_SteamGeyser || t is Blueprint || t is Frame)
+				//never destroy live pawns, geysers, the ship's own blueprint/frames, or motes -
+				//destroying the heat-haze motes every overlapping blast kills the molten look
+				if (t is Pawn || t is Mote || t is Building_SteamGeyser || t is Blueprint || t is Frame)
 					continue;
 				if (t.def.destroyable && !t.Destroyed)
 					t.Destroy(DestroyMode.Vanish);
