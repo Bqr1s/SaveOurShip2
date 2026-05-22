@@ -6,7 +6,7 @@
 	<ThingDef ParentName="DoorBase">
 		<defName>GravshipAirlock</defName>
 		<label>vacuum airlock</label>
-		<description>An autodoor with an integrated vacuum barrier. It opens for pawns like any door, but while powered a shimmering field holds the air in even as it slides open - no airlock cycling, no lost atmosphere. Cut the power and the field drops: it becomes an ordinary door that leaks to vacuum whenever it is open.</description>
+		<description>An autodoor with an integrated vacuum barrier. Keeps air inside and enemies outside.</description>
 		<thingClass>SaveOurShip2.Building_GravshipAirlock</thingClass>
 		<graphicData>
 			<texPath>Things/Building/Door/Autodoor_Mover</texPath>
@@ -14,11 +14,12 @@
 		</graphicData>
 		<uiIconPath>Things/Building/Door/Autodoor_MenuIcon</uiIconPath>
 		<costStuffCount>60</costStuffCount>
-		<stuffCategories>
+		<stuffCategories Inherit="False">
 			<li>Metallic</li>
 		</stuffCategories>
 		<costList>
-			<ComponentIndustrial>2</ComponentIndustrial>
+			<ComponentIndustrial>3</ComponentIndustrial>
+			<GravlitePanel>2</GravlitePanel>
 		</costList>
 		<comps>
 			<li Class="CompProperties_Power">

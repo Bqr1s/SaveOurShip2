@@ -190,22 +190,6 @@ namespace SaveOurShip2
 			}
 		}
 
-		static HashSet<IntVec3> MessyMargin(HashSet<IntVec3> footprint, Map map)
-		{
-			HashSet<IntVec3> spill = new HashSet<IntVec3>();
-			foreach (IntVec3 f in footprint)
-			{
-				foreach (IntVec3 c in GenRadial.RadialCellsAround(f, 2.4f, false))
-				{
-					if (!c.InBounds(map) || footprint.Contains(c) || spill.Contains(c))
-						continue;
-					if (Rand.Chance(Mathf.Clamp01(1.15f - c.DistanceTo(f) * 0.45f)))
-						spill.Add(c);
-				}
-			}
-			return spill;
-		}
-
 		static void StripRoof(Map map, IntVec3 c)
 		{
 			if (map.roofGrid.Roofed(c) && map.roofGrid.RoofAt(c) != RoofDefOf.RoofRockThick)
