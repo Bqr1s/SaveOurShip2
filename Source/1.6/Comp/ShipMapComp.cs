@@ -317,6 +317,7 @@ namespace SaveOurShip2
 			Scribe_Values.Look<IntVec3>(ref MoveToVec, "MoveToVec");
 			Scribe_References.Look<Map>(ref MoveToMap, "MoveToMap");
 			Scribe_Values.Look<int>(ref MoveToTile, "MoveToTile");
+			Scribe_Values.Look<bool>(ref BlastLandingPending, "BlastLandingPending");
 			Scribe_References.Look<Map>(ref PrevMap, "PrevMap");
 			Scribe_Values.Look<int>(ref PrevTile, "PrevTile");
 			Scribe_Values.Look<bool>(ref Takeoff, "Takeoff");
@@ -489,6 +490,7 @@ namespace SaveOurShip2
 		public IntVec3 MoveToVec; //vec to move to after altitude reached
 		public Map MoveToMap; //ship move after altitude reached
 		public int MoveToTile; //if ground target map is closed, find new valid LZ near this
+		public bool BlastLandingPending; //blast landing confirmed - bombard the LZ when the ship sets down
 		public Map PrevMap; //on takeoff, fallback to MoveToMap
 		public int PrevTile; //on takeoff, fallback to MoveToTile
 		public bool Takeoff; //started from planet
@@ -1772,6 +1774,16 @@ namespace SaveOurShip2
 				mapParent.drawPos = mapParent.originDrawPos + new Vector3(d.x * ratio, d.y * ratio, d.z * ratio);
 
 			}
+			//blast landing: one plasma salvo a second, spread across the descent for a real spectacle.
+			//Stops in the last stretch of the descent so the final rounds land before the ship sets down.
+			if (ShipMapState == ShipMapState.inTransit && Heading < 0 && BlastLandingPending && MoveToMap != null
+				&& Find.Maps.Contains(MoveToMap) && ShipsOnMap.Count > 0 && tick % 60 == 0
+				&& Altitude > ShipInteriorMod2.altitudeLand + (ShipInteriorMod2.altitudeNominal - ShipInteriorMod2.altitudeLand) * 0.18f)
+			{
+				SpaceShipCache blastShip = ShipsOnMap.Values.First();
+				if (blastShip != null && !blastShip.Area.NullOrEmpty())
+					BlastLanding.BlastSalvo(MoveToMap, blastShip.Area.Select(c => c + MoveToVec).ToHashSet(), blastShip);
+			}
 			if (callSlowTick) //origin only: call both slow ticks
 			{
 				SlowTick(tick);
@@ -2316,7 +2328,15 @@ namespace SaveOurShip2
 
 				if (MoveToMap != null) //ground map exists
 				{
-					ShipInteriorMod2.MoveShip(ShipsOnMap.Values.First().Core, MoveToMap, MoveToVec);
+					SpaceShipCache landed = ShipsOnMap.Values.First();
+					bool wasBlastLanding = BlastLandingPending;
+					HashSet<IntVec3> landCells = wasBlastLanding ? landed.Area.Select(c => c + MoveToVec).ToHashSet() : null;
+					ShipInteriorMod2.MoveShip(landed.Core, MoveToMap, MoveToVec);
+					if (wasBlastLanding)
+					{
+						BlastLanding.ClearLandingZone(MoveToMap, landCells); //no heat motes or fires under the hull
+						BlastLandingPending = false;
+					}
 				}
 				else //moveto map was closed or no room
 				{

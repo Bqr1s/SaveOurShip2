@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+	<!-- Surface a "build vacuum airlock" gizmo when a gravship hull wall is selected. Vanilla
+	     BuildRelatedCommandUtility reads building/relatedBuildCommands and yields it from
+	     Building.GetGizmos - the same mechanism the grav engine uses to suggest the hull. -->
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThingDef[defName="GravshipHull"]/building</xpath>
+		<value>
+			<relatedBuildCommands>
+				<li>GravshipAirlock</li>
+			</relatedBuildCommands>
+		</value>
+	</Operation>
+</Patch>

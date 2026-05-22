@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- Gravship airlock: vanilla autodoor art + an integrated vacuum barrier. This whole folder is
+	     Odyssey-gated, so no MayRequire is needed - it exists only where vacuum and gravships do. -->
+	<ThingDef ParentName="DoorBase">
+		<defName>GravshipAirlock</defName>
+		<label>vacuum airlock</label>
+		<description>An autodoor with an integrated vacuum barrier. It opens for pawns like any door, but while powered a shimmering field holds the air in even as it slides open - no airlock cycling, no lost atmosphere. Cut the power and the field drops: it becomes an ordinary door that leaks to vacuum whenever it is open.</description>
+		<thingClass>SaveOurShip2.Building_GravshipAirlock</thingClass>
+		<graphicData>
+			<texPath>Things/Building/Door/Autodoor_Mover</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+		</graphicData>
+		<uiIconPath>Things/Building/Door/Autodoor_MenuIcon</uiIconPath>
+		<costStuffCount>60</costStuffCount>
+		<stuffCategories>
+			<li>Metallic</li>
+		</stuffCategories>
+		<costList>
+			<ComponentIndustrial>2</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>100</basePowerConsumption>
+			</li>
+			<li Class="CompProperties_Flickable"/>
+		</comps>
+		<building>
+			<isStuffableAirtight>true</isStuffableAirtight>
+		</building>
+		<researchPrerequisites>
+			<li>Autodoors</li>
+		</researchPrerequisites>
+		<designationCategory>Odyssey</designationCategory>
+	</ThingDef>
+
+</Defs>
