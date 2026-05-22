@@ -1455,6 +1455,7 @@
 				<projectileSpeed>3</projectileSpeed>
 				<threat>10</threat>
 				<groundDefense>true</groundDefense>
+				<canWorkStandalone>true</canWorkStandalone>
 				<groundProjectile>Bullet_Ground_Plasma</groundProjectile>
 				<groundMissRadius>3</groundMissRadius>
 			</li>
@@ -1766,6 +1767,7 @@
 				<projectileSpeed>4</projectileSpeed>
 				<threat>10</threat>
 				<groundDefense>true</groundDefense>
+				<canWorkStandalone>true</canWorkStandalone>
 				<groundProjectile>Bullet_Ground_Kinetic</groundProjectile>
 				<groundMissRadius>2</groundMissRadius>
 			</li>

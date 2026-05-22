@@ -927,6 +927,7 @@
 		</statBases>
 		<tickerType>Normal</tickerType>
 		<description>A chemfuel-powered engine capable of launching a ship into orbit. Not suitable for interplanetary travel.\n\nThrust: 500\nFuel use: 1 chemfuel/s\nMax takeoff strength: 750</description>
+		<description MayRequire="Ludeon.RimWorld.Odyssey">A chemfuel-powered engine capable of launching a ship into orbit. Not suitable for interplanetary travel.\n\nThrust: 500\nFuel use: 1 chemfuel/s\nMax takeoff strength: 750\n\nGravship use specifics: a relatively small rocket, simple enough to bolt onto a gravship without fuss.\n\nGameplay effect: doubles as a thruster and a fuel tank. Adds a small range bonus; stack several for real distance. Must be entirely placed on a gravship substructure.</description>
 		<size>(2,3)</size>
 		<receivesSignals>true</receivesSignals>
 		<designationCategory>Ship</designationCategory>
@@ -968,6 +969,16 @@
 				<killZoneWidth>4</killZoneWidth>
 				<soundWorking>ShipEngineFuel</soundWorking>
 			</li>
+			<!-- Odyssey: doubles as a gravship thruster that holds its own fuel (range + FuelStorage in one) -->
+			<li Class="CompProperties_GravshipFacility" MayRequire="Ludeon.RimWorld.Odyssey">
+				<componentTypeDef>Thruster</componentTypeDef>
+				<providesFuel>true</providesFuel>
+				<statOffsets>
+					<GravshipRange>10</GravshipRange>
+				</statOffsets>
+				<requiresLOS>false</requiresLOS>
+				<maxDistance>500</maxDistance>
+			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -1005,6 +1016,7 @@
 		</statBases>
 		<tickerType>Normal</tickerType>
 		<description>A chemfuel-powered engine capable of launching a ship into orbit. Not suitable for interplanetary travel.\n\nThrust: 1000\nFuel use: 2 chemfuel/s\nMax takeoff strength: 1000</description>
+		<description MayRequire="Ludeon.RimWorld.Odyssey">A chemfuel-powered engine capable of launching a ship into orbit. Not suitable for interplanetary travel.\n\nThrust: 1000\nFuel use: 2 chemfuel/s\nMax takeoff strength: 1000\n\nGravship use specifics: a reliable rocket engine, it shoves hard, and - freed from the work of fighting gravity - burns its fuel with a solid thrift.\n\nGameplay effect: doubles as a thruster and a fuel tank. Adds a solid range bonus and reduces gravship fuel consumption. Must be entirely placed on a gravship substructure.</description>
 		<size>(3,3)</size>
 		<receivesSignals>true</receivesSignals>
 		<designationCategory>Ship</designationCategory>
@@ -1046,6 +1058,17 @@
 				<killZoneWidth>5</killZoneWidth>
 				<soundWorking>ShipEngineFuel</soundWorking>
 			</li>
+			<!-- Odyssey: doubles as a gravship thruster that holds its own fuel (range + FuelStorage in one) -->
+			<li Class="CompProperties_GravshipFacility" MayRequire="Ludeon.RimWorld.Odyssey">
+				<componentTypeDef>Thruster</componentTypeDef>
+				<providesFuel>true</providesFuel>
+				<fuelSavingsPercent>0.10</fuelSavingsPercent>
+				<statOffsets>
+					<GravshipRange>20</GravshipRange>
+				</statOffsets>
+				<requiresLOS>false</requiresLOS>
+				<maxDistance>500</maxDistance>
+			</li>
 			<li Class="Rimefeller.CompProperties_Pipe" MayRequire="Dubwise.Rimefeller"/>
 		</comps>
 		<placeWorkers>
@@ -1085,6 +1108,7 @@
 		</statBases>
 		<tickerType>Normal</tickerType>
 		<description>A nuclear-powered engine capable of launching a ship into orbit. Not suitable for interplanetary travel.\n\nThrust: 3000\nFuel use: 3 fuel pods/s\nMax takeoff strength: 4000</description>
+		<description MayRequire="Ludeon.RimWorld.Odyssey">A nuclear-powered engine capable of launching a ship into orbit. Not suitable for interplanetary travel.\n\nThrust: 3000\nFuel use: 3 fuel pods/s\nMax takeoff strength: 4000\n\nGravship use specifics: this monstrous engine was designed to propel a colossal mass of dreadnoughts and interplanetary freighters. When jury-rigged to a weightless gravship it can easily fly you anywhere on a planet in no time and with exceptional fuel efficiency... Too easily.\n\nGameplay effect: only one is required to maximize range, and fuel consumption is greatly reduced. However, its sheer power makes gravship controls fiddly, reducing piloting quality. Must be entirely placed on a gravship substructure.</description>
 		<size>(5,5)</size>
 		<receivesSignals>true</receivesSignals>
 		<designationCategory>Ship</designationCategory>
@@ -1125,6 +1149,17 @@
 				<killZoneLength>15</killZoneLength>
 				<killZoneWidth>9</killZoneWidth>
 				<soundWorking>ShipEngineFuel</soundWorking>
+			</li>
+			<!-- Odyssey: doubles as a gravship thruster that holds its own fuel (range + FuelStorage in one) -->
+			<li Class="CompProperties_GravshipFacility" MayRequire="Ludeon.RimWorld.Odyssey">
+				<componentTypeDef>Thruster</componentTypeDef>
+				<providesFuel>true</providesFuel>
+				<fuelSavingsPercent>0.4</fuelSavingsPercent>
+				<statOffsets>
+					<GravshipRange>100</GravshipRange>
+				</statOffsets>
+				<requiresLOS>false</requiresLOS>
+				<maxDistance>500</maxDistance>
 			</li>
 		</comps>
 		<placeWorkers>
