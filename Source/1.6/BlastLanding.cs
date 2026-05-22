@@ -214,6 +214,9 @@ namespace SaveOurShip2
 				//destroying the heat-haze motes every overlapping blast kills the molten look
 				if (t is Pawn || t is Mote || t is Building_SteamGeyser || t is Blueprint || t is Frame)
 					continue;
+				//never wreck a SOS2 ship part - guards against a stray late round hitting the landed ship
+				if (t is Building bld && bld.TryGetComp<CompShipCachePart>() != null)
+					continue;
 				if (t.def.destroyable && !t.Destroyed)
 					t.Destroy(DestroyMode.Vanish);
 			}

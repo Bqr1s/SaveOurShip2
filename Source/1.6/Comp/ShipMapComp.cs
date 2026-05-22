@@ -1781,8 +1781,9 @@ namespace SaveOurShip2
 			//blast landing: the turrets fire now; the target map receives that salvo 600 ticks (10s)
 			//later, simulating the plasma's flight. Gated on Altitude, NOT Heading - Heading goes to 0
 			//at "first burn done", which would silence the rest of the descent's barrage.
-			if (ShipMapState == ShipMapState.inTransit && BlastLandingPending && Altitude > ShipInteriorMod2.altitudeLand
-				&& MoveToMap != null && Find.Maps.Contains(MoveToMap) && ShipsOnMap.Count > 0)
+			if (ShipMapState == ShipMapState.inTransit && BlastLandingPending && MoveToMap != null
+				&& Find.Maps.Contains(MoveToMap) && ShipsOnMap.Count > 0
+				&& Altitude > ShipInteriorMod2.altitudeLand + (ShipInteriorMod2.altitudeNominal - ShipInteriorMod2.altitudeLand) * 0.05f)
 			{
 				if (tick % 60 == 0 && Altitude > ShipInteriorMod2.altitudeLand + (ShipInteriorMod2.altitudeNominal - ShipInteriorMod2.altitudeLand) * 0.30f)
 				{
