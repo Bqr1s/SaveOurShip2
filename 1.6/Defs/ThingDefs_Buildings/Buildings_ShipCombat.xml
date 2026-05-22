@@ -638,6 +638,7 @@
 				<projectileSpeed>4</projectileSpeed>
 				<pointDefense>true</pointDefense>
 				<groundDefense>true</groundDefense>
+				<canWorkStandalone>true</canWorkStandalone>
 				<groundProjectile>Bullet_Ground_ACI</groundProjectile>
 				<groundMissRadius>4</groundMissRadius>
 				<threat>10</threat>
@@ -1145,6 +1146,7 @@
 				<projectileSpeed>10</projectileSpeed>
 				<pointDefense>true</pointDefense>
 				<groundDefense>true</groundDefense>
+				<canWorkStandalone>true</canWorkStandalone>
 				<groundProjectile>Bullet_Ground_Laser</groundProjectile>
 				<singleFireSound>ShipCombatLaser</singleFireSound>
 				<threat>10</threat>

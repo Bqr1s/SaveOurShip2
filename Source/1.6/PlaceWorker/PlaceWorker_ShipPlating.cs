@@ -34,7 +34,8 @@ namespace SaveOurShip2
                 }
 				// Hull plating assumes heavy terrain need, but doesn't have that in XML in order to skip affordance check for empty Ody space
 				TerrainAffordanceDef requiredTerrain = TerrainAffordanceDefOf.Heavy;
-				if (!loc.GetAffordances(map).Contains(requiredTerrain) && !isEmptyOdysseySpace)
+				// Heavy terrain not required when extending plating off an existing player ship hull (anchored start, free growth)
+				if (!loc.GetAffordances(map).Contains(requiredTerrain) && !isEmptyOdysseySpace && !AdjacentToPlayerShipPart(loc, map))
 				{
 					// Vanilla string key
 					return new AcceptanceReport(TranslatorFormattedStringExtensions.Translate("TerrainCannotSupport_TerrainAffordance", def, requiredTerrain).CapitalizeFirst());
@@ -53,6 +54,27 @@ namespace SaveOurShip2
 				}
 			}
 			return true;
+		}
+
+		// True if a cardinally adjacent cell holds (or is queued to hold) a player ship part, so plating may extend off an existing hull
+		private static bool AdjacentToPlayerShipPart(IntVec3 loc, Map map)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				IntVec3 vec = loc + GenAdj.CardinalDirections[i];
+				if (!vec.InBounds(map))
+					continue;
+				foreach (Thing t in vec.GetThingList(map))
+				{
+					if (t.Faction != Faction.OfPlayer)
+						continue;
+					if (t is Building b && b.def.building.shipPart)
+						return true;
+					if ((t is Blueprint || t is Frame) && t.def.entityDefToBuild is ThingDef td && (td.building?.shipPart ?? false))
+						return true;
+				}
+			}
+			return false;
 		}
 	}
 }
