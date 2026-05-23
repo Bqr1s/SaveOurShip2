@@ -28,4 +28,17 @@ namespace SaveOurShip2
 			return !(__instance is CompShipEngineBreakdownable);
 		}
 	}
+
+	// A SOS2 engine carries CompGravshipThruster only as a secondary (Odyssey) role. While it isn't
+	// linked to a grav engine, the comp's red "not functional: not connected" inspect text is just
+	// noise on a working SOS2 engine - blank the thruster inspect line in that case.
+	[HarmonyPatch(typeof(CompGravshipThruster), nameof(CompGravshipThruster.CompInspectStringExtra))]
+	public static class CompGravshipThruster_InspectString_ShipEngine
+	{
+		public static void Postfix(CompGravshipThruster __instance, ref string __result)
+		{
+			if (__instance.parent.TryGetComp<CompEngineTrail>() != null && __instance.LinkedBuildings.NullOrEmpty())
+				__result = "";
+		}
+	}
 }
