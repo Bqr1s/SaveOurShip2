@@ -79,9 +79,26 @@ namespace SaveOurShip2
 		{
 			if (map.roofGrid.RoofAt(c) == RoofDefOf.RoofRockThick) //overhead mountain - indestructible
 				return true;
+			//scripted no-landing zones (Odyssey quest sites use these; field exists in Core, list empty otherwise)
+			if (map.landingBlockers != null)
+			{
+				foreach (CellRect rect in map.landingBlockers)
+				{
+					if (rect.Contains(c))
+						return true;
+				}
+			}
 			foreach (Thing t in c.GetThingList(map))
 			{
 				if (t is Building_SteamGeyser)
+					return true;
+				//indestructible building (e.g. ancient quest walls) - blast can't clear it,
+				//so reject the cell rather than pound it forever every salvo
+				if (t is Building && !t.def.destroyable)
+					return true;
+				//things flagged as never-land-on (e.g. monoliths, special items) - respect even if destroyable,
+				//to match vanilla gravship-landing intent
+				if (t.def.preventGravshipLandingOn)
 					return true;
 			}
 			return false;
@@ -94,6 +111,10 @@ namespace SaveOurShip2
 			if (map.roofGrid.Roofed(c)) //any roof (overhead mountain is treated as hard-blocked separately)
 				return true;
 			if (!c.GetAffordances(map).Contains(TerrainAffordanceDefOf.Heavy)) //water, marsh, soft ground
+				return true;
+			//constructed floor (concrete, carpet, wood, etc.) - heavy enough to land on, but blast
+			//landing fuses everything to volcanic glass, so floors in the LZ get vaporized too
+			if (c.GetTerrain(map).IsFloor)
 				return true;
 			foreach (Thing t in c.GetThingList(map))
 			{
@@ -210,13 +231,21 @@ namespace SaveOurShip2
 			StripRoof(map, c);
 			foreach (Thing t in c.GetThingList(map).ToList())
 			{
-				//never destroy live pawns, geysers, the ship's own blueprint/frames, or motes -
+				//never destroy geysers, the ship's own blueprint/frames, or motes -
 				//destroying the heat-haze motes every overlapping blast kills the molten look
-				if (t is Pawn || t is Mote || t is Building_SteamGeyser || t is Blueprint || t is Frame)
+				if (t is Mote || t is Building_SteamGeyser || t is Blueprint || t is Frame)
 					continue;
 				//never wreck a SOS2 ship part - guards against a stray late round hitting the landed ship
 				if (t is Building bld && bld.TryGetComp<CompShipCachePart>() != null)
 					continue;
+				//pawns standing in a glassing round take plasma burn damage, but are never Vanished -
+				//that would skip the death event (no corpse, no notify). Let damage kill them properly.
+				if (t is Pawn p)
+				{
+					if (!p.Dead)
+						p.TakeDamage(new DamageInfo(DamageDefOf.Burn, 12f, instigator: null));
+					continue;
+				}
 				if (t.def.destroyable && !t.Destroyed)
 					t.Destroy(DestroyMode.Vanish);
 			}
@@ -254,6 +283,28 @@ namespace SaveOurShip2
 			}
 		}
 
+		// Each glassing impact panics nearby pawns into PanicFlee mental state, so survivors of
+		// the first hit run clear of the LZ before subsequent salvos land - mirrors how pawns flee
+		// from the Ideology hacked ancient drone before it self-destructs.
+		public static void PanicFleeNearby(Map map, IntVec3 center, float radius)
+		{
+			if (map == null)
+				return;
+			foreach (Pawn p in map.mapPawns.AllPawnsSpawned.ToList())
+			{
+				if (p.Dead || p.Downed || p.mindState == null)
+					continue;
+				if (!p.Position.InHorDistOf(center, radius))
+					continue;
+				//already panic-fleeing - leave them be, don't restart the state every salvo
+				if (p.InMentalState && p.MentalStateDef == MentalStateDefOf.PanicFlee)
+					continue;
+				p.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.PanicFlee,
+					reason: null, forced: false, forceWake: false, causedByMood: false,
+					otherPawn: null, transitionSilently: true, causedByDamage: true);
+			}
+		}
+
 		// Clears blast-landing heat motes and fires from the cells the ship now occupies.
 		public static void ClearLandingZone(Map map, IEnumerable<IntVec3> cells)
 		{
@@ -286,6 +337,9 @@ namespace SaveOurShip2
 				return;
 			foreach (IntVec3 c in GenRadial.RadialCellsAround(pos, 3.4f, true))
 				BlastLanding.GlassCell(map, c);
+			//panic-flee pawns in a wider radius than the glassing - survivors of the first hit run
+			//before the next salvo arrives. Radius covers the LZ shoulder, not just the impact center.
+			BlastLanding.PanicFleeNearby(map, pos, 12f);
 		}
 	}
 }
