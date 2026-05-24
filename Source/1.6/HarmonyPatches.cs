@@ -1644,8 +1644,14 @@ namespace SaveOurShip2
 		public static bool Prefix(TradeShip __instance, Pawn negotiator, out bool __state) //normal trade on ground if no bounty
 		{
 			__state = false;
-			if (!__instance.Map.IsSpace() && ShipInteriorMod2.WorldComp.PlayerFactionBounty > negotiator.skills.GetSkill(SkillDefOf.Social).levelInt * 2)
-				return true;
+			if (!__instance.Map.IsSpace())
+			{
+				int bounty = ShipInteriorMod2.WorldComp.PlayerFactionBounty;
+				// Skip SoS2 wrapper dialog when it has nothing extra to show (no pirate option on ground, no pay-bounty option).
+				// Direct vanilla Dialog_Trade avoids the multi-click focus race between closing wrapper and opening Dialog_Trade.
+				if (bounty <= 1 || bounty > negotiator.skills.GetSkill(SkillDefOf.Social).levelInt * 2)
+					return true;
+			}
 
 			__state = true;
 			return false;
