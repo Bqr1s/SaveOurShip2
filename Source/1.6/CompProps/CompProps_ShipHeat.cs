@@ -18,6 +18,7 @@ namespace SaveOurShip2
 		public float projectileSpeed = 1;
 		public bool pointDefense = false;
 		public bool groundDefense = false;
+		public bool canWorkStandalone = false; //turret can fire without a ship heat network/bridge, venting fire heat into the room instead
 		public bool showOnRoof = false;
 		public ThingDef groundProjectile;
 		public float groundMissRadius = 0;

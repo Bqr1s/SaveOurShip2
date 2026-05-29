@@ -228,6 +228,14 @@ namespace SaveOurShip2
 				}
 			}
 		}
+		public override void PostDrawExtraSelectionOverlays()
+		{
+			base.PostDrawExtraSelectionOverlays();
+			if (!Props.reactionless && ExhaustArea.Count > 0)
+			{
+				GenDraw.DrawFieldEdges(ExhaustArea.ToList(), Color.red);
+			}
+		}
 		public override void CompTick()
 		{
 			base.CompTick();

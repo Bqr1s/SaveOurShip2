@@ -2689,6 +2689,11 @@ namespace SaveOurShip2
 
 			//move things - new
 			//despawn, error check if playermove
+			//strip any null entries the collection picked up - a null is not a movable thing and
+			//would NRE the despawn/respawn/rollback loops below
+			toMoveShipParts.Remove(null);
+			toMoveBuildings.Remove(null);
+			toMoveThings.Remove(null);
 			bool fail = false;
 			var reason = new StringBuilder();
 			foreach (Thing spawnThing in toMoveThings.Where(t => !t.Destroyed))
