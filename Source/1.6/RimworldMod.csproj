@@ -161,6 +161,7 @@
     <Compile Include="CloakThresholdGizmo.cs" />
     <Compile Include="ShipCatalog.cs" />
     <Compile Include="ShipImorter.cs" />
+    <Compile Include="ShipInteriorMod2.MoveShip.cs" />
     <Compile Include="SOS2MapUtility.cs" />
     <Compile Include="SoSDebugActions.cs" />
     <Compile Include="SoSSpawnOverride.cs" />
