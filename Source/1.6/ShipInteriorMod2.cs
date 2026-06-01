@@ -143,7 +143,7 @@ namespace SaveOurShip2
 		// Non-standard staritingship is requested. runtime-only flag, not saved
 		public bool RequestCustomShip = false;
     }
-	public class ShipInteriorMod2 : Mod
+	public partial class ShipInteriorMod2 : Mod
 	{
 		public ShipInteriorMod2(ModContentPack content) : base(content)
 		{
