@@ -371,6 +371,7 @@ namespace SaveOurShip2
 
 				Scribe_Collections.Look<Building_ShipBridge>(ref MapRootListAll, "MapRootListAll", LookMode.Reference); //td rem?
 				Scribe_Deep.Look(ref ShuttlesOnMissions, "ShuttlesOnMissions", this);
+				Scribe_Collections.Look(ref ShuttlesOnMissionsDeparting, "ShuttlesOnMissionsDeparting", LookMode.Reference);
 				Scribe_Collections.Look<ShuttleMissionData>(ref ShuttleMissions, "ShuttleMissions", LookMode.Deep);
 
 				Scribe_Collections.Look<Projectile>(ref incomingProjectiles, "incomingProjectiles", LookMode.Reference);
@@ -400,6 +401,7 @@ namespace SaveOurShip2
 		public Map ShipCombatOriginMap; //"player" map - initializes combat vars, runs all non duplicate code, AI
 		private ShipMapComp originMapComp;
 		public ThingOwner<VehiclePawn> ShuttlesOnMissions = new ThingOwner<VehiclePawn>();
+		private List<VehiclePawn> ShuttlesOnMissionsDeparting = new List<VehiclePawn>();
 		public List<ShuttleMissionData> ShuttleMissions = new List<ShuttleMissionData>();
 		public ShipMapComp OriginMapComp
 		{
@@ -1318,6 +1320,7 @@ namespace SaveOurShip2
 			TorpsInRange = new List<ShipCombatProjectile>();
 			ShuttlesInRange = new List<VehiclePawn>();
 			ShuttlesOnMissions = new ThingOwner<VehiclePawn>();
+			ShuttlesOnMissionsDeparting = new List<VehiclePawn>();
 			ShuttleMissions = new List<ShuttleMissionData>();
 			//ship AI
 			if (HasShipMapAI)
@@ -3028,6 +3031,17 @@ namespace SaveOurShip2
         {
 			return ShuttlesOnMissions;
         }
+		// Due to ownership collision between skyfaller leaving and ShuttlesOnMissions beint thing owner,
+		// departing shuttles are stored in temporary list, then added to actual list via call to this method from Harmony patch.
+		public void NotifyVehicleLeaving(VehiclePawn vehicle)
+		{
+			if (ShuttlesOnMissionsDeparting.Contains(vehicle))
+			{
+				ShuttlesOnMissionsDeparting.Remove(vehicle);
+				vehicle.holdingOwner = null;
+				ShuttlesOnMissions.TryAdd(vehicle);
+			}
+		}
 		public ShuttleMissionData RegisterShuttleMission(VehiclePawn shuttle, ShuttleMission mission)
         {
 			if (shuttle.Spawned)
@@ -3035,7 +3049,8 @@ namespace SaveOurShip2
 				map.GetComponent<VehicleReservationManager>().ClearReservedFor(shuttle);
 				shuttle.DeSpawn();
 			}
-			ShuttlesOnMissions.TryAddOrTransfer(shuttle);
+			ShuttlesOnMissionsDeparting.Add(shuttle);
+			// ShuttlesOnMissions.TryAddOrTransfer(shuttle);
 			// List of shuttles on mission conflicts with shuttle launch mechanocs because of being IThingHolder.
 			// Setting holdingOwner for departing shuttles solves the conflict.
 			shuttle.holdingOwner = null;

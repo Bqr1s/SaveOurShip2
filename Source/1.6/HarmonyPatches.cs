@@ -6372,5 +6372,21 @@ namespace SaveOurShip2
 			}
 		}
 	}
-	
+
+	[HarmonyPatch(typeof(VehicleSkyfaller_Leaving), "LeaveMap")]
+	public static class FixShuttlesOnMissionList
+	{
+		// Prefixing in order to still have a map
+		public static void Prefix(VehicleSkyfaller_Leaving __instance)
+		{
+			Map map = __instance.Map;
+			VehiclePawn vehicle = __instance.vehicle;
+			if (vehicle != null)
+			{
+				return;
+			}
+			ShipMapComp mapComp = map.GetComponent<ShipMapComp>();
+			mapComp.NotifyVehicleLeaving(vehicle);
+		}
+	}
 }
