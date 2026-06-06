@@ -32,6 +32,27 @@ namespace SaveOurShip2
 		avoidant //flee is possible, else fight - traders, etc.
 	}
 
+	public class DepartingShuttle : IExposable
+	{
+		// As off-map suttles list for mission consieders having shuttle ownership (eg for deep save)
+		// departing shuttle can't be added to that list yet, as framework skyfaller owns that shuttle until actually left the map
+		// So got to store a list of departing ones
+		public VehiclePawn Shuttle;
+		public ShipMapComp.ShuttleMission Mission;
+
+		public DepartingShuttle(VehiclePawn shuttle, ShipMapComp.ShuttleMission mission)
+		{
+			Shuttle = shuttle;
+			Mission = mission;
+		}
+
+		public void ExposeData()
+		{
+			Scribe_References.Look<VehiclePawn>(ref Shuttle, "Shuttle", false);
+			Scribe_Values.Look<ShipMapComp.ShuttleMission>(ref Mission, "Mission");
+		}
+	}
+
 	public class ShipMapComp : MapComponent, IThingHolder //It's an IThingHolder because it holds shuttles while they're on missions
 	{
 		public List<ShipHeatNet> cachedNets = new List<ShipHeatNet>();
@@ -371,7 +392,9 @@ namespace SaveOurShip2
 
 				Scribe_Collections.Look<Building_ShipBridge>(ref MapRootListAll, "MapRootListAll", LookMode.Reference); //td rem?
 				Scribe_Deep.Look(ref ShuttlesOnMissions, "ShuttlesOnMissions", this);
-				Scribe_Collections.Look<ShuttleMissionData>(ref ShuttleMissions, "ShuttleMissions", LookMode.Deep);
+				Scribe_Collections.Look<DepartingShuttle>(ref DepartingShuttles, "DepartingShuttles", LookMode.Value);
+				//public List<DepartingShuttle> DepartingShuttles = new List<DepartingShuttle>();
+		Scribe_Collections.Look<ShuttleMissionData>(ref ShuttleMissions, "ShuttleMissions", LookMode.Deep);
 
 				Scribe_Collections.Look<Projectile>(ref incomingProjectiles, "incomingProjectiles", LookMode.Reference);
 			}
@@ -400,6 +423,7 @@ namespace SaveOurShip2
 		public Map ShipCombatOriginMap; //"player" map - initializes combat vars, runs all non duplicate code, AI
 		private ShipMapComp originMapComp;
 		public ThingOwner<VehiclePawn> ShuttlesOnMissions = new ThingOwner<VehiclePawn>();
+		public List<DepartingShuttle> DepartingShuttles = new List<DepartingShuttle>();
 		public List<ShuttleMissionData> ShuttleMissions = new List<ShuttleMissionData>();
 		public ShipMapComp OriginMapComp
 		{
@@ -1318,6 +1342,7 @@ namespace SaveOurShip2
 			TorpsInRange = new List<ShipCombatProjectile>();
 			ShuttlesInRange = new List<VehiclePawn>();
 			ShuttlesOnMissions = new ThingOwner<VehiclePawn>();
+			DepartingShuttles = new List<DepartingShuttle>();
 			ShuttleMissions = new List<ShuttleMissionData>();
 			//ship AI
 			if (HasShipMapAI)
@@ -3030,6 +3055,7 @@ namespace SaveOurShip2
         }
 		public ShuttleMissionData RegisterShuttleMission(VehiclePawn shuttle, ShuttleMission mission)
         {
+			DepartingShuttles.Add(new DepartingShuttle(shuttle, mission));
 			if (shuttle.Spawned)
 			{
 				map.GetComponent<VehicleReservationManager>().ClearReservedFor(shuttle);
