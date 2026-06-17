@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Net;
 using UnityEngine;
 using RimWorld;
 using Verse;
@@ -105,7 +106,14 @@ namespace SaveOurShip2
 				Messages.Message("To import ship blueprint, switch from world view to loacl map view", null, MessageTypeDefOf.NeutralEvent);
 				return;
 			}
-			string path = Path.Combine(GenFilePaths.SaveDataFolderPath, "SoS2\\Blueprint.png");
+			string path = Path.Combine(GenFilePaths.SaveDataFolderPath, "SoS2\\BlueprintFromNetwork.png");
+
+			using (WebClient client = new WebClient())
+			{
+				client.DownloadFile(new Uri(@"https://127.0.0.1:8080/BlueprintImportExample.png"),
+					path);
+			}
+
 			if (!File.Exists(path))
             {
 				Messages.Message("Blueprint file doesn't exist", null, MessageTypeDefOf.NeutralEvent);
