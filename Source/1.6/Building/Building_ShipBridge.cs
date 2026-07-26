@@ -144,6 +144,55 @@ namespace SaveOurShip2
 			return result;
 		}
 
+		// Tactical console allows enabling/disabling weapon group system completely andf also selecting each group
+		private IEnumerable<Gizmo> GetWeaponGroupGizmos()
+		{
+			if (!Spawned || Map != ShipInteriorMod2.FindPlayerShipMap())
+			{
+				yield break;
+			}
+			List<Gizmo> result = new List<Gizmo>();
+			try
+			{
+				Command_Toggle commandEnable = new Command_Toggle();
+				commandEnable.defaultLabel = "SoS.CommandEnableWeaponGroups".Translate();
+				commandEnable.defaultDesc = "SoS.CommandEnableWeaponGroupsDesc".Translate();
+				commandEnable.icon = ContentFinder<Texture2D>.Get("UI/WeaponGroups");
+				commandEnable.isActive = () => ShipInteriorMod2.WorldComp.WeaponGroups.Enabled;
+				commandEnable.toggleAction = delegate
+				{
+					ShipInteriorMod2.WorldComp.WeaponGroups.Enabled = !ShipInteriorMod2.WorldComp.WeaponGroups.Enabled;
+				};
+				commandEnable.activateSound = SoundDefOf.Tick_Tiny;
+				result.Add(commandEnable);
+
+				if (ShipInteriorMod2.WorldComp.WeaponGroups.Enabled)
+				{
+					for (int i = 0; i < ShipInteriorMod2.WorldComp.WeaponGroups.CountToDisplay; i++)
+					{
+						int index_captured = i;
+						Command_Action commandSelectGroup = new Command_Action();
+						commandSelectGroup.defaultLabel = "SoS.CommandSelectWeaponGroup".Translate(i + 1);
+						commandSelectGroup.defaultDesc = "SoS.CommandSelectWeaponGroupDesc".Translate();
+						commandSelectGroup.icon = ContentFinder<Texture2D>.Get("UI/WeaponGroup" + (i + 1).ToString());
+						commandSelectGroup.action = delegate
+						{
+							ShipInteriorMod2.WorldComp.WeaponGroups.Select(index_captured);
+						};
+						result.Add(commandSelectGroup);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.ErrorOnce("Error creating tac con weapon group gizmos: " + ex.Message, 881486421);
+			}
+			foreach(Gizmo g in result)
+			{
+				yield return g;
+			}
+		}
+
 		[DebuggerHidden]
 		public override IEnumerable<Gizmo> GetGizmos()
 		{
@@ -171,8 +220,18 @@ namespace SaveOurShip2
 			{
 				yield return c;
 			}
-			if (TacCon || heatNet == null || !powerComp.PowerOn || Ship == null)
+			bool inactiveBridge = heatNet == null || !powerComp.PowerOn || Ship == null;
+			if (TacCon || inactiveBridge)
+			{
+				if (TacCon && !inactiveBridge)
+				{
+					foreach(Gizmo g in GetWeaponGroupGizmos())
+					{
+						yield return g;
+					}
+				}
 				yield break;
+			}
 			if (!selected)
 			{
 				fail = InterstellarFailReasons();
@@ -1246,18 +1305,14 @@ namespace SaveOurShip2
 		public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
 		{
 			if (mapComp.MapRootListAll.Contains(this))
-				mapComp.MapRootListAll.Remove(this);
-			if (Map.IsSpace() && mapComp.MapRootListAll.NullOrEmpty() && mapComp.IsPlayerShipMap && mapComp.ShipMapState != ShipMapState.inTransit && !ShipInteriorMod2.MoveShipFlag) //last bridge on player map - deorbit warn
 			{
-				var countdownComp = Map.Parent.GetComponent<TimedForcedExitShip>();
-				if (countdownComp != null && !countdownComp.ForceExitAndRemoveMapCountdownActive)
-				{
-					countdownComp.StartForceExitAndRemoveMapCountdown();
-					Find.LetterStack.ReceiveLetter(TranslatorFormattedStringExtensions.Translate("SoS.BurnUpPlayer"), TranslatorFormattedStringExtensions.Translate("SoS.BurnUpPlayerDesc", countdownComp.ForceExitAndRemoveMapCountdownTimeLeftString), LetterDefOf.ThreatBig);
-				}
+				mapComp.MapRootListAll.Remove(this);
+				Log.Message($"SoS 2: Bridge removed. Remaining count: { mapComp.MapRootListAll.Count }" );
 			}
+			mapComp.CheckForPlayerOrbitFailure();
 			base.DeSpawn(mode);
 		}
+
 		protected override void Tick()
 		{
 			base.Tick();

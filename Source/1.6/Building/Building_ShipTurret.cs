@@ -189,6 +189,7 @@ namespace SaveOurShip2
 			Scribe_Values.Look<IntVec3>(ref SynchronizedBurstLocation, "burstLocation");
 			Scribe_Values.Look<bool>(ref PointDefenseMode, "pointDefenseMode");
 			Scribe_Values.Look<bool>(ref useOptimalRange, "useOptimalRange");
+			Scribe_TargetInfo.Look(ref shipTarget, "shipTarget");
 			BackCompatibility.PostExposeData(this);
 			if (Scribe.mode == LoadSaveMode.PostLoadInit)
 			{
@@ -1008,6 +1009,48 @@ namespace SaveOurShip2
 					isActive = (() => useOptimalRange)
 				};
 				yield return command_Toggle;
+			}
+			foreach(Gizmo g in GetWeaponGroupGizmos())
+			{
+				yield return g;
+			}
+
+		}
+
+		private IEnumerable<Gizmo> GetWeaponGroupGizmos()
+		{
+			if (!Spawned || Map != ShipInteriorMod2.FindPlayerShipMap())
+			{
+				yield break;
+			}
+			List<Gizmo> weaponGroupGizmos = new List<Gizmo>();
+			try
+			{
+				if (ShipInteriorMod2.WorldComp.WeaponGroups.Enabled)
+				{
+					for (int i = 0; i < ShipInteriorMod2.WorldComp.WeaponGroups.CountToDisplay; i++)
+					{
+						int index_captured = i;
+						Command_Toggle toggleIncludeInWeaponGroup = new Command_Toggle();
+						toggleIncludeInWeaponGroup.defaultLabel = "SoS.CommandIncludeInWeaponGroup".Translate(i + 1);
+						toggleIncludeInWeaponGroup.defaultDesc = "SoS.CommandIncludeInWeaponGroupDesc".Translate();
+						toggleIncludeInWeaponGroup.icon = ContentFinder<Texture2D>.Get("UI/WeaponGroup" + (i + 1).ToString());
+						toggleIncludeInWeaponGroup.isActive = () => ShipInteriorMod2.WorldComp.WeaponGroups[index_captured].Contains(this);
+						toggleIncludeInWeaponGroup.toggleAction = delegate
+						{
+							ShipInteriorMod2.WorldComp.WeaponGroups[index_captured].ToggleTurret(this);
+						};
+						weaponGroupGizmos.Add(toggleIncludeInWeaponGroup);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.ErrorOnce("Error creating tac con weapon group gizmos: " + ex.Message, 535271124);
+			}
+			foreach (Gizmo g in weaponGroupGizmos)
+			{
+				yield return g;
 			}
 		}
 

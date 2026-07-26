@@ -159,27 +159,27 @@ namespace SaveOurShip2
 		public bool HasGravEngine = false;
 		private int fuelOptimizerCount = 0;
 		public int EffectiveFuelOptimizerCount
-        {
-            get
-            {
+		{
+			get
+			{
 				return Mathf.Min(fuelOptimizerCount, 2);
-            }
-        }
+			}
+		}
 		public float MassTakeoff
-        {
-            get
-            {
+		{
+			get
+			{
 				const float gravEnineMassMultiplier = 0.4f;
 				return HasGravEngine ? MassActual * gravEnineMassMultiplier : MassActual;
 			}
-        }
+		}
 		public float MaxTakeoff = 0;
 		public float ThrustRaw = 0;
 		public float ThrustRatio => ThrustRaw * TWRMath.TWRSmallMultiplier * TWRMath.TWRLargeMultiplier / Mathf.Pow(MassSum, 1.2f);
 		public int Rot => Engines.First().parent.Rotation.AsInt;
 		public bool IsWreck => Core == null; //not a real ship
 		public bool IsStuck => IsWreck || Bridges.All(b => b.TacCon) || Engines.NullOrEmpty(); //ship but cant move on its own
-		// A cache for persistent UI to avoid intorducing extra data structures
+																							   // A cache for persistent UI to avoid intorducing extra data structures
 		public string cachedTooltip;
 		public bool CanFire() //ship has any engine that can fire
 		{
@@ -563,6 +563,12 @@ namespace SaveOurShip2
 			Log.Message("Ship size: " + size);
 			return size;
 		}
+
+		public IntVec3 Center()
+		{
+			return MaximumCorner() - Size(out var minCorner) / 2;
+		}
+
 		public IntVec3 CenterShipOnMap()
 		{
 			IntVec3 min;
@@ -779,6 +785,26 @@ namespace SaveOurShip2
 			PathDirty = false;
 			Log.Message("SOS2: ".Colorize(Color.cyan) + map + " Ship ".Colorize(Color.green) + Index + " Rebuilt cache, Parts: " + Parts.Count + " Buildings: " + Buildings.Count + " Bridges: " + Bridges.Count + " Area: " + Area.Count + " Core: " + Core + " Name: " + Name + " path max: " + LastSafePath);
 		}
+
+		const int platingWeightMultiplier = 1;
+		private int GetWeight(Building b)
+		{
+			if (b.IsClearableFreeBuilding || b.def.altitudeLayer == AltitudeLayer.Conduits)
+			{
+				return 0;
+			}
+			const int normalWeightMultiplier = 3;
+			const int attachmentWeightMultiplier = 1;
+			int weightMultiplier = normalWeightMultiplier;
+			if (b.def.building.isAttachment)
+			{
+				weightMultiplier = attachmentWeightMultiplier;
+			}
+			return b.def.Size.x * b.def.Size.z * weightMultiplier;
+		}
+		// TODO: This is quite low and subject to be increased. Effective CR of singe amplifier is about 25,
+		// because it increases 100 CR spinal weapon base damage by 1/4.
+		const int amplifierThreat = 10;
 		public void AddToCache(Building b)
 		{
 			if (Buildings.Add(b))
@@ -801,7 +827,7 @@ namespace SaveOurShip2
 						}
 						if (part.Props.isPlating)
 						{
-							Mass += 1;
+							Mass += platingWeightMultiplier;
 							return;
 						}
 						if (b.TryGetComp<CompEngineTrail>() != null)
@@ -898,16 +924,13 @@ namespace SaveOurShip2
 						Shields.Add(shield);
 				}
 				else if (b.def == ResourceBank.ThingDefOf.ShipSpinalAmplifier)
-					ThreatRaw += 10;
+					ThreatRaw += amplifierThreat;
 				// Exclude sleeping spots etc
-				if (!b.IsClearableFreeBuilding)
-				{
-					Mass += b.def.Size.x * b.def.Size.z * 3;
-				}
+				Mass += GetWeight(b);
 				if (ResourceBank.IsGravEngine(b.def))
-                {
+				{
 					HasGravEngine = true;
-                }
+				}
 				if (b.def == ResourceBank.ThingDefOf.FuelOptimizer)
 				{
 					fuelOptimizerCount++;
@@ -935,7 +958,7 @@ namespace SaveOurShip2
 						Parts.Remove(b);
 						if (part.Props.isPlating)
 						{
-							Mass -= 1;
+							Mass -= platingWeightMultiplier;
 							return;
 						}
 						if (b.TryGetComp<CompEngineTrail>() != null)
@@ -1015,11 +1038,8 @@ namespace SaveOurShip2
 						Shields.Remove(shield);
 				}
 				else if (b.def == ResourceBank.ThingDefOf.ShipSpinalAmplifier)
-					ThreatRaw -= 10;
-				if (!b.IsClearableFreeBuilding)
-				{
-					Mass -= b.def.Size.x * b.def.Size.z * 3;
-				}
+					ThreatRaw -= amplifierThreat;
+				Mass -= GetWeight(b);
 				// Only one should exist, so removal nmeans no grav engines left
 				if (ResourceBank.IsGravEngine(b.def))
 				{
@@ -1134,7 +1154,7 @@ namespace SaveOurShip2
 		public void SlowTick()
 		{
 			//fill lowest path vec/sec/foamdist
-			if (!IsWreck &&(BuildingsToFoam.Any() && FoamDistributors.Any()))
+			if (!IsWreck && (BuildingsToFoam.Any() && FoamDistributors.Any()))
 			{
 				foreach (CompHullFoamDistributor dist in FoamDistributors.Where(d => d.fuelComp.Fuel > 0 && d.powerComp.PowerOn))
 				{
@@ -1411,12 +1431,12 @@ namespace SaveOurShip2
 		}
 
 		public bool Powered()
-        {
+		{
 			return Core != null && !IsWreck && (Core.PowerComp.PowerNet.HasActivePowerSource || Core.PowerComp.PowerNet.CurrentStoredEnergy() >= 1000);
-        }
+		}
 
 		public void StartBoardingShuttles(ref List<VehiclePawn> shuttlesWantingBoarders)
-        {
+		{
 			List<VehiclePawn> shuttles = new List<VehiclePawn>();
 			List<CompShipBay> bays = new List<CompShipBay>();
 			foreach (VehiclePawn vehicle in ShuttlesOnShip(Faction))
@@ -1459,6 +1479,29 @@ namespace SaveOurShip2
 				}
 				Log.Message("[SoS2] " + shuttlesWantingBoarders.Count + " shuttles assigned boarders, " + shuttlesToBeFilled.Count + " shuttles unfilled.");
 			}
+		}
+		public string GetLabel()
+		{
+			if (Core != null)
+			{
+				return Core.ShipName;
+			}
+			return "SoS.Ship.WreckName".Translate();
+		}
+		// Getter converting ship cache to list of things, which is the alert format used.
+		// TODO: When needed, could upgrade (at the cost of some performance) to getting central building rather than first, but now that isn't a priority.
+		public List<Thing> GetCulpritsForAlert()
+		{
+			List<Thing> result = new List<Thing>();
+			if (Core != null)
+			{
+				result.Add(Core);
+			}
+			else if (!Buildings.NullOrEmpty())
+			{
+				result.Add(Buildings.First());
+			}
+			return result;
 		}
 	}
 }

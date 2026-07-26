@@ -179,7 +179,7 @@ namespace SaveOurShip2
             // Extra buildings
             float dodgeMultiplierFromBuildings = ThisMapEvasionScaleFromBuildings;
 			// TWR
-			float dodgeMultiplierFromTWR = DodgeChanceMultiplier.Evaluate(ThisMapComp.SlowestThrustRatio());
+			float dodgeMultiplierFromTWR = DodgeChanceMultiplier.Evaluate(ThisMapComp.SlowestThrustRatio(out var blockingShip, out var slowestShip));
 			float finalChance = baseChance * dodgeMultiplierFromShooting * dodgeMultiplierFromPiloting * dodgeMultiplierFromTWR *
 				dodgeMultiplierFromBuildings * DodgeChanceSubmodScale;
 			return Mathf.Clamp(finalChance, 0f, 0.9f);
@@ -187,10 +187,11 @@ namespace SaveOurShip2
 
 		private bool ShouldLogDataNow
 		{
-			// Sort of arbitrary seetting preventing excess log spam
+			// Check preventing excess log spam. 
+			// Could be set to fisrst few projectiles or every X projectiles base on projectileCount
 			get
 			{
-				return projectileCount < 5;
+				return false;
 			}
 		}
 
@@ -198,7 +199,7 @@ namespace SaveOurShip2
 		{
 			if(ShouldLogDataNow)
 			{
-				Log.Warning("Doddging, chance: " + DodgeCance(proj));
+				Log.Warning("Dodging, chance: " + DodgeCance(proj));
 			}
 			return Rand.Chance(DodgeCance(proj));
 		}
@@ -232,17 +233,17 @@ namespace SaveOurShip2
 			//shooter adj 0-50%
 			missAngle *= (100 - proj.accBoost * 2.5f) / 100;
 			// Use reasonable clamp when working with MapEnginePower
-			dodgeAngle = Mathf.Clamp(DodgeAngleMultiplier.Evaluate(ThisMapComp.SlowestThrustRatio()), 0f, 40f);
+			dodgeAngle = Mathf.Clamp(DodgeAngleMultiplier.Evaluate(ThisMapComp.SlowestThrustRatio(out var blockingShip, out var slowestShip)), 0f, 40f);
 			if (ModSettings_SoS.debugMode)
 			{
 				Log.Warning("===Base DodgeAngle:" + dodgeAngle.ToString("F2"));
-				Log.Warning("From TWR:" + ThisMapComp.SlowestThrustRatio());
+				Log.Warning("From TWR:" + ThisMapComp.SlowestThrustRatio(out var blockingShip2, out var slowestShip2));
 				Log.Warning("For map:" + thisMap.Parent?.Label ?? "(no parent)");
 			}
 			// There can be orphan projectiles on the way after battle ends
 			if (SourceMapComp.IsValid)
 			{
-				dodgeAngle *= Mathf.Clamp(DodgePenaltyMultiplier.Evaluate(SourceMapComp.SlowestThrustRatio()), 1f, 10f);
+				dodgeAngle *= Mathf.Clamp(DodgePenaltyMultiplier.Evaluate(SourceMapComp.SlowestThrustRatio(out var blockingShip3, out var slowestShip3)), 1f, 10f);
 			}
 			// Dodge angle reduced for short-ranged weapons
 			dodgeAngle *= DodgeMultiplierFromWeaponRange.Evaluate(proj.turret.heatComp.Props.maxRange);
