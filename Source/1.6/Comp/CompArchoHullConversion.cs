@@ -88,10 +88,15 @@ namespace SaveOurShip2
 				if (ShipInteriorMod2.archoConversions.ContainsKey(t.def))
 				{
 					toDestroy.Add(t);
-					Thing replacement = ThingMaker.MakeThing(ShipInteriorMod2.archoConversions[t.def]);
+					ThingDef newDef = ShipInteriorMod2.archoConversions[t.def];
+					Thing replacement = ThingMaker.MakeThing(newDef);
 					replacement.Rotation = t.Rotation;
 					replacement.Position = t.Position;
 					replacement.SetFaction(Faction.OfPlayer);
+					if (t.Stuff != null && newDef.MadeFromStuff)
+					{
+						replacement.SetStuffDirect(t.Stuff);
+					}
 					/*var attachComp = t.TryGetComp<CompAttachBase>();
 					if (attachComp != null)
 					{
