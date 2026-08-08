@@ -89,14 +89,15 @@ namespace SaveOurShip2
 				{
 					toDestroy.Add(t);
 					ThingDef newDef = ShipInteriorMod2.archoConversions[t.def];
-					Thing replacement = ThingMaker.MakeThing(newDef);
+					ThingDef stuff = null;
+					if (t.Stuff != null && newDef.MadeFromStuff)
+					{
+						stuff = t.Stuff;
+					}
+					Thing replacement = ThingMaker.MakeThing(newDef, stuff);
 					replacement.Rotation = t.Rotation;
 					replacement.Position = t.Position;
 					replacement.SetFaction(Faction.OfPlayer);
-					if (t.Stuff != null && newDef.MadeFromStuff)
-					{
-						replacement.SetStuffDirect(t.Stuff);
-					}
 					/*var attachComp = t.TryGetComp<CompAttachBase>();
 					if (attachComp != null)
 					{
