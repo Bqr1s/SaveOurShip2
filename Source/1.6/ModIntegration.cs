@@ -6,6 +6,8 @@ namespace SaveOurShip2
 {
 	public class ModIntegration
 	{
+		// This just properly checks for single active mod. Which includes both unchanged mod name
+		// and name with steam suffix.
 		public static bool HasActiveModWithIdentifierAndOptionalSuffix(string modID)
 		{
 			string suffixedModID = modID + "_steam";
@@ -33,6 +35,12 @@ namespace SaveOurShip2
 		// Because of Odyssey changes, need to place world objects further from each other,
 		// as zoomin in in orbit normally results in hiding orbit, switching to syrface layer.
 		public const float NewOdyOffsetScale = 2.5f;
+
+		public static bool IsSOS2ContentPack(ModContentPack pack)
+		{
+			ModContentPack sos2ContentPack = LoadedModManager.GetMod<ShipInteriorMod2>().Content;
+			return sos2ContentPack == pack;
+		}
 	}
 }
 

@@ -325,16 +325,13 @@ namespace SaveOurShip2
 		{
 			Log.Message("SOS2 " + SOS2version + " active");
 
-			string[] disallowedPlants = new string[]{
-				// Elder ocular tree from Vanilla Psycasts Expanded
-				"AA_ElderAlienTree",
-				// RA_MetalBean is from Ratkin Anomaly+, causes real bad effects and was requested to not spawn randomly.
-				"RA_MetalBean",
-				// Archean tree converts soil, so not suitable for placing on ship.
-				"Plant_TreeArchean"
-			};
-
-			randomPlants = DefDatabase<ThingDef>.AllDefs.Where(t => t.plant != null && !t.defName.Contains("Anima") && !disallowedPlants.Contains(t.defName)).ToList();
+			// Only allow vanilla and SOS 2 plants, as they are enough to make ship grdens look wild.
+			// Plants fom mods caused errors.
+			
+			randomPlants = DefDatabase<ThingDef>.AllDefs.Where(t => t.plant != null &&
+				(ModIntegration.IsSOS2ContentPack(t.modContentPack) || t.modContentPack.IsOfficialMod) &&
+				!t.defName.Contains("Anima") && // Anima tree is disallowed
+				!t.plant.diesToLight).ToList(); // Darkness plants like cave mushrooms aren't supposed to grow in lit ship gardens
 
 			foreach (ShipDef ship in DefDatabase<ShipDef>.AllDefs.Where(d => d.saveSysVer < 2 && !d.neverRandom).ToList())
 			{
