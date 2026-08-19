@@ -984,7 +984,7 @@
 			<li>
 				<key>TurretLaserA</key>
 				<label>Laser Turret (hardpoint A)</label>
-				<description>Install a laser turret atop the first hardpoint. A shuttle equipped with laser weaponry can fly interception and strafing missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
+				<description>Install a laser turret atop the first hardpoint. A shuttle equipped with laser weaponry can fly interception (attack incoming torpedoes and enemy shuttles) and strafing (attack enemy ship) missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/TurretLaser</icon>
 				<work>12000</work>
 				<gridCoordinate>(1,16)</gridCoordinate>
@@ -1030,7 +1030,7 @@
 			<li>
 				<key>TurretPlasmaA</key>
 				<label>Plasma Turret (hardpoint A)</label>
-				<description>Install a plasma turret atop the first hardpoint. A shuttle equipped with plasma weaponry can fly strafing missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
+				<description>Install a plasma turret atop the first hardpoint. A shuttle equipped with plasma weaponry can fly strafing (attack enemy ship) missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/TurretPlasma</icon>
 				<work>12000</work>
 				<gridCoordinate>(4,16)</gridCoordinate>
@@ -1120,7 +1120,7 @@
 			<li>
 				<key>TurretLaserB</key>
 				<label>Laser Turret (hardpoint B)</label>
-				<description>Install a laser turret atop the second hardpoint. A shuttle equipped with laser weaponry can fly interception and strafing missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
+				<description>Install a laser turret atop the first hardpoint. A shuttle equipped with laser weaponry can fly interception (attack incoming torpedoes and enemy shuttles) and strafing (attack enemy ship) missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/TurretLaser</icon>
 				<work>12000</work>
 				<gridCoordinate>(1,19)</gridCoordinate>
@@ -1166,7 +1166,7 @@
 			<li>
 				<key>TurretPlasmaB</key>
 				<label>Plasma Turret (hardpoint B)</label>
-				<description>Install a plasma turret atop the second hardpoint. A shuttle equipped with plasma weaponry can fly strafing missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
+				<description>Install a plasma turret atop the first hardpoint. A shuttle equipped with plasma weaponry can fly strafing (attack enemy ship) missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/TurretPlasma</icon>
 				<work>12000</work>
 				<gridCoordinate>(4,19)</gridCoordinate>
@@ -1256,7 +1256,7 @@
 			<li>
 				<key>TurretLaserC</key>
 				<label>Laser Turret (hardpoint C)</label>
-				<description>Install a laser turret atop the third hardpoint. A shuttle equipped with laser weaponry can fly interception and strafing missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
+				<description>Install a laser turret atop the first hardpoint. A shuttle equipped with laser weaponry can fly interception (attack incoming torpedoes and enemy shuttles) and strafing (attack enemy ship) missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/TurretLaser</icon>
 				<work>12000</work>
 				<gridCoordinate>(1,22)</gridCoordinate>
@@ -1302,7 +1302,7 @@
 			<li>
 				<key>TurretPlasmaC</key>
 				<label>Plasma Turret (hardpoint C)</label>
-				<description>Install a plasma turret atop the third hardpoint. A shuttle equipped with plasma weaponry can fly strafing missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
+				<description>Install a plasma turret atop the first hardpoint. A shuttle equipped with plasma weaponry can fly strafing (attack enemy ship) missions in combat.\n&lt;color=#bb8f04&gt;-200 cargo capacity&lt;/color&gt;</description>
 				<icon>UI/ShuttleUpgrades/TurretPlasma</icon>
 				<work>12000</work>
 				<gridCoordinate>(4,22)</gridCoordinate>
