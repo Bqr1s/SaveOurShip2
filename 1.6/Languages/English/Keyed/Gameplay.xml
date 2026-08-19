@@ -437,7 +437,7 @@
 	<SoS.ShuttleMissionBomb>Torpedo enemy ship</SoS.ShuttleMissionBomb>
 	<SoS.ShuttleMissionBombDesc>Send this shuttle to fire torpedoes from close range. It will be extremely vulnerable to point-defense weaponry, but its torpedoes will not be. If the enemy has active engines, the shuttle will take longer to arrive.\n\nIt will continue its mission until it runs low on fuel runs out of torpedoes, is sufficiently damaged, or you recall it manually.\n\nWhen issuing this command,   target selection at the enemy ship map will be activated. All active shuttles will attack the same target.</SoS.ShuttleMissionBombDesc>
 	<SoS.RecallShuttle>{0} (mission: {1})</SoS.RecallShuttle>
-	<SoS.RecallShuttleDesc>Change this shuttle's mission.</SoS.RecallShuttleDesc>
+	<SoS.RecallShuttleDesc>Change this shuttle's mission.\nIntercept: a shuttle will intercept incoming torpedoes and enemy shuttlecraft.\nStrafe: a shuttle equipped with laser or plasma weaponry can be ordered to attack enemy ship. Such shuttle will be vulnerable to enemy point defense weapons.\nBomb: a shuttle equipped with torpedo turrets can be ordered to attack enemy ship with them. Shuttle itself will be vulnerable to enemy point defense weapons, but torpedoes launched from shuttle couldn't be intercepted.</SoS.RecallShuttleDesc>
 	<SoS.RetreatAtHealth>Retreat at shuttle health</SoS.RetreatAtHealth>
 	<SoS.RetreatAtHealthDesc>This shuttle will automatically retreat when its health drops below this percentage.</SoS.RetreatAtHealthDesc>
 	<SoS.CancelBoarding>Cancel boarding action? Your shuttle will return to your ship.</SoS.CancelBoarding>
