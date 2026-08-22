@@ -98,6 +98,10 @@ namespace SaveOurShip2
 			{
 				return;
 			}
+			if (!ModSettings_SoS.enableCollisions)
+			{
+				return;
+			}
 			if (Find.TickManager.TicksGame - lastCollisionTick < collisionTickInterval)
 			{
 				return;
