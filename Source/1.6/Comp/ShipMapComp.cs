@@ -1320,7 +1320,7 @@ namespace SaveOurShip2
 				{
 					newMapComp.ShipMapAI = ShipAI.avoidant;
 				}
-				else if (ShipCollisionManager.PirateFactionWantsRamming(faction))
+				else if (ModSettings_SoS.enableCollisions && ShipCollisionManager.PirateFactionWantsRamming(faction))
 				{
 					newMapComp.ShipMapAI = ShipAI.ramming;
 				}
