@@ -153,17 +153,37 @@ namespace SaveOurShip2
 			return TogglePsychicAmplifierQuest.DaysFromLastAmplifier() > daysToFindAmplifier;
 		}
 
+		// RangeInclusive from mint o max, but weight of premade site (roll 3) will be adjusted
+		protected int GetAdjustedScanRoll(int min, int max)
+		{
+			if (min > 3 || max < 3)
+			{
+				return Rand.RangeInclusive(min, max);
+			}
+			int optionsCount = max - min + 1;
+			List<int> results = Enumerable.Range(min, optionsCount).ToList();
+
+			float setWeight = ScanFindingChancesDef.GetPremadeSiteWeight();
+			// Cap the weight based on other options having weight 1
+			int otherWeightsSum = optionsCount - 1;
+			// Single resut having 2x chance of all other results is 66.7% chance,
+			float maxWeiht = 2 * otherWeightsSum;
+			float minWeiht = otherWeightsSum / 20f;
+			setWeight = Mathf.Clamp(setWeight, minWeiht, maxWeiht);
+
+			return results.RandomElementByWeight(x => x == 3 ? setWeight : 1);
+		}
 		protected void FoundMinerals(Pawn worker)
 		{
 			this.daysWorkingSinceLastMinerals = 0f;
 
 			int chance;
 			if (scanSites && !scanShips)
-				chance = Rand.RangeInclusive(1, 6);
+				chance = GetAdjustedScanRoll(1, 6);
 			else if (!scanSites && scanShips)
-				chance = Rand.RangeInclusive(3, 15);
+				chance = GetAdjustedScanRoll(3, 15);
 			else
-				chance = Rand.RangeInclusive(1, 15);
+				chance = GetAdjustedScanRoll(1, 15);
 
 			// Standard way of finding amplifier via Psychic Soothe/Droner event cold just not work for some modded players for various reasons.
 			// Therefore, a reliable alternative way of finding amplifier is implemented here.
