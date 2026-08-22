@@ -127,6 +127,7 @@
     <Compile Include="Comp\CompShuttleAutoDoc.cs" />
     <Compile Include="Def\DodgeChanceSubmodScaleDef.cs" />
     <Compile Include="Def\GlobalUnlockDef.cs" />
+    <Compile Include="Def\ScanFindingChancesDef.cs" />
     <Compile Include="Designator_RestoreHull.cs" />
     <Compile Include="Dialog\DialogOptionGetter_StashedShip.cs" />
     <Compile Include="GenAdjExtension.cs" />
