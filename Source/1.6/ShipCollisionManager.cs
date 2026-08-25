@@ -121,8 +121,8 @@ namespace SaveOurShip2
 			OriginMapComp.Range = warningRange;
 
 			ShipMapComp targetMapComp = OriginMapComp.TargetMapComp;
-			SpaceShipCache playerShip = getCollidingShipOnMap(OriginMapComp);
-			SpaceShipCache enemyShip = getCollidingShipOnMap(targetMapComp);
+			SpaceShipCache playerShip = GetCollidingShipOnMap(OriginMapComp);
+			SpaceShipCache enemyShip = GetCollidingShipOnMap(targetMapComp);
 
 			// Extremeny unlikely to happen
 			if (playerShip == null || enemyShip == null)
@@ -263,7 +263,7 @@ namespace SaveOurShip2
 				}
 			}
 		}
-		private SpaceShipCache getCollidingShipOnMap(ShipMapComp mapComp)
+		public static SpaceShipCache GetCollidingShipOnMap(ShipMapComp mapComp)
 		{
 			IEnumerable<SpaceShipCache> ships = mapComp.ShipsOnMap.Values.Where(s => !s.IsWreck);
 			SpaceShipCache ship = ships.MaxBy(s => s.MassActual);
