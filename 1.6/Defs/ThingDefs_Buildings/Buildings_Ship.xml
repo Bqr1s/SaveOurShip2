@@ -2605,7 +2605,7 @@
 			<MaxHitPoints>1000</MaxHitPoints>
 			<Flammability>0</Flammability>
 		</statBases>
-		<description>Generates a field which masks heat emissions, hiding your ship from passive scans. This prevents random ship battles from starting, but is not helpful once combat has already begun. It also cannot protect you from the powerful scanners used to find ships with high Notoriety.\n\nWhile the device is active, your ship's heat sinks will be disabled and heat capacity will decrease.</description>
+		<description>Generates a field which masks heat emissions, hiding your ship from passive scans. This prevents random ship battles from starting, but is not helpful once combat has already begun. It also cannot protect you from the powerful scanners used to find ships with high Notoriety.\n\nWhile the device is active, your ship's heat sinks will be disabled and heat capacity will decrease.\n\nCloaking device works for entire map, so only one is needed to cover the entire fleet. But all heatsinks on the map will be inactive while cloaking device is enabled as well.</description>
 		<designationCategory>Ship</designationCategory>
 		<comps>
 			<li Class="CompProperties_Power">
