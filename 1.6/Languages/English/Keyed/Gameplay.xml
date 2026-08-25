@@ -506,7 +506,11 @@
 	<SoS.Alert.TWRDesc>Final thrust to weight ratios (TWRs) for player and enemy maps in ship battle. When there are multiple ships on one map, this is equal to TWR of the slowest ship.
 Slowest player ship: {0}, click to jump to it.
 Slowest enemy ship: {1}.
-	</SoS.Alert.TWRDesc>	
+	</SoS.Alert.TWRDesc>
+
+	<!-- Enemy ramming alert -->
+	<SoS.Alert.EnemyRamming>Enemy is attempting to ram</SoS.Alert.TWR>	
+	<SoS.Alert.EnemyRammingDesc>Enemy ship/fleet is attempting to ram. They will advance in order to reduce distance to zero and ipmact player ship. If player ship is faster, that obviously can be avoided, but may cost some fuel, as anemy won't care about fuel spent at all if they've decided to ram.</SoS.Alert.EnemyRammingDesc>
 	
 	<!-- This scetion and lower were added during major translation upgrade -->
 	<!-- Archotech and endgame stuff -->

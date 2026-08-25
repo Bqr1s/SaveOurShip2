@@ -98,6 +98,7 @@
   <ItemGroup>
     <Compile Include="AccuracyCalculator.cs" />
     <Compile Include="AISettings.cs" />
+    <Compile Include="Alert\AlertRamming.cs" />
     <Compile Include="Alert\AlertTWR.cs" />
     <Compile Include="AssetPreprocessor.cs" />
     <Compile Include="BlastLanding.cs" />
