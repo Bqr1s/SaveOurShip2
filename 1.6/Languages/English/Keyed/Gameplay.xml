@@ -509,7 +509,7 @@ Slowest enemy ship: {1}.
 	</SoS.Alert.TWRDesc>
 
 	<!-- Enemy ramming alert -->
-	<SoS.Alert.EnemyRamming>Enemy is attempting to ram</SoS.Alert.TWR>	
+	<SoS.Alert.EnemyRamming>Enemy is attempting to ram</SoS.Alert.EnemyRamming>	
 	<SoS.Alert.EnemyRammingDesc>Enemy ship/fleet is attempting to ram. They will advance in order to reduce distance to zero and ipmact player ship. If player ship is faster, that obviously can be avoided, but may cost some fuel, as anemy won't care about fuel spent at all if they've decided to ram.</SoS.Alert.EnemyRammingDesc>
 	
 	<!-- This scetion and lower were added during major translation upgrade -->
