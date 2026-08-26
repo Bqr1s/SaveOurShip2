@@ -5732,7 +5732,22 @@ namespace SaveOurShip2
 			___blockedByRoof = false;
 			foreach (IntVec3 c in ___rect)
 			{
-				if (c.Roofed(___map) && ___map.roofGrid.RoofAt(c) == ResourceBank.RoofDefOf.RoofShip)
+				bool allowPassingThroughRoof = c.Roofed(___map) && ___map.roofGrid.RoofAt(c) == ResourceBank.RoofDefOf.RoofShip;
+				// Ship can also be covered by constructed roof. But that type of roof only allowed to pass through if there is a
+				// bay beneath, not just anywhere. To handle modded games, any roofs instead of thick rock (just in case) over ship
+				// bay are allowed to be passed.
+				// Checking just bay area and not checking bay working area results in 5x3 shuttle being able to land on salvage
+				// bay too, this is intended. As imperial shuttle has too few "direct controls", that results in strict/rough
+				// landing restrictions leaving players confused.
+				if (!allowPassingThroughRoof && c.Roofed(___map) && ___map.roofGrid.RoofAt(c) != RoofDefOf.RoofRockThick)
+				{
+					ThingWithComps shipBay = c.GetFirstThingWithComp<CompShipBay>(___map);
+					if (shipBay != null)
+					{
+						allowPassingThroughRoof = true;
+					}
+				}
+				if (allowPassingThroughRoof)
 				{
 					List<Thing> thingList = c.GetThingList(___map);
 					for (int i = 0; i < thingList.Count; i++)
