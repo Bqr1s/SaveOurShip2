@@ -708,7 +708,7 @@ Are you sure you want to proceed?</SoS.Sensor.ConfimObserve>
 Medium-range weapons dodge chance: {1}
 Short-range weapons dodge chance: {2}
 
-Long-range weapons are railguns, plasma has medum range, lasers and cannons have short range.
+Long-range weapons are railguns, plasma has medium range, lasers and cannons have short range.
 Dodge chance is based on target ship Thrust To Weight ratio, so only fast ships dodge very well. Pilot Intellectual skill increases dodge chance. Tactician with high shooting skill on attacking ship decreases enemy dodge chance.
 For Thrust to weight ratio, slowest ship on the map is taken into account.
 Successful dodge means miss by a lot, projectile doesn't even enter target map.</SoS.DodgeChanceExplanation>
