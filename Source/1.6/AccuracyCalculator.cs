@@ -358,8 +358,9 @@ namespace SaveOurShip2
 				}
 				gravEngineCount = Mathf.Min(gravEngineCount, maxGravEngines);
 				subpersonaCount = Mathf.Min(subpersonaCount, maxSubpersonas);
-				const float gravEngineMonus = 0.055f;
-				const float subpersonaBonus = 0.01f;
+				const float gravEngineMonus = 0.075f;
+				// This is percent bonus, so currently it will change dodge chance from 33% to 34%, for example, for one core with 3% value here.
+				const float subpersonaBonus = 0.03f;
 
 				float result = 1f + gravEngineCount * gravEngineMonus + subpersonaCount * subpersonaBonus;
 				thisMapEvasionScaleFromBuildings = result;
