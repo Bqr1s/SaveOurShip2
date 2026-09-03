@@ -42,7 +42,7 @@
 	<ThingDef ParentName="ResourceBase">
 		<defName>SoSEntanglementManifold</defName>
 		<label>entanglement manifold</label>
-		<description>A small ultratech device which entangles itself with matter inside distant stars, essential to the function of the Johnson-Tanaka drive. It cannot be duplicated without glitterworld infrastructure.</description>
+		<description>A small ultratech device which entangles itself with matter inside distant stars, essential to the function of the Johnson-Tanaka drive. It cannot be duplicated without glitterworld infrastructure.\n\nEntanglement manifold can be obtained from quest that begins with finding Starship Bow. One of the ways to find it is just scan for a long time with ship's science consoles and/or large scanners while in space. Can be found in both scan for sites and scan for ships modes. After quest completion, not just one manifold obtained, but enemy ships (and very rarely derelicts too) will spawn with Johnson-Tanaka drives, that way more entanglement manifolds can be obtained.\nBefore quest completion, Johnson-Tanaka drives are replaced by standard ship drives on spawning non-player ships.</description>
 		<graphicData>
 			<texPath>Things/Item/EntanglementManifold</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
