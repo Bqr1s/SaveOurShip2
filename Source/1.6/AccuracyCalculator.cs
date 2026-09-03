@@ -342,7 +342,12 @@ namespace SaveOurShip2
 						}
 						if (building.def == ResourceBank.ThingDefOf.PilotSubpersonaCore)
 						{
-							subpersonaCount++;
+							// In case power trader is removed, it's best to consider subpersona core
+							// always working until cases where the contrary is true are figured out.
+							if (building.TryGetComp<CompPowerTrader>()?.PowerOn ?? true)
+							{
+								subpersonaCount++;
+							}
 						}
 						if (subpersonaCount >= maxSubpersonas && gravEngineCount >= maxGravEngines)
 						{
@@ -384,9 +389,10 @@ namespace SaveOurShip2
 							result = Mathf.Max(result, skill);
 						}
 					}
-					// AI core counst as intellectual 10
-					if (ship.AICores.Any())
+					// If no power comp (maybe Bioship core), it is assumed that core is always active.
+					if (ship.AICores.Any(c => c.TryGetComp<CompPowerTrader>()?.PowerOn ?? true))
 					{
+						// AI core counst as intellectual 10
 						result = Mathf.Max(result, 10);
 					}
 				}
