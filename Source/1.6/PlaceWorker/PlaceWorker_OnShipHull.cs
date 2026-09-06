@@ -8,6 +8,8 @@ namespace SaveOurShip2
 	{
 		public override AcceptanceReport AllowsPlacing(BuildableDef def, IntVec3 loc, Rot4 rot, Map map, Thing thingToIgnore = null, Thing thing = null)
 		{
+			//standalone-capable parts (e.g. small turrets) may be placed off ship hull, on any building-supporting terrain
+			bool canWorkStandalone = (def as ThingDef)?.GetCompProperties<CompProps_ShipHeat>()?.canWorkStandalone ?? false;
 			CellRect occupiedRect = GenAdj.OccupiedRect(loc, rot, def.Size);
 			foreach (IntVec3 vec in occupiedRect)
 			{
@@ -16,7 +18,7 @@ namespace SaveOurShip2
 				HasPlatingAndRestrictedBayFor(def, loc, map, out hasPlating, out hasRestrictedBay);
 				if (hasRestrictedBay)
 					return false;
-				if (!hasPlating)
+				if (!hasPlating && !canWorkStandalone)
 					return new AcceptanceReport(TranslatorFormattedStringExtensions.Translate("SoS.PlaceOnShipHull"));
 			}
 			return true;
