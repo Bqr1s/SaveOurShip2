@@ -6387,5 +6387,24 @@ namespace SaveOurShip2
 			}
 		}
 	}
-	
+
+    [HarmonyPatch(typeof(MainButtonWorker_ToggleWorld), nameof(MainButtonWorker_ToggleWorld.Activate))]
+    internal static class OrbitCameraFix
+    {
+        [HarmonyPostfix]
+        private static void Postfix()
+        {
+            if (Current.ProgramState != ProgramState.Playing || Find.World == null
+                || Find.World.renderer.wantedMode != WorldRenderMode.Planet || Current.Game.PlayerHomeMaps.Any(x => x.TileInfo.OnSurface))
+                return;
+            var ship = Find.CurrentMap?.Parent as WorldObjectOrbitingShip;
+            if (ship == null || !ship.Spawned) return;
+            Vector3 position = ship.DrawPos;
+            if (position == Vector3.zero) return;
+            // The world button and its hotkey share this toggle; center only in world view.
+            // Tile identifies the map/layer, while DrawPos follows the ship's orbit.
+            if (ship.Tile.Valid) PlanetLayer.Selected = ship.Tile.Layer;
+            Find.WorldCameraDriver.JumpTo(position);
+        }
+    }
 }
