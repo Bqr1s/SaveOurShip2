@@ -38,9 +38,11 @@
 	<ItemGroup>
 		<Reference Include="SmashTools, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
 			<HintPath>..\..\..\Vehicle-Framework\1.6\Assemblies\SmashTools.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="Vehicles">
 			<HintPath>..\..\..\Vehicle-Framework\1.6\Assemblies\Vehicles.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
