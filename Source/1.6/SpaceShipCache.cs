@@ -1442,7 +1442,9 @@ namespace SaveOurShip2
 			List<CompShipBay> bays = new List<CompShipBay>();
 			foreach (VehiclePawn vehicle in ShuttlesOnShip(Faction))
 			{
+#pragma warning disable CS0618
 				if (ShipInteriorMod2.IsShuttle(vehicle) && (vehicle.CompUpgradeTree == null || !ShipInteriorMod2.ShuttleIsArmed(vehicle)) && vehicle.GetNextAvailableHandler(HandlingType.Movement) != null)
+#pragma warning restore CS0618
 				{
 					if (ShipInteriorMod2.IsPod(vehicle) || !ModSettings_SoS.shipMapPhysics)
 						shuttles.Add(vehicle);

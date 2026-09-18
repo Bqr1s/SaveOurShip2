@@ -9,7 +9,7 @@ namespace SaveOurShip2
 {
 	class CompProps_ArchoHullConversion : CompProperties
 	{
-		public SimpleCurve radiusPerDayCurve;
+		public SimpleCurve radiusPerDayCurve = null;
 
 		public CompProps_ArchoHullConversion()
 		{

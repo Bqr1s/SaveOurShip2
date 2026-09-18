@@ -14,6 +14,12 @@ namespace SaveOurShip2
 		{
 			public IntVec3 offset;
 			public Rot4 rot;
+
+			public SpawnDescriptor(IntVec3 offset, Rot4 rot)
+			{
+				this.offset = offset;
+				this.rot = rot;
+			}
 		}
 
 		public override void Resolve(ResolveParams rp)

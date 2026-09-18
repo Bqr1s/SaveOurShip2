@@ -8,7 +8,7 @@ namespace SaveOurShip2
 {
 	class CompProps_Archolife : CompProperties
 	{
-		public float shield;
+		public float shield = 0f;
 		public bool purr = false;
 		public bool scintillate = false;
 
