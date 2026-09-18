@@ -228,6 +228,19 @@ namespace SaveOurShip2
 				}
 			}
 		}
+		public override void PostDrawExtraSelectionOverlays()
+		{
+			base.PostDrawExtraSelectionOverlays();
+			//exhaust-zone overlay only when Odyssey is loaded - mirrors Odyssey's gravship-thruster
+			//placement preview and is gated behind the DLC to avoid any "looks like ours" complaint
+			//from Ludeon. Without Odyssey, no overlay at all.
+			if (!ModsConfig.OdysseyActive)
+				return;
+			if (!Props.reactionless && ExhaustArea.Count > 0)
+			{
+				GenDraw.DrawFieldEdges(ExhaustArea.ToList(), Color.red);
+			}
+		}
 		public override void CompTick()
 		{
 			base.CompTick();
