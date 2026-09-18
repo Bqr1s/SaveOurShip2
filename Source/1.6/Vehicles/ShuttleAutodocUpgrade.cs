@@ -9,7 +9,7 @@ namespace SaveOurShip2.Vehicles
 {
     class ShuttleAutodocUpgrade : Upgrade
     {
-        public CompProps_ShuttleAutoDoc props;
+        public CompProps_ShuttleAutoDoc props = null;
 
         public override bool UnlockOnLoad => true;
 

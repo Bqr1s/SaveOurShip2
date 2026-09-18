@@ -28,7 +28,7 @@ namespace SaveOurShip2
 		public override string InspectStringAddon => TranslatorFormattedStringExtensions.Translate("SoS.MechanitesDisassembling") + " (" +
 			TranslatorFormattedStringExtensions.Translate("SoS.MechaniteSizeLower", (fireSize * 100f).ToString("F0")) + ")";
 
-		public void DoFireDamage(Thing targ)
+		public new void DoFireDamage(Thing targ)
 		{
 			int num = GenMath.RoundRandom(Mathf.Clamp(0.025f + 0.0072f * fireSize, 0.025f, 0.1f) * 1200f);
 			if (num < 1)

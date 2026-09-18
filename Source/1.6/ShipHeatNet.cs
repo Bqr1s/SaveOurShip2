@@ -71,7 +71,7 @@ namespace SaveOurShip2
 					}
 					turretCEinitialized = true;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					turretCEtype = null;
 					turretCEinitialized = true;

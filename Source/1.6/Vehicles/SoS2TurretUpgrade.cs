@@ -12,8 +12,8 @@ namespace SaveOurShip2.Vehicles
 {
     class SoS2TurretUpgrade : TurretUpgrade
     {
-        public int turretSlot; //Used to hide upgrade nodes on shuttles which don't have enough hardpoints
-        public bool useShuttleFuel;
+        public int turretSlot = 0; //Used to hide upgrade nodes on shuttles which don't have enough hardpoints
+        public bool useShuttleFuel = false;
 
         public override bool UnlockOnLoad => false;
 
