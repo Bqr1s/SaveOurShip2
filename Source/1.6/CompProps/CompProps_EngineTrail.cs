@@ -30,16 +30,12 @@ namespace SaveOurShip2
 			{
 				case Rot4.NorthInt:
 					return killOffsetNorthL;
-					break;
 				case Rot4.EastInt:
 					return killOffsetEastL;
-					break;
 				case Rot4.SouthInt:
 					return killOffsetSouthL;
-					break;
 				case Rot4.WestInt:
 					return killOffsetWestL;
-					break;
 				default:
 					return new IntVec2();
 			}

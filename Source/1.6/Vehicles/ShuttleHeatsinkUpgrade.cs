@@ -9,7 +9,7 @@ namespace SaveOurShip2.Vehicles
 {
     class ShuttleHeatsinkUpgrade : Upgrade
     {
-        public CompProps_ShipHeat sink;
+        public CompProps_ShipHeat sink = null;
 
         public override bool UnlockOnLoad => true;
 

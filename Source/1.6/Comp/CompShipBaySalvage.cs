@@ -13,7 +13,7 @@ namespace SaveOurShip2
 {
 	public class CompShipBaySalvage : CompShipBay
 	{
-		private ShipMapComp mapComp;
+		private new ShipMapComp mapComp;
 		public int SalvageWeight => Props.weight;
 		public override void PostSpawnSetup(bool respawningAfterLoad)
 		{

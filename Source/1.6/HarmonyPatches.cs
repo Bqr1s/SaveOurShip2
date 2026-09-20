@@ -5284,11 +5284,11 @@ namespace SaveOurShip2
 			{
 				return true;
 			}
-			if (VehicleWorldObjectsHolder.Instance?.AerialVehicles == null)
+			if (Find.World.GetComponent<VehicleWorldObjectsHolder>()?.AerialVehicles == null)
 			{
 				return false;
 			}
-			foreach (AerialVehicleInFlight aerialVehicle in VehicleWorldObjectsHolder.Instance.AerialVehicles)
+			foreach (AerialVehicleInFlight aerialVehicle in Find.World.GetComponent<VehicleWorldObjectsHolder>().AerialVehicles)
 			{
 				if (aerialVehicle?.vehicle == null)
 				{

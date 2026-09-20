@@ -10,7 +10,7 @@ namespace SaveOurShip2
 {
 	class CompProps_PowerPlantSolarShip : CompProperties_Power
 	{
-		public float bonusPower;
+		public float bonusPower = 0f;
 
 		public CompProps_PowerPlantSolarShip()
 		{

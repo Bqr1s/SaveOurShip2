@@ -1220,14 +1220,12 @@ namespace SaveOurShip2
 			bool ideoActive = false;
 			if (ModsConfig.IdeologyActive && (fac != Faction.OfAncientsHostile || fac != Faction.OfAncients || fac != Faction.OfMechanoids))
 				ideoActive = true;
-			bool royActive = false;
 			bool isMechs = false; //for roy mech turret override
 			bool isDungeon = shipDef.defName == "StarshipBowDungeon";
 			HashSet<IntVec3> exclusionZones = new HashSet<IntVec3>();
 			int spawnedPawnCount = 0;
 			if (ModsConfig.RoyaltyActive)
 			{
-				royActive = true;
 				if (fac == Faction.OfMechanoids)
 					isMechs = true;
 			}
@@ -2368,7 +2366,9 @@ namespace SaveOurShip2
 				return false;
 			//if (Find.WorldGrid.ApproxDistanceInTiles(tile, root) >= min && Find.WorldGrid.ApproxDistanceInTiles(tile, root) <= max)
 				return true;
+/*
 			return false;
+*/
 		}
 		public static bool CanShipLandOnMap(Map sourceMap, Map targetMap)
 		{
@@ -3911,24 +3911,11 @@ namespace SaveOurShip2
 					else //fighter
 					{
 						Log.Message("Speccing shuttle as heavy fighter");
-						if (!ModIntegration.IsCEEnabled())
-						{
-							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaA"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 2)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaB"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 3)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaC"));
-						}
-						else
-						{
-							// Temporary fix, don't give plasma weapons to shuttles in CE.
-							Log.Message("Speccing shuttle as interceptor");
-							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretLaserA"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 2)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretLaserB"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 3)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretLaserC"));
-						}
+						vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaA"));
+						if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 2)
+							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaB"));
+						if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 3)
+							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaC"));
 					}
 				}
 				else //transport
