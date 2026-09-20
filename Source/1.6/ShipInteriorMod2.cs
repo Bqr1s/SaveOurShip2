@@ -253,7 +253,12 @@ namespace SaveOurShip2
 			options.Label("SoS.Settings.ShowVersionUI".Translate(SOS2version));
 
 			options.Gap();
-			options.CheckboxLabeled("SoS.Settings.RenderPlanet".Translate(), ref renderPlanet, "SoS.Settings.RenderPlanet.Desc".Translate());
+			// Odyssey planet rendering wasn't reported as a performance issue.
+			// so when Odyssey is active, it's rendering is used unconditionally, no option to change.
+			if (!ModsConfig.OdysseyActive)
+			{
+				options.CheckboxLabeled("SoS.Settings.RenderPlanet".Translate(), ref renderPlanet, "SoS.Settings.RenderPlanet.Desc".Translate());
+			}
 			options.Label("SoS.Settings.UI".Translate());
 			options.CheckboxLabeled("SoS.Settings.UseSplashScreen".Translate(), ref useSplashScreen, "SoS.Settings.UseSplashScreen.Desc".Translate());
 			options.CheckboxLabeled("SoS.Settings.PersistShipUI".Translate(), ref persistShipUI, "SoS.Settings.PersistShipUI.Desc".Translate());
