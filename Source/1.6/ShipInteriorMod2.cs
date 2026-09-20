@@ -335,6 +335,7 @@ namespace SaveOurShip2
 			
 			randomPlants = DefDatabase<ThingDef>.AllDefs.Where(t => t.plant != null &&
 				(ModIntegration.IsSOS2ContentPack(t.modContentPack) || t.modContentPack.IsOfficialMod) &&
+				t != ThingDefOf.Plant_TreeArchean &&
 				!t.defName.Contains("Anima") && // Anima tree is disallowed
 				!t.plant.diesToLight).ToList(); // Darkness plants like cave mushrooms aren't supposed to grow in lit ship gardens
 
