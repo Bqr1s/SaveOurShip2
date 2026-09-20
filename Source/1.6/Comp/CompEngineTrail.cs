@@ -159,6 +159,90 @@ namespace SaveOurShip2
 				sustainer.End();
 			}*/
 		}
+		public static HashSet<IntVec3> GetExhaustArea(IntVec3 position, Rot4 rot, ThingDef def, Map map)
+		{
+			int narrowExhaustsize = 3;
+			HashSet<IntVec3> result = new HashSet<IntVec3>();
+
+			CellRect occupiedRect = GenAdj.OccupiedRect(position, rot, def.size);
+			CompProps_EngineTrail compProps = def.GetCompProperties<CompProps_EngineTrail>();
+			CellRect rectToKill = GenAdjExtension.GetDirectAdjacentRect(position.ToIntVec2, rot.Rotated(RotationDirection.Opposite).rotInt, occupiedRect,
+				compProps.killZoneWidth, compProps.killZoneLength, compProps.killZoneExtraOffset);
+
+			CellRect smallerRect;
+			int parentLength = def.size.x;
+			if (rot.IsHorizontal)
+			{
+				smallerRect = rectToKill.ContractedBy(0, 1);
+			}
+			else
+			{
+				smallerRect = rectToKill.ContractedBy(1, 0);
+			}
+
+			foreach (IntVec3 v in rectToKill.Where(v => v.InBounds(map)))
+			{
+				IntVec3 distanceVec = v - position;
+				// distance from engine edge to the tile in the supposed exhaust area.
+				int distance = rot.IsHorizontal ? Mathf.Abs(distanceVec.x) - parentLength / 2 : Mathf.Abs(distanceVec.z) - parentLength / 2;
+				int distanceOtrogonal = rot.IsHorizontal ? Mathf.Abs(distanceVec.z) : Mathf.Abs(distanceVec.x);
+				// Fix distance for engines with even width
+				if (def.size.x % 2 == 0)
+				{
+					if (rot == Rot4.East)
+					{
+						if(distanceVec.z > 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+					if (rot == Rot4.West)
+					{
+						if (distanceVec.z < 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+					if (rot == Rot4.North)
+					{
+						if (distanceVec.x < 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+					if (rot == Rot4.South)
+					{
+						if (distanceVec.x > 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+				}
+				// At closest distance, exhaust is not allowed to be wider than engine.
+				if (distance <= narrowExhaustsize)
+				{
+					if (distanceOtrogonal <= def.size.z / 2)
+					{
+						result.Add(v);
+					}
+				}
+				// Further from engine, exhaust can be 2 tiles (1 tile in each direction) wider than engine.
+				else if (distance <= narrowExhaustsize * 2)
+				{
+					if (distanceOtrogonal <= def.size.z / 2 + 1)
+					{
+						result.Add(v);
+					}
+				}
+				else
+				{
+					result.Add(v);
+				}
+			}
+
+			return result;
+
+		}
 		public override void PostSpawnSetup(bool respawningAfterLoad)
 		{
 			base.PostSpawnSetup(respawningAfterLoad);
@@ -172,10 +256,8 @@ namespace SaveOurShip2
 			ExhaustArea.Clear();
 			CellRect rectToKill = GenAdjExtension.GetDirectAdjacentRect(parent.Position.ToIntVec2, parent.Rotation.Rotated(RotationDirection.Opposite).rotInt, parent.OccupiedRect(),
 				Props.killZoneWidth, Props.killZoneLength, Props.killZoneExtraOffset);
-			foreach (IntVec3 v in rectToKill.Where(v => v.InBounds(parent.Map)))
-			{
-				ExhaustArea.Add(v);
-			}
+
+			ExhaustArea = GetExhaustArea(parent.Position, parent.Rotation, parent.def, parent.Map);
 		}
 		public override void PostDeSpawn(Map map, DestroyMode mode = DestroyMode.Vanish)
 		{
@@ -183,7 +265,6 @@ namespace SaveOurShip2
 			if (mapComp.ShipsOnMap.Values.Any(s => !s.IsWreck && s.Engines.Any()))
 				mapComp.EngineRot = -1;
 			Off();
-			//sustainer = null;
 			base.PostDeSpawn(map, mode);
 		}
 		public override void PostDraw()
@@ -272,7 +353,10 @@ namespace SaveOurShip2
 				}
 				foreach (Thing t in toBurn)
 				{
-					t.TakeDamage(new DamageInfo(DamageDefOf.Bomb, 100));
+					if (!t.Destroyed)
+					{
+						t.TakeDamage(new DamageInfo(DamageDefOf.Bomb, 100));
+					}
 				}
 			}
 		}
