@@ -144,7 +144,7 @@ namespace SaveOurShip2
 					|| (tier == 2 && def.building.shipPart && comp != null && !comp.Plating)
 					|| (tier == 3 && !def.building.shipPart))
 				{
-					if (GenConstruct.CanPlaceBlueprintAt(def, v, shape.rot, map))
+					if (!AlreadyHasBuilding(def, v, map) && GenConstruct.CanPlaceBlueprintAt(def, v, shape.rot, map))
 					{
 						ThingDef stuff = GenStuff.DefaultStuffFor(def);
 						if (def.MadeFromStuff)
@@ -160,9 +160,24 @@ namespace SaveOurShip2
 			{
 				ThingDef def = ThingDef.Named(shipDef.core.shapeOrDef);
 				IntVec3 v = new IntVec3(pos.x + shipDef.core.x + 1, 0, pos.z + shipDef.core.z + 1);
-				if (GenConstruct.CanPlaceBlueprintAt(def, v, shipDef.core.rot, map))
+				if (!AlreadyHasBuilding(def, v, map) && GenConstruct.CanPlaceBlueprintAt(def, v, shipDef.core.rot, map))
 					GenConstruct.PlaceBlueprintForBuild(def, v, map, shipDef.core.rot, Faction.OfPlayer, null);
 			}
+		}
+
+		//Replace Stuff makes GenConstruct.CanPlaceBlueprintAt permit a blueprint over an identical
+		//existing building (for material swaps), so the ship blueprint can no longer rely on it to
+		//skip already-built parts - check for the built thing explicitly.
+		static bool AlreadyHasBuilding(ThingDef def, IntVec3 v, Map map)
+		{
+			if (!v.InBounds(map))
+				return false;
+			foreach (Thing t in v.GetThingList(map))
+			{
+				if (t.def == def)
+					return true;
+			}
+			return false;
 		}
 	}
 }

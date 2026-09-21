@@ -48,17 +48,33 @@ namespace SaveOurShip2
 				return heatComp != null && heatComp.myNet != null && (heatComp.myNet.PilCons.Any() || heatComp.myNet.AICores.Any() || heatComp.myNet.TacCons.Any());
 			}
 		}
-		public bool Active //needs power, heat and bridge on net
+		//turret is wired into a working ship heat network with a bridge on it
+		public bool OnHeatNet
+		{
+			get
+			{
+				return heatComp != null && heatComp.myNet != null && !heatComp.myNet.venting && ConnectedToBridge;
+			}
+		}
+		//small turrets (canWorkStandalone) can fire without a ship heat network, venting fire heat into the room instead (see BeginBurst)
+		public bool Standalone
+		{
+			get
+			{
+				return PlayerControlled && heatComp != null && heatComp.Props.canWorkStandalone && GroundDefenseMode && !OnHeatNet;
+			}
+		}
+		public bool Active //needs power; on a ship also needs heat network + bridge, otherwise may run standalone
 		{
 			get
 			{
 				//if (SpinalHasNoAmps) //td req recheck system when parts placed by player, AI skip
 				//	return false;
-				if (Spawned && heatComp != null && heatComp.myNet != null && !heatComp.myNet.venting && (powerComp == null || powerComp.PowerOn) && ConnectedToBridge)
-				{
-					return true;
-				}
-				return false;
+				if (!Spawned || heatComp == null)
+					return false;
+				if (powerComp != null && !powerComp.PowerOn)
+					return false;
+				return OnHeatNet || Standalone;
 			}
 		}
 
@@ -547,14 +563,21 @@ namespace SaveOurShip2
 				ResetCurrentTarget();
 				return;
 			}
-			//if we do not have enough heatcap, vent heat to room/fail to fire in vacuum
+			//if we do not have enough heatcap: standalone turrets vent fire heat into the room, others fail to fire
 			if (heatComp.Props.heatPerPulse > 0 && !heatComp.AddHeatToNetwork(HeatToFire))
 			{
-				if (!PointDefenseMode && PlayerControlled)
-					Messages.Message(TranslatorFormattedStringExtensions.Translate("SoS.CannotFireDueToHeat", Label), this, MessageTypeDefOf.SilentInput);
-				shipTarget = LocalTargetInfo.Invalid;
-				ResetCurrentTarget();
-				return;
+				if (Standalone)
+				{
+					GenTemperature.PushHeat(this, HeatToFire);
+				}
+				else
+				{
+					if (!PointDefenseMode && PlayerControlled)
+						Messages.Message(TranslatorFormattedStringExtensions.Translate("SoS.CannotFireDueToHeat", Label), this, MessageTypeDefOf.SilentInput);
+					shipTarget = LocalTargetInfo.Invalid;
+					ResetCurrentTarget();
+					return;
+				}
 			}
 			//ammo
 			if (fuelComp != null)
@@ -723,7 +746,7 @@ namespace SaveOurShip2
 		{
 			StringBuilder stringBuilder = new StringBuilder();
 			// That is the most important line, if can't fire, all energy costs etc don't matter
-			if (!ConnectedToBridge)
+			if (!ConnectedToBridge && !Standalone)
 			{
 				stringBuilder.AppendLine(TranslatorFormattedStringExtensions.Translate("SoS.TurretNotConnected"));
 			}
@@ -1009,48 +1032,6 @@ namespace SaveOurShip2
 					isActive = (() => useOptimalRange)
 				};
 				yield return command_Toggle;
-			}
-			foreach(Gizmo g in GetWeaponGroupGizmos())
-			{
-				yield return g;
-			}
-
-		}
-
-		private IEnumerable<Gizmo> GetWeaponGroupGizmos()
-		{
-			if (!Spawned || Map != ShipInteriorMod2.FindPlayerShipMap())
-			{
-				yield break;
-			}
-			List<Gizmo> weaponGroupGizmos = new List<Gizmo>();
-			try
-			{
-				if (ShipInteriorMod2.WorldComp.WeaponGroups.Enabled)
-				{
-					for (int i = 0; i < ShipInteriorMod2.WorldComp.WeaponGroups.CountToDisplay; i++)
-					{
-						int index_captured = i;
-						Command_Toggle toggleIncludeInWeaponGroup = new Command_Toggle();
-						toggleIncludeInWeaponGroup.defaultLabel = "SoS.CommandIncludeInWeaponGroup".Translate(i + 1);
-						toggleIncludeInWeaponGroup.defaultDesc = "SoS.CommandIncludeInWeaponGroupDesc".Translate();
-						toggleIncludeInWeaponGroup.icon = ContentFinder<Texture2D>.Get("UI/WeaponGroup" + (i + 1).ToString());
-						toggleIncludeInWeaponGroup.isActive = () => ShipInteriorMod2.WorldComp.WeaponGroups[index_captured].Contains(this);
-						toggleIncludeInWeaponGroup.toggleAction = delegate
-						{
-							ShipInteriorMod2.WorldComp.WeaponGroups[index_captured].ToggleTurret(this);
-						};
-						weaponGroupGizmos.Add(toggleIncludeInWeaponGroup);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.ErrorOnce("Error creating tac con weapon group gizmos: " + ex.Message, 535271124);
-			}
-			foreach (Gizmo g in weaponGroupGizmos)
-			{
-				yield return g;
 			}
 		}
 
