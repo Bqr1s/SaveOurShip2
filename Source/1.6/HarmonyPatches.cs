@@ -23,7 +23,6 @@ using Vehicles.Rendering;
 using SaveOurShip2.Vehicles;
 using static Vehicles.LandingTargeter;
 using static SaveOurShip2.ShipMapComp;
-using RuntimeAudioClipLoader;
 
 namespace SaveOurShip2
 {
@@ -3927,7 +3926,7 @@ namespace SaveOurShip2
 		}
 	}
 
-	[HarmonyPatch(typeof(JobGiver_FightFiresNearPoint), "TryGiveJob")]
+	[HarmonyPatch("RimWorld.JobGiver_FightFiresNearPoint", "TryGiveJob")] // internal in RimWorld 1.7
 	public static class FixFireBugC
 	{
 		public static void Postfix(ref Job __result, Pawn pawn)
