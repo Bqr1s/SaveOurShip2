@@ -1127,7 +1127,7 @@ namespace SaveOurShip2
 		}
 	}
 
-	[HarmonyPatch(typeof(WeatherDecider), "StartNextWeather")]
+	/*[HarmonyPatch(typeof(WeatherDecider), "StartNextWeather")]
 	public static class SpaceWeatherStaysTwo
 	{
 		public static bool Prefix(WeatherManager __instance)
@@ -1138,7 +1138,7 @@ namespace SaveOurShip2
 			}
 			return true;
 		}
-	}
+	}*/
 
 	[HarmonyPatch(typeof(JoyUtility), "EnjoyableOutsideNow", new Type[] { typeof(Map), typeof(StringBuilder) })]
 	public static class NoNatureRunningInSpace
