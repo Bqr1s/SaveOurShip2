@@ -53,7 +53,23 @@ namespace SaveOurShip2
 			//Legacy methods. All of these could technically be merged
 			ShipInteriorMod2.DefsLoaded();
 			Harmony pat = new Harmony("ShipInteriorMod2");
-			pat.PatchAll();
+			// Same as PatchAll(), but one rejected patch (Harmony 3 validates patch IL and parameter
+			// types) no longer aborts every patch class after it.
+			foreach (Type patchType in AccessTools.GetTypesFromAssembly(typeof(Setup).Assembly))
+			{
+				// Harmony 3 runs Prepare/Cleanup hooks on any class handed to a class processor,
+				// so only pass classes that are actually annotated as patches.
+				if (!patchType.GetCustomAttributes(typeof(HarmonyAttribute), false).Any())
+					continue;
+				try
+				{
+					pat.CreateClassProcessor(patchType).Patch();
+				}
+				catch (Exception e)
+				{
+					Log.Error("SOS2: ".Colorize(Color.cyan) + "Failed to apply Harmony patch class " + patchType.FullName + ": " + e);
+				}
+			}
 			HarmonyCustomPatches.Apply(pat);
 			HarmonyPatchesShuttleRange.Apply(pat);
 
