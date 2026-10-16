@@ -2119,7 +2119,9 @@ namespace SaveOurShip2
 		// Maintain command which should be checked more often than every so clled "slow tick" = 60 ticks
 		private void MaintainTick()
 		{
-			if (Maintain) //distance maintain
+			// Runs on every space map, not only in combat, and EndBattle does not clear Maintain,
+			// so skip it once the battle is over and there is no target map.
+			if (Maintain && TargetMapComp != null && OriginMapComp != null) //distance maintain
 			{
 				if (TargetMapComp.Heading == 1) //target moving to origin
 				{
