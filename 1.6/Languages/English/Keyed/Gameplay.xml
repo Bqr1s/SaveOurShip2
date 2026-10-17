@@ -357,6 +357,7 @@
 	<SoS.EquipMeleeDesc>Equip this hologram with a blade and an energy shield</SoS.EquipMeleeDesc>
 	<SoS.ResurrectBrain>Resurrect</SoS.ResurrectBrain>
 	<SoS.ResurrectBrainDesc>Use a resurrector mech serum to construct a new body for this consciousness</SoS.ResurrectBrainDesc>
+	<SoS.NoResurrector>Need to have resurrector mech serum on currrent map not and in a ontainer to use this option.</SoS.NoResurrector>
 	<SoS.CantScanFormgel>Formgel is not suitable for scanning</SoS.CantScanFormgel>
 	<!-- Archotech -->
 	<SoS.Archotech.ResearchTabName>Archotech</SoS.Archotech.ResearchTabName>
