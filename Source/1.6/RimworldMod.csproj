@@ -98,8 +98,10 @@
   <ItemGroup>
     <Compile Include="AccuracyCalculator.cs" />
     <Compile Include="AISettings.cs" />
+    <Compile Include="Alert\AlertRamming.cs" />
     <Compile Include="Alert\AlertTWR.cs" />
     <Compile Include="AssetPreprocessor.cs" />
+    <Compile Include="BlastLanding.cs" />
     <Compile Include="ColorDefMatcher.cs" />
     <Compile Include="CompShipEngineBreakdownable.cs" />
     <Compile Include="Alert\AlertDodgeChanceBase.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="Comp\CompShuttleAutoDoc.cs" />
     <Compile Include="Def\DodgeChanceSubmodScaleDef.cs" />
     <Compile Include="Def\GlobalUnlockDef.cs" />
+    <Compile Include="Def\ScanFindingChancesDef.cs" />
     <Compile Include="Designator_RestoreHull.cs" />
     <Compile Include="Dialog\DialogOptionGetter_StashedShip.cs" />
     <Compile Include="GenAdjExtension.cs" />

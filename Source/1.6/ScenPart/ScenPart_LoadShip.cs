@@ -381,7 +381,7 @@ namespace SaveOurShip2
 				{
 					try
 					{
-						if(thing is VehiclePawn vehicle && vehicle.VehicleDef.HasComp<CompVehicleLauncher>()) //Buggy initialization, requiring the jankiest solution that has ever janked
+						if(thing is VehiclePawn vehicle) //Buggy initialization, requiring the jankiest solution that has ever janked
 						{
 							VehiclePawn newVehicle = VehicleSpawner.GenerateVehicle(vehicle.VehicleDef, Faction.OfPlayer);
 							CompVehicleLoadData LoadData = new CompVehicleLoadData();

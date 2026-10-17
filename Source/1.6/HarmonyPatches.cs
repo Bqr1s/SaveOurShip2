@@ -5732,7 +5732,22 @@ namespace SaveOurShip2
 			___blockedByRoof = false;
 			foreach (IntVec3 c in ___rect)
 			{
-				if (c.Roofed(___map) && ___map.roofGrid.RoofAt(c) == ResourceBank.RoofDefOf.RoofShip)
+				bool allowPassingThroughRoof = c.Roofed(___map) && ___map.roofGrid.RoofAt(c) == ResourceBank.RoofDefOf.RoofShip;
+				// Ship can also be covered by constructed roof. But that type of roof only allowed to pass through if there is a
+				// bay beneath, not just anywhere. To handle modded games, any roofs instead of thick rock (just in case) over ship
+				// bay are allowed to be passed.
+				// Checking just bay area and not checking bay working area results in 5x3 shuttle being able to land on salvage
+				// bay too, this is intended. As imperial shuttle has too few "direct controls", that results in strict/rough
+				// landing restrictions leaving players confused.
+				if (!allowPassingThroughRoof && c.Roofed(___map) && ___map.roofGrid.RoofAt(c) != RoofDefOf.RoofRockThick)
+				{
+					ThingWithComps shipBay = c.GetFirstThingWithComp<CompShipBay>(___map);
+					if (shipBay != null)
+					{
+						allowPassingThroughRoof = true;
+					}
+				}
+				if (allowPassingThroughRoof)
 				{
 					List<Thing> thingList = c.GetThingList(___map);
 					for (int i = 0; i < thingList.Count; i++)
@@ -6372,5 +6387,24 @@ namespace SaveOurShip2
 			}
 		}
 	}
-	
+
+    [HarmonyPatch(typeof(MainButtonWorker_ToggleWorld), nameof(MainButtonWorker_ToggleWorld.Activate))]
+    internal static class OrbitCameraFix
+    {
+        [HarmonyPostfix]
+        private static void Postfix()
+        {
+            if (Current.ProgramState != ProgramState.Playing || Find.World == null
+                || Find.World.renderer.wantedMode != WorldRenderMode.Planet || Current.Game.PlayerHomeMaps.Any(x => x.TileInfo.OnSurface))
+                return;
+            var ship = Find.CurrentMap?.Parent as WorldObjectOrbitingShip;
+            if (ship == null || !ship.Spawned) return;
+            Vector3 position = ship.DrawPos;
+            if (position == Vector3.zero) return;
+            // The world button and its hotkey share this toggle; center only in world view.
+            // Tile identifies the map/layer, while DrawPos follows the ship's orbit.
+            if (ship.Tile.Valid) PlanetLayer.Selected = ship.Tile.Layer;
+            Find.WorldCameraDriver.JumpTo(position);
+        }
+    }
 }

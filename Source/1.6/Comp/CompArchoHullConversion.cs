@@ -88,7 +88,13 @@ namespace SaveOurShip2
 				if (ShipInteriorMod2.archoConversions.ContainsKey(t.def))
 				{
 					toDestroy.Add(t);
-					Thing replacement = ThingMaker.MakeThing(ShipInteriorMod2.archoConversions[t.def]);
+					ThingDef newDef = ShipInteriorMod2.archoConversions[t.def];
+					ThingDef stuff = null;
+					if (t.Stuff != null && newDef.MadeFromStuff)
+					{
+						stuff = t.Stuff;
+					}
+					Thing replacement = ThingMaker.MakeThing(newDef, stuff);
 					replacement.Rotation = t.Rotation;
 					replacement.Position = t.Position;
 					replacement.SetFaction(Faction.OfPlayer);

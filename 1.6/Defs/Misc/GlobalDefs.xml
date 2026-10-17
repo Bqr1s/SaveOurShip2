@@ -14,4 +14,15 @@
 			<li>1.0</li>
 		</multiplierList>
 	</SaveOurShip2.DodgeChanceSubmodScaleDef>
+
+	<SaveOurShip2.ScanFindingChancesDef>
+		<defName>ScanFindingChances</defName>
+		<!-- Because SOS 2 accepts support requests about core features working even with submods active,
+		this weight will be capped in code to no more than 66.7% chance of finding pre-made site,
+		so that optios can't be almost excluded by this weight being too high.
+        Default weight of 1 means that there is 1 of 6 chance to to find a pre-made site when scanning mode
+		is scan for sites, as other options have a combined weight of 5 Weiht 0f 5 hewe will mean
+		50% chance to find a pre-made site in scan for sites mode -->
+		<PremadeSiteWeight>1.0</PremadeSiteWeight>
+	</SaveOurShip2.ScanFindingChancesDef>
 </Defs>

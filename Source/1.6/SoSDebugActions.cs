@@ -72,6 +72,12 @@ namespace SaveOurShip2
 		}
 
 		[DebugAction(sos2Category, null, false, false, false, false, false, 0, false, actionType = DebugActionType.Action, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		public static void RemoveNotoriety()
+		{
+			ShipInteriorMod2.WorldComp.PlayerFactionBounty = 0;
+		}
+
+		[DebugAction(sos2Category, null, false, false, false, false, false, 0, false, actionType = DebugActionType.Action, allowedGameStates = AllowedGameStates.PlayingOnMap)]
 		private static void PngToShipBlueprint()
 		{
 			ShipImporter.ImportShipDesign(placeActualBuildings:false);

@@ -28,25 +28,32 @@ namespace SaveOurShip2.Vehicles
         {
             if (Vehicle.Map.GetComponent<ShipMapComp>().ShipMapState != ShipMapState.inCombat)
             {
-                yield return new Command_ActionHighlighter
+				const float fuelCost = 5f;
+				const float fuelCostWithReserve = fuelCost + 0.1f;
+				yield return new Command_ActionHighlighter
                 {
                     defaultLabel = Translator.Translate("SoS.HoverJump"),
                     defaultDesc = Translator.Translate("SoS.HoverJump.Desc"),
                     icon = ContentFinder<Texture2D>.Get("UI/ShuttleLocalFlight"),
                     action = delegate ()
                     {
-                        Vehicle.CompFueledTravel.ConsumeFuel(5);
+                        // Prevent issuing duplicate commands. If vehicle was launched already, map will be null.
+                        if (LandingTargeter.Instance.IsTargeting || Vehicle.Map == null)
+                        {
+                            return;
+                        }
                         LandingTargeter.Instance.BeginTargeting(Vehicle, Vehicle.Map, delegate (LocalTargetInfo target, Rot4 rot)
                         {
                             // CHANGE 1.6 LaunchTargeter.FlightPath = new List<FlightNode> { new FlightNode(Vehicle.Map.Tile) };
                             TargetData<GlobalTargetInfo> targetData = new TargetData<GlobalTargetInfo>();
                             targetData.targets.Add(Vehicle.Map.Parent != null ? new GlobalTargetInfo(Vehicle.Map.Parent) : new GlobalTargetInfo(Vehicle.Map.Tile));
-                            Vehicle.CompVehicleLauncher.Launch(targetData, new ArrivalAction_LandToCell(Vehicle, Vehicle.Map.Parent, target.Cell, rot));
+							Vehicle.CompFueledTravel.ConsumeFuel(fuelCost);
+							Vehicle.CompVehicleLauncher.Launch(targetData, new ArrivalAction_LandToCell(Vehicle, Vehicle.Map.Parent, target.Cell, rot));
                         }, (LocalTargetInfo targetInfo) => !Ext_Vehicles.IsRoofRestricted(Vehicle.VehicleDef, targetInfo.Cell, Vehicle.Map),
                         forcedTargeting: true);
                     },
-                    disabled = Vehicle.CompFueledTravel.Fuel < 5.1 || Ext_Vehicles.IsRoofRestricted(Vehicle.VehicleDef, Vehicle.Position, Vehicle.Map),
-                    disabledReason = Vehicle.CompFueledTravel.Fuel < 5.1 ? "SoS.NotEnoughFuelToLaunchShuttle".Translate() : "SoS.CannotLaunchUnderRoof".Translate()
+                    disabled = Vehicle.CompFueledTravel.Fuel < fuelCostWithReserve || Ext_Vehicles.IsRoofRestricted(Vehicle.VehicleDef, Vehicle.Position, Vehicle.Map),
+                    disabledReason = Vehicle.CompFueledTravel.Fuel < fuelCostWithReserve ? "SoS.NotEnoughFuelToLaunchShuttle".Translate() : "SoS.CannotLaunchUnderRoof".Translate()
                 };
             }
 		}

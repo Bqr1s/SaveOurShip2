@@ -342,7 +342,12 @@ namespace SaveOurShip2
 						}
 						if (building.def == ResourceBank.ThingDefOf.PilotSubpersonaCore)
 						{
-							subpersonaCount++;
+							// In case power trader is removed, it's best to consider subpersona core
+							// always working until cases where the contrary is true are figured out.
+							if (building.TryGetComp<CompPowerTrader>()?.PowerOn ?? true)
+							{
+								subpersonaCount++;
+							}
 						}
 						if (subpersonaCount >= maxSubpersonas && gravEngineCount >= maxGravEngines)
 						{
@@ -353,8 +358,9 @@ namespace SaveOurShip2
 				}
 				gravEngineCount = Mathf.Min(gravEngineCount, maxGravEngines);
 				subpersonaCount = Mathf.Min(subpersonaCount, maxSubpersonas);
-				const float gravEngineMonus = 0.055f;
-				const float subpersonaBonus = 0.01f;
+				const float gravEngineMonus = 0.075f;
+				// This is percent bonus, so currently it will change dodge chance from 33% to 34%, for example, for one core with 3% value here.
+				const float subpersonaBonus = 0.03f;
 
 				float result = 1f + gravEngineCount * gravEngineMonus + subpersonaCount * subpersonaBonus;
 				thisMapEvasionScaleFromBuildings = result;
@@ -384,9 +390,10 @@ namespace SaveOurShip2
 							result = Mathf.Max(result, skill);
 						}
 					}
-					// AI core counst as intellectual 10
-					if (ship.AICores.Any())
+					// If no power comp (maybe Bioship core), it is assumed that core is always active.
+					if (ship.AICores.Any(c => c.TryGetComp<CompPowerTrader>()?.PowerOn ?? true))
 					{
+						// AI core counst as intellectual 10
 						result = Mathf.Max(result, 10);
 					}
 				}

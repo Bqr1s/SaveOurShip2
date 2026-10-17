@@ -155,7 +155,7 @@ namespace SaveOurShip2
 		{
 			base.GetSettings<ModSettings_SoS>();
 		}
-		public const string SOS2version = "GithubV2.8.139";
+		public const string SOS2version = "GithubV2.8.151";
 		public const int SOS2ReqCurrentMinor = 5;
 		// 1.5.4063 public build (4062 constant) was not enough as there is no AnomalyUtility.TryDuplicatePawn_NewTemp method to harmony patch it.
 		// Historical builds are not available, so for sure can be increased just to next build, 4066
@@ -253,11 +253,13 @@ namespace SaveOurShip2
 			options.Label("SoS.Settings.ShowVersionUI".Translate(SOS2version));
 
 			options.Gap();
-			options.CheckboxLabeled("SoS.Settings.RenderPlanet".Translate(), ref renderPlanet, "SoS.Settings.RenderPlanet.Desc".Translate());
-			options.Gap();
-			options.Gap();
+			// Odyssey planet rendering wasn't reported as a performance issue.
+			// so when Odyssey is active, it's rendering is used unconditionally, no option to change.
+			if (!ModsConfig.OdysseyActive)
+			{
+				options.CheckboxLabeled("SoS.Settings.RenderPlanet".Translate(), ref renderPlanet, "SoS.Settings.RenderPlanet.Desc".Translate());
+			}
 			options.Label("SoS.Settings.UI".Translate());
-			options.GapLine();
 			options.CheckboxLabeled("SoS.Settings.UseSplashScreen".Translate(), ref useSplashScreen, "SoS.Settings.UseSplashScreen.Desc".Translate());
 			options.CheckboxLabeled("SoS.Settings.PersistShipUI".Translate(), ref persistShipUI, "SoS.Settings.PersistShipUI.Desc".Translate());
 			options.Label("SoS.Settings.OffsetUIx".Translate(), -1f, "SoS.Settings.OffsetUIx.Desc".Translate());
@@ -269,10 +271,7 @@ namespace SaveOurShip2
 			options.Label("SoS.Settings.ShuttlesToDisplay".Translate(), -1f, "SoS.Settings.ShuttlesToDisplay.Desc".Translate());
 			string bufferShuttleNum = shuttlesToDisplay.ToString();
 			options.TextFieldNumeric<int>(ref shuttlesToDisplay, ref bufferShuttleNum, 0, 20);
-			options.Gap();
-			options.Gap();
 			options.Label("SoS.Settings.Misc".Translate());
-			options.GapLine();
 			options.CheckboxLabeled("SoS.Settings.ShipMapPhysics".Translate(), ref shipMapPhysics, "SoS.Settings.ShipMapPhysics.Desc".Translate());
 			options.CheckboxLabeled("SoS.Settings.EasyMode".Translate(), ref easyMode, "SoS.Settings.EasyMode.Desc".Translate());
 			options.CheckboxLabeled("SoS.Settings.NewAccuiracySystem".Translate(), ref newAccuracySystem,"SoS.Settings.NewAccuiracySystem.Desc".Translate());
@@ -331,16 +330,14 @@ namespace SaveOurShip2
 		{
 			Log.Message("SOS2 " + SOS2version + " active");
 
-			string[] disallowedPlants = new string[]{
-				// Elder ocular tree from Vanilla Psycasts Expanded
-				"AA_ElderAlienTree",
-				// RA_MetalBean is from Ratkin Anomaly+, causes real bad effects and was requested to not spawn randomly.
-				"RA_MetalBean",
-				// Archean tree converts soil, so not suitable for placing on ship.
-				"Plant_TreeArchean"
-			};
-
-			randomPlants = DefDatabase<ThingDef>.AllDefs.Where(t => t.plant != null && !t.defName.Contains("Anima") && !disallowedPlants.Contains(t.defName)).ToList();
+			// Only allow vanilla and SOS 2 plants, as they are enough to make ship grdens look wild.
+			// Plants fom mods caused errors.
+			
+			randomPlants = DefDatabase<ThingDef>.AllDefs.Where(t => t.plant != null &&
+				(ModIntegration.IsSOS2ContentPack(t.modContentPack) || t.modContentPack.IsOfficialMod) &&
+				t != ThingDefOf.Plant_TreeArchean &&
+				!t.defName.Contains("Anima") && // Anima tree is disallowed
+				!t.plant.diesToLight).ToList(); // Darkness plants like cave mushrooms aren't supposed to grow in lit ship gardens
 
 			foreach (ShipDef ship in DefDatabase<ShipDef>.AllDefs.Where(d => d.saveSysVer < 2 && !d.neverRandom).ToList())
 			{

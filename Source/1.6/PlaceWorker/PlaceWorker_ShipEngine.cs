@@ -39,11 +39,9 @@ namespace SaveOurShip2
 					minz = vec.z;
 			}
 
-			CellRect occupiedRect = GenAdj.OccupiedRect(center, rot, def.size);
-			CompProps_EngineTrail compProps = def.GetCompProperties<CompProps_EngineTrail>();
-			CellRect rectToKill = GenAdjExtension.GetDirectAdjacentRect(center.ToIntVec2, rot.Rotated(RotationDirection.Opposite).rotInt, occupiedRect,
-				compProps.killZoneWidth, compProps.killZoneLength, compProps.killZoneExtraOffset);
-			GenDraw.DrawFieldEdges(rectToKill.Cells.ToList(), Color.red);
+			HashSet<IntVec3> exhaustArea = CompEngineTrail.GetExhaustArea(center, rot, def, Find.CurrentMap);
+
+			GenDraw.DrawFieldEdges(exhaustArea.ToList(), Color.red);
 		}
 	}
 }
