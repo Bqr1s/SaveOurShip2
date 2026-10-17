@@ -67,9 +67,14 @@ namespace SaveOurShip2
 					continue;
 				}
 				DiaOption unavailableOption;
+				// Base cost by curve
 				float silverCost = valueFromShapeCount.Evaluate(ship.parts.Count);
-				int roundedCost = (int)silverCost / 100 * 100;
-				int threatPoints = (int)threatFromCR.Evaluate(ship.combatPoints);
+				// Multiple by squared trade price disadvantage, as base game doesn't
+				// have special multipler for the cost of transition from oene part/chapter of the game to another
+				float difficultyMultiplier = (1f + Find.Storyteller.difficulty.tradePriceFactorLoss) * (1f + Find.Storyteller.difficulty.tradePriceFactorLoss);
+				silverCost *= difficultyMultiplier;
+				int roundedCost = Mathf.RoundToInt(silverCost / 100 * 100);
+				int threatPoints = Mathf.RoundToInt(threatFromCR.Evaluate(ship.combatPoints) * Find.Storyteller.difficulty.threatScale);
 				if (IsSpecificOptionUnvailable(ship.defName, roundedCost, out unavailableOption))
 				{
 					listNode.options.Add(unavailableOption);
