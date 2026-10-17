@@ -3057,14 +3057,13 @@ namespace SaveOurShip2
 			}
 			foreach(ShuttleMissionData mission in OriginMapComp.ShuttleMissions.ListFullCopy())
             {
-				// Each mission must be removed and resolved by its owning map component.
-				OriginMapComp.DeRegisterShuttleMission(mission);
+				DeRegisterShuttleMission(mission);
 			}
 			foreach (ShuttleMissionData mission in OriginMapComp.TargetMapComp.ShuttleMissions.ListFullCopy())
 			{
 				if (mission.shuttle.Faction != Faction.OfPlayer && mission.mission == ShuttleMission.BOARD)
 					mission.mission = ShuttleMission.RETURN;
-				OriginMapComp.TargetMapComp.DeRegisterShuttleMission(mission);
+				DeRegisterShuttleMission(mission);
 			}
 
 			if (loser != ShipInteriorMod2.FindPlayerShipMap())
