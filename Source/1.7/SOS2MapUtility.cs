@@ -14,8 +14,10 @@ namespace SaveOurShip2
 	{
 		public static bool AnyVehiclePreventsMapRemoval(Map map)
 		{
-			if(MapHelper.AnyVehicleSkyfallersBlockingMap(map) ||
+#pragma warning disable CS0618
+			if(map.mapPawns.AnyPawnBlockingMapRemoval ||
 				MapHelper.AnyAerialVehiclesInRecon(map))
+#pragma warning restore CS0618
 			{
 				return true;
 			}

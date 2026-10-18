@@ -27,9 +27,16 @@ namespace SaveOurShip2
 			{
 				ShipMapComp mapComp = map.GetComponent<ShipMapComp>();
 				IEnumerable<SpaceShipCache> ships = mapComp.ShipsOnMap.Values.Where(s => !s.IsWreck);
-				SpaceShipCache flagship = ships.MaxBy(s => s.MassActual);
-				List<Thing> culprits = new List<Thing>{ flagship.Core };
-                return AlertReport.CulpritsAre(culprits);
+				bool foundFlagship = ships.TryMaxBy(s => s.MassActual, out SpaceShipCache flagship);
+				if (foundFlagship)
+				{
+					List<Thing> culprits = new List<Thing> { flagship.Core };
+					return AlertReport.CulpritsAre(culprits);
+				}
+				else
+				{
+					return AlertReport.Inactive;
+				}
 			}
 			return true;
 		}

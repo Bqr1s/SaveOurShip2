@@ -2921,7 +2921,7 @@ namespace SaveOurShip2
 	{
 		public static void Postfix(List<Pawn> selectedPawns, Vector3 clickPos, ref List<FloatMenuOption> __result)
 		{
-			if (selectedPawns == null || clickPos == null)
+			if (selectedPawns == null)
 			{
 				return;
 			}
@@ -5283,11 +5283,11 @@ namespace SaveOurShip2
 			{
 				return true;
 			}
-			if (VehicleWorldObjectsHolder.Instance?.AerialVehicles == null)
+			if (Find.World.GetComponent<VehicleWorldObjectsHolder>()?.AerialVehicles == null)
 			{
 				return false;
 			}
-			foreach (AerialVehicleInFlight aerialVehicle in VehicleWorldObjectsHolder.Instance.AerialVehicles)
+			foreach (AerialVehicleInFlight aerialVehicle in Find.World.GetComponent<VehicleWorldObjectsHolder>().AerialVehicles)
 			{
 				if (aerialVehicle?.vehicle == null)
 				{

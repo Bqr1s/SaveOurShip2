@@ -155,7 +155,7 @@ namespace SaveOurShip2
 		{
 			base.GetSettings<ModSettings_SoS>();
 		}
-		public const string SOS2version = "GithubV2.8.153";
+		public const string SOS2version = "GithubV2.8.253";
 		public const int SOS2ReqCurrentMinor = 5;
 		// 1.5.4063 public build (4062 constant) was not enough as there is no AnomalyUtility.TryDuplicatePawn_NewTemp method to harmony patch it.
 		// Historical builds are not available, so for sure can be increased just to next build, 4066
@@ -713,7 +713,7 @@ namespace SaveOurShip2
 			if (allowSpace && Find.World.grid.Orbit != null)
 			{
 				PlanetTile orbitTile = FindWorldTileInOrbit();
-				if (orbitTile != null && orbitTile != PlanetTile.Invalid)
+				if (orbitTile.Valid && orbitTile != PlanetTile.Invalid)
 				{
 					return orbitTile;
 				}
@@ -1220,14 +1220,12 @@ namespace SaveOurShip2
 			bool ideoActive = false;
 			if (ModsConfig.IdeologyActive && (fac != Faction.OfAncientsHostile || fac != Faction.OfAncients || fac != Faction.OfMechanoids))
 				ideoActive = true;
-			bool royActive = false;
 			bool isMechs = false; //for roy mech turret override
 			bool isDungeon = shipDef.defName == "StarshipBowDungeon";
 			HashSet<IntVec3> exclusionZones = new HashSet<IntVec3>();
 			int spawnedPawnCount = 0;
 			if (ModsConfig.RoyaltyActive)
 			{
-				royActive = true;
 				if (fac == Faction.OfMechanoids)
 					isMechs = true;
 			}
@@ -2368,7 +2366,9 @@ namespace SaveOurShip2
 				return false;
 			//if (Find.WorldGrid.ApproxDistanceInTiles(tile, root) >= min && Find.WorldGrid.ApproxDistanceInTiles(tile, root) <= max)
 				return true;
+/*
 			return false;
+*/
 		}
 		public static bool CanShipLandOnMap(Map sourceMap, Map targetMap)
 		{
@@ -2620,13 +2620,13 @@ namespace SaveOurShip2
 					uninstalled.Position = oldPosition;
 					toInstallAfterMove.Add(uninstalled);
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					if (item != null)
 					{
 						Log.Warning("Error uninstaling during ship move: " + item.def.defName + " at " + item.Position);
 					}
-					throw e;
+					throw;
 				}
 			}
 			foreach (IntVec3 pos in sourceArea)
@@ -2860,13 +2860,13 @@ namespace SaveOurShip2
 					{
 						thing.Destroy();
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
 						if (thing != null)
 						{
 							Log.Warning("Error destroying during ship move: " + thing.def.defName + " at " + thing.Position);
 						}
-						throw e;
+						throw;
 					}
 				}
 			}
@@ -2997,13 +2997,13 @@ namespace SaveOurShip2
 					ReSpawnThingOnMap(spawnThing, targetMap, adjustment, rotb, fac);
 					spawnThing.beingTransportedOnGravship = false;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					if (spawnThing != null)
 					{
 						Log.Warning("Error respawning during ship move: " + spawnThing.def.defName + " at " + spawnThing.Position);
 					}
-					throw e;
+					throw;
 				}
 			}
 			foreach (Thing spawnThing in toMoveThings)
@@ -3911,24 +3911,11 @@ namespace SaveOurShip2
 					else //fighter
 					{
 						Log.Message("Speccing shuttle as heavy fighter");
-						if (!ModIntegration.IsCEEnabled())
-						{
-							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaA"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 2)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaB"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 3)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaC"));
-						}
-						else
-						{
-							// Temporary fix, don't give plasma weapons to shuttles in CE.
-							Log.Message("Speccing shuttle as interceptor");
-							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretLaserA"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 2)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretLaserB"));
-							if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 3)
-								vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretLaserC"));
-						}
+						vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaA"));
+						if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 2)
+							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaB"));
+						if (vehicle.statHandler.GetStatValue(ResourceBank.VehicleStatDefOf.Hardpoints) >= 3)
+							vehicle.CompUpgradeTree.FinishUnlock(vehicle.CompUpgradeTree.Props.def.GetNode("TurretPlasmaC"));
 					}
 				}
 				else //transport

@@ -95,7 +95,7 @@ namespace SaveOurShip2
 
 		public static bool ShouldAdjustDistanceForTarget(PlanetTile targetTile)
 		{
-			if (targetTile != null)
+			if (targetTile.Valid)
 			{
 				MapParent mapParent = Find.WorldObjects.MapParentAt(targetTile);
 				if (mapParent != null)

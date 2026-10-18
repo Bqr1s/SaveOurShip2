@@ -2284,7 +2284,12 @@ namespace SaveOurShip2
 						List<VehiclePawn> shuttles = new List<VehiclePawn>();
 						foreach (VehiclePawn vehicle in ship.ShuttlesOnShip(ship.Faction))
 						{
-							if (ShipInteriorMod2.IsShuttle(vehicle) && IsShuttleCombatReady(vehicle) && vehicle.CompUpgradeTree != null && ShipInteriorMod2.ShuttleIsArmed(vehicle) && vehicle.GetNextAvailableHandler(HandlingType.Movement) != null)
+#pragma warning disable CS0618
+							// TODO 17 re-check if this change is correct
+							Pawn pawn = map.mapPawns.AllHumanlikeSpawned.Any() ? map.mapPawns.AllHumanlikeSpawned.First() : null;
+							if (ShipInteriorMod2.IsShuttle(vehicle) && IsShuttleCombatReady(vehicle) && vehicle.CompUpgradeTree != null &&
+								ShipInteriorMod2.ShuttleIsArmed(vehicle) && vehicle.GetNextAvailableHandler(pawn, HandlingType.Movement) != null)
+#pragma warning restore CS0618
 								shuttles.Add(vehicle);
 						}
 						List<VehiclePawn> shuttlesToBeFilled = new List<VehiclePawn>(shuttles);
@@ -3397,7 +3402,7 @@ namespace SaveOurShip2
 					case ShuttleMission.INTERCEPT:
 						return TranslatorFormattedStringExtensions.Translate("SoS.ShipMapMission.Intercepting");
 					case ShuttleMission.STRAFE:
-						return TranslatorFormattedStringExtensions.Translate("SoS.ShipMapMission.Strafing"); ;
+						return TranslatorFormattedStringExtensions.Translate("SoS.ShipMapMission.Strafing");
 					case ShuttleMission.BOMB:
 						return TranslatorFormattedStringExtensions.Translate("SoS.ShipMapMission.Bombing");
 					default:

@@ -88,7 +88,7 @@ namespace SaveOurShip2
 			}
 		}
 
-		private new void Dig(IntVec3 start, float dir, float width, List<IntVec3> group, Map map, bool closed, HashSet<IntVec3> visited = null)
+		private void Dig(IntVec3 start, float dir, float width, List<IntVec3> group, Map map, bool closed, HashSet<IntVec3> visited = null)
 		{
 			HashSet<IntVec3> tmpGroupSet = new HashSet<IntVec3>();
 			FloatRange BranchedTunnelWidthOffset = new FloatRange(0.2f, 0.4f);
@@ -152,7 +152,7 @@ namespace SaveOurShip2
 			}
 		}
 
-		private new void SetCaveAround(IntVec3 around, float tunnelWidth, Map map, HashSet<IntVec3> visited, out bool hitAnotherTunnel)
+		private void SetCaveAround(IntVec3 around, float tunnelWidth, Map map, HashSet<IntVec3> visited, out bool hitAnotherTunnel)
 		{
 			hitAnotherTunnel = false;
 			int num = GenRadial.NumCellsInRadius(tunnelWidth / 2f);
