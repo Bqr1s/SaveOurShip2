@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_AfterlifeVaultStart</defName>
+	<label>ship blueprint (Afterlife Vault)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 3
+Ship size: 10x10</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>AfterlifeVaultStart</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BattlecruiserArmata</defName>
+	<label>ship blueprint (Armata class battlecruiser)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 2711
+Ship size: 185x66</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BattlecruiserArmata</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BattlecruiserAurora</defName>
+	<label>ship blueprint (Aurora class battlecruiser)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 2472
+Ship size: 136x96</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BattlecruiserAurora</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BattlecruiserCrescent</defName>
+	<label>ship blueprint (Crescent class battlecruiser)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 2484
+Ship size: 125x128</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BattlecruiserCrescent</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BattlecruiserOrion</defName>
+	<label>ship blueprint (Orion class battlecruiser)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 2368
+Ship size: 132x72</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BattlecruiserOrion</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BattlecruiserTrident</defName>
+	<label>ship blueprint (Trident class battlecruiser)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 2623
+Ship size: 119x72</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BattlecruiserTrident</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BomberHeavy</defName>
+	<label>ship blueprint (Heavy bomber)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 131
+Ship size: 28x26</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BomberHeavy</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BomberLight</defName>
+	<label>ship blueprint (Light bomber)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 60
+Ship size: 24x18</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BomberLight</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+<ThingDef ParentName="ShipBlueprintBase">
+	<defName>AllBP_BomberMedium</defName>
+	<label>ship blueprint (Bomber)</label>
+	<description>A three stage reusable blueprint that can be used to build a complete space ship as long as one is capable of constructing the individual parts. Can be customized at any point but the next stage will only place prints when the required parts under them are already built.\Combat rating: 131
+Ship size: 26x26</description>
+	<statBases>
+		<MarketValue>250</MarketValue>
+	</statBases>
+	<comps>
+		<li Class="SaveOurShip2.CompProps_ShipBlueprint">
+			<shipDef>BomberMedium</shipDef>
+		</li>
+	</comps>
+</ThingDef>
+</Defs>

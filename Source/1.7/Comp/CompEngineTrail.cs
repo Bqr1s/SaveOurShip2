@@ -1,0 +1,363 @@
+﻿using RimWorld;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+using Verse;
+using Verse.Sound;
+
+namespace SaveOurShip2
+{
+	[StaticConstructorOnStartup]
+	public class CompEngineTrail : ThingComp
+	{
+		private static Graphic trailGraphic = GraphicDatabase.Get(typeof(Graphic_Multi), "Things/Building/Ship/Ship_Engine_Trail_Double", ShaderDatabase.MoteGlow, new Vector2(7, 16.5f), Color.white, Color.white);
+		private static Graphic trailGraphicSingle = GraphicDatabase.Get(typeof(Graphic_Multi), "Things/Building/Ship/Ship_Engine_Trail_Single", ShaderDatabase.MoteGlow, new Vector2(7, 16.5f), Color.white, Color.white);
+		private static Graphic trailGraphicLarge = GraphicDatabase.Get(typeof(Graphic_Multi), "Things/Building/Ship/NuclearEngineTrail", ShaderDatabase.MoteGlow, new Vector2(7, 26.5f), Color.white, Color.white);
+		private static Graphic trailGraphicEnergy = GraphicDatabase.Get(typeof(Graphic_Multi), "Things/Building/Ship/Ship_Engine_Trail_Energy_Double", ShaderDatabase.MoteGlow, new Vector2(7, 16.5f), Color.white, Color.white);
+		private static Graphic trailGraphicEnergyLarge = GraphicDatabase.Get(typeof(Graphic_Multi), "Things/Building/Ship/Ship_Engine_Trail_Energy_Large", ShaderDatabase.MoteGlow, new Vector2(11, 26.5f), Color.white, Color.white);
+		private static Vector3[] offset = { new Vector3(0, 0, -5.5f), new Vector3(-5.5f, 0, 0), new Vector3(0, 0, 5.5f), new Vector3(5.5f, 0, 0) };
+		private static Vector3[] offsetL = { new Vector3(0, 0, -11f), new Vector3(-11f, 0, 0), new Vector3(0, 0, 11f), new Vector3(11f, 0, 0) };
+		private static Vector3[] offsetE = { new Vector3(0, 0, -9.2f), new Vector3(-9.2f, 0, 0), new Vector3(0, 0, 9.2f), new Vector3(9.2f, 0, 0) };
+		public static IntVec2[] killOffset = { new IntVec2(0, -6), new IntVec2(-6, 0), new IntVec2(0, 4), new IntVec2(4, 0) };
+		public virtual CompProps_EngineTrail Props
+		{
+			get { return props as CompProps_EngineTrail; }
+		}
+		public virtual int FuelUse
+		{
+            get
+            {
+                return Props.fuelUse;
+            }
+        }
+		public virtual int Thrust
+		{
+			get
+			{
+				return Props.thrust;
+			}
+		}
+		public virtual float PreciseThrust
+		{
+			get
+			{
+				// For compatibility, legacy int thrust will bew used if new precise is not defined
+				if (Props.preciseThrust != 0)
+					return Props.preciseThrust;
+				else
+					return Thrust;
+			}
+		}
+		public bool PodFueled => refuelComp.Props.fuelFilter.AllowedThingDefs.Contains(ResourceBank.ThingDefOf.ShuttleFuelPods);
+		public bool active = false;
+		int size;
+		public HashSet<IntVec3> ExhaustArea = new HashSet<IntVec3>();
+		public ShipMapComp mapComp;
+		public CompFlickable flickComp;
+		public CompRefuelable refuelComp;
+		public CompPowerTrader powerComp;
+
+		public virtual bool CanFire()
+		{
+			if (flickComp.SwitchIsOn && powerComp.PowerOn)
+			{
+				if (Props.reactionless)
+				{
+					if (powerComp.PowerOn)
+						if (refuelComp != null)
+						{
+							return refuelComp.Fuel > FuelUse;
+						}
+						else
+						{
+							return true;
+						}
+				}
+				else if (Props.energy)
+				{
+					return true;
+				}
+				else if (refuelComp.Fuel > FuelUse)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		public virtual bool CanFire(Rot4 rot)
+		{
+			if (flickComp.SwitchIsOn && powerComp.PowerOn)
+			{
+				if (Props.reactionless)
+				{
+					if (powerComp.PowerOn)
+					{
+						if (refuelComp != null)
+						{
+							return refuelComp.Fuel > FuelUse;
+						}
+						else
+						{
+							return true;
+						}
+					}
+				}
+				else if (rot == parent.Rotation)
+				{
+					if (Props.energy)
+					{
+						return true;
+					}
+					else if (refuelComp.Fuel > FuelUse)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		public void On()
+		{
+			if (Props.energy)
+			{
+				powerComp.PowerOutput = -2000 * PreciseThrust;
+			}
+			active = true;
+		}
+		public bool OnOld()
+		{
+			if (Props.reactionless)
+			{
+				active = true;
+				return true;
+			}
+			if (Props.energy)
+			{
+				powerComp.PowerOutput = -2000 * PreciseThrust;
+				active = true;
+				return true;
+			}
+			if (refuelComp.Fuel > FuelUse)
+			{
+				active = true;
+				return true;
+			}
+			return false;
+		}
+		public void Off()
+		{
+			if (Props.energy)
+			{
+				powerComp.PowerOutput = -200 * PreciseThrust;
+			}
+			active = false;
+			/*if (sustainer != null && !sustainer.Ended)
+			{
+				sustainer.End();
+			}*/
+		}
+		public static HashSet<IntVec3> GetExhaustArea(IntVec3 position, Rot4 rot, ThingDef def, Map map)
+		{
+			int narrowExhaustsize = 3;
+			HashSet<IntVec3> result = new HashSet<IntVec3>();
+
+			CellRect occupiedRect = GenAdj.OccupiedRect(position, rot, def.size);
+			CompProps_EngineTrail compProps = def.GetCompProperties<CompProps_EngineTrail>();
+			CellRect rectToKill = GenAdjExtension.GetDirectAdjacentRect(position.ToIntVec2, rot.Rotated(RotationDirection.Opposite).rotInt, occupiedRect,
+				compProps.killZoneWidth, compProps.killZoneLength, compProps.killZoneExtraOffset);
+
+			CellRect smallerRect;
+			int parentLength = def.size.x;
+			if (rot.IsHorizontal)
+			{
+				smallerRect = rectToKill.ContractedBy(0, 1);
+			}
+			else
+			{
+				smallerRect = rectToKill.ContractedBy(1, 0);
+			}
+
+			foreach (IntVec3 v in rectToKill.Where(v => v.InBounds(map)))
+			{
+				IntVec3 distanceVec = v - position;
+				// distance from engine edge to the tile in the supposed exhaust area.
+				int distance = rot.IsHorizontal ? Mathf.Abs(distanceVec.x) - parentLength / 2 : Mathf.Abs(distanceVec.z) - parentLength / 2;
+				int distanceOtrogonal = rot.IsHorizontal ? Mathf.Abs(distanceVec.z) : Mathf.Abs(distanceVec.x);
+				// Fix distance for engines with even width
+				if (def.size.x % 2 == 0)
+				{
+					if (rot == Rot4.East)
+					{
+						if(distanceVec.z > 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+					if (rot == Rot4.West)
+					{
+						if (distanceVec.z < 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+					if (rot == Rot4.North)
+					{
+						if (distanceVec.x < 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+					if (rot == Rot4.South)
+					{
+						if (distanceVec.x > 0)
+						{
+							distanceOtrogonal += 1;
+						}
+					}
+				}
+				// At closest distance, exhaust is not allowed to be wider than engine.
+				if (distance <= narrowExhaustsize)
+				{
+					if (distanceOtrogonal <= def.size.z / 2)
+					{
+						result.Add(v);
+					}
+				}
+				// Further from engine, exhaust can be 2 tiles (1 tile in each direction) wider than engine.
+				else if (distance <= narrowExhaustsize * 2)
+				{
+					if (distanceOtrogonal <= def.size.z / 2 + 1)
+					{
+						result.Add(v);
+					}
+				}
+				else
+				{
+					result.Add(v);
+				}
+			}
+
+			return result;
+
+		}
+		public override void PostSpawnSetup(bool respawningAfterLoad)
+		{
+			base.PostSpawnSetup(respawningAfterLoad);
+			flickComp = parent.TryGetComp<CompFlickable>();
+			refuelComp = parent.TryGetComp<CompRefuelable>();
+			powerComp = parent.TryGetComp<CompPowerTrader>();
+			mapComp = parent.Map.GetComponent<ShipMapComp>();
+			size = parent.def.size.x;
+			if (Props.reactionless)
+				return;
+			ExhaustArea.Clear();
+			CellRect rectToKill = GenAdjExtension.GetDirectAdjacentRect(parent.Position.ToIntVec2, parent.Rotation.Rotated(RotationDirection.Opposite).rotInt, parent.OccupiedRect(),
+				Props.killZoneWidth, Props.killZoneLength, Props.killZoneExtraOffset);
+
+			ExhaustArea = GetExhaustArea(parent.Position, parent.Rotation, parent.def, parent.Map);
+		}
+		public override void PostDeSpawn(Map map, DestroyMode mode = DestroyMode.Vanish)
+		{
+			var mapComp = map.GetComponent<ShipMapComp>();
+			if (mapComp.ShipsOnMap.Values.Any(s => !s.IsWreck && s.Engines.Any()))
+				mapComp.EngineRot = -1;
+			Off();
+			base.PostDeSpawn(map, mode);
+		}
+		public override void PostDraw()
+		{
+			base.PostDraw();
+			if (active && !Props.reactionless)
+			{
+				if (Props.energy)
+				{
+					if (size > 3)
+					{
+						trailGraphicEnergyLarge.drawSize = new Vector2(11, 26.5f + 0.5f * Mathf.Cos(Find.TickManager.TicksGame / 4));
+						trailGraphicEnergyLarge.Draw(new Vector3(parent.DrawPos.x + offsetE[parent.Rotation.AsInt].x, parent.DrawPos.y + 1f, parent.DrawPos.z + offsetE[parent.Rotation.AsInt].z), parent.Rotation, parent);
+					}
+					else
+					{
+						trailGraphicEnergy.drawSize = new Vector2(7, 15.5f + 0.5f * Mathf.Cos(Find.TickManager.TicksGame / 4));
+						trailGraphicEnergy.Draw(new Vector3(parent.DrawPos.x + offset[parent.Rotation.AsInt].x, parent.DrawPos.y + 1f, parent.DrawPos.z + offset[parent.Rotation.AsInt].z), parent.Rotation, parent);
+					}
+				}
+				else
+				{
+					if (size > 3)
+					{
+						trailGraphicLarge.drawSize = new Vector2(7, 26.5f + 0.5f * Mathf.Cos(Find.TickManager.TicksGame / 4));
+						trailGraphicLarge.Draw(new Vector3(parent.DrawPos.x + offsetL[parent.Rotation.AsInt].x, parent.DrawPos.y + 1f, parent.DrawPos.z + offsetL[parent.Rotation.AsInt].z), parent.Rotation, parent);
+					}
+					else
+					{
+						Vector2 drawSize = new Vector2(7, 15.5f + 0.5f * Mathf.Cos(Find.TickManager.TicksGame / 4));
+						if (size == 3)
+						{
+							trailGraphic.drawSize = drawSize;
+							trailGraphic.Draw(new Vector3(parent.DrawPos.x + offset[parent.Rotation.AsInt].x, parent.DrawPos.y + 1f, parent.DrawPos.z + offset[parent.Rotation.AsInt].z), parent.Rotation, parent);
+						}
+						else
+						{
+							trailGraphicSingle.drawSize = drawSize;
+							trailGraphicSingle.Draw(new Vector3(parent.DrawPos.x + offset[parent.Rotation.AsInt].x, parent.DrawPos.y + 1f, parent.DrawPos.z + offset[parent.Rotation.AsInt].z), parent.Rotation, parent);
+						}
+					}
+				}
+			}
+		}
+		public override void CompTick()
+		{
+			base.CompTick();
+			if (active)
+			{
+				if (Find.TickManager.TicksGame % 60 == 0)
+				{
+					if (!flickComp.SwitchIsOn || !powerComp.PowerOn)
+					{
+						Off();
+						return;
+					}
+					if (refuelComp != null)
+					{
+						if (refuelComp.Fuel < FuelUse)
+						{
+							Off();
+							return;
+						}
+						refuelComp.ConsumeFuel(FuelUse);
+					}
+					/*if (!Props.soundWorking.NullOrUndefined())
+					{
+						if (sustainer == null || sustainer.Ended)
+						{
+							sustainer = Props.soundWorking.TrySpawnSustainer(SoundInfo.InMap(parent, MaintenanceType.None));
+						}
+						sustainer.Maintain();
+					}*/
+				}
+				if (Props.reactionless)
+					return;
+				//destroy stuff in plume
+				HashSet<Thing> toBurn = new HashSet<Thing>();
+				foreach (IntVec3 cell in ExhaustArea)
+				{
+					foreach (Thing t in cell.GetThingList(parent.Map))
+					{
+						if ((t.def.useHitPoints || t is Pawn) && t.def.altitudeLayer != AltitudeLayer.Terrain)
+							toBurn.Add(t);
+					}
+				}
+				foreach (Thing t in toBurn)
+				{
+					if (!t.Destroyed)
+					{
+						t.TakeDamage(new DamageInfo(DamageDefOf.Bomb, 100));
+					}
+				}
+			}
+		}
+	}
+}

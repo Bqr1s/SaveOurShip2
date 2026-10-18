@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <FuelOptimizer.description>A gravtech unit that allows grav engine lift to coordinate more efficiently with traditional thrusters. It reduces the fuel needed for gravship flight.\n\nA gravship can support two fuel optimizers.\n\nCan be installed on Save our Ship 2 ship to reduce takeoff fuel cost.</FuelOptimizer.description>
+</LanguageData>

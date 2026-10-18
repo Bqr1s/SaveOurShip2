@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<AssemblyName>ShipsHaveInsides</AssemblyName>
+		<AssemblyVersion />
+		<FileVersion />
+		<Version />
+		<Company />
+		<Authors />
+		<Copyright />
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>..\..\1.7\Assemblies\</OutputPath>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<LangVersion>10</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>..\..\1.7\Assemblies\</OutputPath>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<LangVersion>10.0</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="CompProps\CompProperties_ShipCombatShield.cs" />
+		<Compile Remove="CompProps\CompProperties_EngineTrailEnergy.cs" />
+		<Compile Remove="Comp\CompEngineTrailEnergy.cs" />
+		<Compile Remove="Comp\CompGravshipConversion.cs" />
+		<Compile Remove="Alert\AlertMovementBlocked.cs" />
+	</ItemGroup>
+	<ItemGroup>		
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>..\..\..\..\Assembly-CSharp.dll</HintPath>
+		</Reference>		
+		<Reference Include="SmashTools">
+		  <HintPath>..\..\..\..\..\..\workshop\content\294100\3522907382\1.7\Assemblies\SmashTools.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityStubs">
+		  <HintPath>..\..\..\..\UnityStubs.dll</HintPath>
+		</Reference>
+		<Reference Include="Vehicles">
+		  <HintPath>..\..\..\..\..\..\workshop\content\294100\3522907382\1.7\Assemblies\Vehicles.dll</HintPath>
+		</Reference>
+		<Reference Include="Waylith">
+		  <HintPath>..\..\..\..\Waylith.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Krafs.Publicizer" Version="2.3.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Lib.Harmony" Version="2.4.3" ExcludeAssets="runtime" />
+	</ItemGroup>
+	<ItemGroup>
+		<Publicize Include="Assembly-CSharp" IncludeVirtualMembers="false" />
+		<Publicize Include="Vehicles" IncludeVirtualMembers="true" />
+	</ItemGroup>
+</Project>

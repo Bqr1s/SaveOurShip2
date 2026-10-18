@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+		<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Royalty</li>
+		</mods>
+		<match Class="PatchOperationSequence">
+			<success>Normal</success>
+			<operations>
+			<!-- Cataphract Helmet Vacuum Resistance -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[@Name="ApparelArmorHelmetCataphractBase"]/equippedStatOffsets/VacuumResistance</xpath>
+						<value>
+							<VacuumResistance>0.7</VacuumResistance>
+						</value>
+				</li>
+			</operations>
+		</match>
+	</Operation>
+	
+	<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Biotech</li>
+		</mods>
+		<match Class="PatchOperationSequence">
+			<success>Normal</success>
+			<operations>
+			<!-- Mech Commander Helmet Vacuum Resistance -->
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="Apparel_ArmorHelmetMechCommander"]/equippedStatOffsets/VacuumResistance</xpath>
+						<value>
+							<VacuumResistance>0.7</VacuumResistance>
+						</value>
+				</li>
+	  </operations>
+	</match>
+  </Operation>
+</Patch>
