@@ -58,7 +58,6 @@ namespace SaveOurShip2
 		public CompFlickable flickComp;
 		public CompRefuelable refuelComp;
 		public CompPowerTrader powerComp;
-		Sustainer sustainer;
 
 		public virtual bool CanFire()
 		{

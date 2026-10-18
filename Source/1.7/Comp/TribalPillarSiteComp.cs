@@ -50,8 +50,10 @@ namespace SaveOurShip2
 						}
 					}
 				}
-				bool vehiclePreventsMapRemoval = MapHelper.AnyVehicleSkyfallersBlockingMap(mapParent.Map) ||
+#pragma warning disable CS0618
+				bool vehiclePreventsMapRemoval = mapParent.Map.mapPawns.AnyPawnBlockingMapRemoval ||
 					MapHelper.AnyAerialVehiclesInRecon(mapParent.Map);
+#pragma warning restore CS0618
 				foreach (VehiclePawn vehicle in mapParent.Map.GetDetachedMapComponent<VehiclePositionManager>().AllClaimants)
 				{
 					if (vehicle.MovementPermissions.HasFlag(VehiclePermissions.Autonomous))

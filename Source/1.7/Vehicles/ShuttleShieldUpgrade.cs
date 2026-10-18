@@ -11,7 +11,7 @@ namespace SaveOurShip2.Vehicles
 {
     class ShuttleShieldUpgrade : Upgrade
     {
-        public CompProps_ShipHeat shield;
+        public CompProps_ShipHeat shield = null;
 
         public override bool UnlockOnLoad => true;
 

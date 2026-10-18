@@ -197,19 +197,19 @@ namespace SaveOurShip2
 
 			if (impactRot == Rot4.North)
 			{
-				impactPoint = durableArea.MaxBy(cell => cell.z);
+				 durableArea.TryMaxBy(cell => cell.z, out impactPoint);
 			}
 			else if (impactRot == Rot4.South)
 			{
-				impactPoint = durableArea.MinBy(cell => cell.z);
+				 durableArea.TryMinBy(cell => cell.z, out impactPoint);
 			}
 			else if (impactRot == Rot4.East)
 			{
-				impactPoint = durableArea.MaxBy(cell => cell.x);
+				durableArea.TryMaxBy(cell => cell.x, out impactPoint);
 			}
 			else // if (impactRot == Rot4.West)
 			{
-				impactPoint = durableArea.MinBy(cell => cell.x);
+				durableArea.TryMinBy(cell => cell.x, out impactPoint);
 			}
 			doImpactExplosion(targetMapComp, impactPoint, damage);
 		}
@@ -266,12 +266,12 @@ namespace SaveOurShip2
 		public static SpaceShipCache GetCollidingShipOnMap(ShipMapComp mapComp)
 		{
 			IEnumerable<SpaceShipCache> ships = mapComp.ShipsOnMap.Values.Where(s => !s.IsWreck);
-			SpaceShipCache ship = ships.MaxBy(s => s.MassActual);
+			ships.TryMaxBy(s => s.MassActual, out SpaceShipCache ship);
 			if (ship == null)
 			{
 				// Fallback, allow wrecks
 				IEnumerable<SpaceShipCache> shipsAndWrecks = mapComp.ShipsOnMap.Values;
-				ship = shipsAndWrecks.MaxBy(s => s.MassActual);
+				shipsAndWrecks.TryMaxBy(s => s.MassActual, out ship);
 			}
 			return ship;
 		}

@@ -1440,9 +1440,17 @@ namespace SaveOurShip2
 		{
 			List<VehiclePawn> shuttles = new List<VehiclePawn>();
 			List<CompShipBay> bays = new List<CompShipBay>();
+			IEnumerable<Pawn> pawnsToBoard = PawnsOnShip(Faction).Where(
+				pawn => !(pawn is VehiclePawn) && (pawn.CurJob == null || pawn.CurJob.def != ResourceBank.JobDefOf.ManShipBridge) && pawn.kindDef.combatPower > 40);
+			if (!pawnsToBoard.Any())
+			{
+				return;
+			}
 			foreach (VehiclePawn vehicle in ShuttlesOnShip(Faction))
 			{
-				if (ShipInteriorMod2.IsShuttle(vehicle) && (vehicle.CompUpgradeTree == null || !ShipInteriorMod2.ShuttleIsArmed(vehicle)) && vehicle.GetNextAvailableHandler(HandlingType.Movement) != null)
+#pragma warning disable CS0618
+				if (ShipInteriorMod2.IsShuttle(vehicle) && (vehicle.CompUpgradeTree == null || !ShipInteriorMod2.ShuttleIsArmed(vehicle)) && vehicle.GetNextAvailableHandler(pawnsToBoard.First(), HandlingType.Movement) != null)
+#pragma warning restore CS0618
 				{
 					if (ShipInteriorMod2.IsPod(vehicle) || !ModSettings_SoS.shipMapPhysics)
 						shuttles.Add(vehicle);
@@ -1460,7 +1468,6 @@ namespace SaveOurShip2
 				}
 			}
 			List<VehiclePawn> shuttlesToBeFilled = new List<VehiclePawn>(shuttles);
-			IEnumerable<Pawn> pawnsToBoard = PawnsOnShip(Faction).Where(pawn => !(pawn is VehiclePawn) && (pawn.CurJob == null || pawn.CurJob.def != ResourceBank.JobDefOf.ManShipBridge) && pawn.kindDef.combatPower > 40);
 			Log.Message("[SoS2] Planning boarding missions. Found " + shuttlesToBeFilled.Count + " boarding-ready shuttles and " + pawnsToBoard.Count() + " potential boarders.");
 			foreach (Pawn p in pawnsToBoard)
 			{

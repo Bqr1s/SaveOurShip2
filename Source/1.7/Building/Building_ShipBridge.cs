@@ -1202,7 +1202,7 @@ namespace SaveOurShip2
 						action = delegate
 						{
 							CameraJumper.TryJump(CameraJumper.GetWorldTarget(this));
-							Find.TilePicker.StartTargeting(
+							Find.TilePicker.StartTargeting_NewTemp(
 								DevCheckLaunchTarget,
 								DevChooseLaunchTarget,
 								title: "Select a tile to launch your ship",

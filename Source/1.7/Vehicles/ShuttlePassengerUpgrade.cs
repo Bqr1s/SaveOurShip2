@@ -9,7 +9,7 @@ namespace SaveOurShip2.Vehicles
 {
     class ShuttlePassengerUpgrade : Upgrade
     {
-        public int passengers;
+        public int passengers = 0;
 
         public override bool UnlockOnLoad => true;
 
