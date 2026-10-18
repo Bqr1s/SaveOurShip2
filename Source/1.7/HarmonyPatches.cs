@@ -23,7 +23,6 @@ using Vehicles.Rendering;
 using SaveOurShip2.Vehicles;
 using static Vehicles.LandingTargeter;
 using static SaveOurShip2.ShipMapComp;
-using RuntimeAudioClipLoader;
 
 namespace SaveOurShip2
 {
@@ -817,32 +816,32 @@ namespace SaveOurShip2
 	[HarmonyPatch(typeof(MapDrawLayer), "FinalizeMesh")]
 	public static class GenerateSpaceSubMesh
 	{
-		public static bool Prefix(SectionLayer __instance, MeshParts tags)
+		public static bool Prefix(MapDrawLayer __instance, MeshParts tags)
 		{
 			if (ModsConfig.OdysseyActive)
 			{
 				return true;
 			}
-			if (__instance.GetType().Name != "SectionLayer_Terrain")
+			if (!(__instance is SectionLayer layer) || __instance.GetType().Name != "SectionLayer_Terrain")
 				return true;
 
 			bool foundSpace = false;
 			foreach (IntVec3 cell in __instance.GetBoundaryRect().Cells)
 			{
-				TerrainDef terrain1 = __instance.map.terrainGrid.TerrainAt(cell);
+				TerrainDef terrain1 = layer.map.terrainGrid.TerrainAt(cell);
 				if (terrain1 == ResourceBank.TerrainDefOf.EmptySpace)
 				{
 					foundSpace = true;
-					Printer_Mesh.PrintMesh(__instance, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), ResourceBank.PlanetMaterial);
+					Printer_Mesh.PrintMesh(layer, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), ResourceBank.PlanetMaterial);
 				}
 			}
 			if (!foundSpace)
 			{
-				for (int i = 0; i < __instance.subMeshes.Count; i++)
+				for (int i = 0; i < layer.subMeshes.Count; i++)
 				{
-					if (__instance.subMeshes[i].material == ResourceBank.PlanetMaterial)
+					if (layer.subMeshes[i].material == ResourceBank.PlanetMaterial)
 					{
-						__instance.subMeshes.RemoveAt(i);
+						layer.subMeshes.RemoveAt(i);
 					}
 				}
 			}
@@ -1130,9 +1129,9 @@ namespace SaveOurShip2
 	[HarmonyPatch(typeof(WeatherDecider), "StartNextWeather")]
 	public static class SpaceWeatherStaysTwo
 	{
-		public static bool Prefix(WeatherManager __instance)
+		public static bool Prefix(WeatherDecider __instance)
 		{
-			if (__instance.map.IsSpace() && __instance.curWeather == ResourceBank.WeatherDefOf.OuterSpaceWeather)
+			if (__instance.map.IsSpace() && __instance.map.weatherManager.curWeather == ResourceBank.WeatherDefOf.OuterSpaceWeather)
 			{
 				return false;
 			}
@@ -4826,7 +4825,7 @@ namespace SaveOurShip2
 	[HarmonyPatch(typeof(CompRefuelable), "CompGetGizmosExtra")]
 	public static class CannotControlEnemyFuel
 	{
-		public static void Postfix(CompTempControl __instance, ref IEnumerable<Gizmo> __result)
+		public static void Postfix(CompRefuelable __instance, ref IEnumerable<Gizmo> __result)
 		{
 			if (__instance.parent.Faction != Faction.OfPlayer)
 				__result = new List<Gizmo>();
