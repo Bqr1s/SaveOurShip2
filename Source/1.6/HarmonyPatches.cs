@@ -23,7 +23,6 @@ using Vehicles.Rendering;
 using SaveOurShip2.Vehicles;
 using static Vehicles.LandingTargeter;
 using static SaveOurShip2.ShipMapComp;
-using RuntimeAudioClipLoader;
 
 namespace SaveOurShip2
 {
@@ -817,32 +816,33 @@ namespace SaveOurShip2
 	[HarmonyPatch(typeof(MapDrawLayer), "FinalizeMesh")]
 	public static class GenerateSpaceSubMesh
 	{
-		public static bool Prefix(SectionLayer __instance, MeshParts tags)
+		public static bool Prefix(MapDrawLayer __instance, MeshParts tags)
 		{
 			if (ModsConfig.OdysseyActive)
 			{
 				return true;
 			}
-			if (__instance.GetType().Name != "SectionLayer_Terrain")
+			// FinalizeMesh is declared on MapDrawLayer; only terrain section layers get the space mesh.
+			if (!(__instance is SectionLayer layer) || __instance.GetType().Name != "SectionLayer_Terrain")
 				return true;
 
 			bool foundSpace = false;
-			foreach (IntVec3 cell in __instance.GetBoundaryRect().Cells)
+			foreach (IntVec3 cell in layer.GetBoundaryRect().Cells)
 			{
-				TerrainDef terrain1 = __instance.map.terrainGrid.TerrainAt(cell);
+				TerrainDef terrain1 = layer.map.terrainGrid.TerrainAt(cell);
 				if (terrain1 == ResourceBank.TerrainDefOf.EmptySpace)
 				{
 					foundSpace = true;
-					Printer_Mesh.PrintMesh(__instance, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), ResourceBank.PlanetMaterial);
+					Printer_Mesh.PrintMesh(layer, Matrix4x4.TRS(cell.ToVector3() + new Vector3(0.5f, 0f, 0.5f), Quaternion.identity, Vector3.one), MeshMakerPlanes.NewPlaneMesh(1f), ResourceBank.PlanetMaterial);
 				}
 			}
 			if (!foundSpace)
 			{
-				for (int i = 0; i < __instance.subMeshes.Count; i++)
+				for (int i = 0; i < layer.subMeshes.Count; i++)
 				{
-					if (__instance.subMeshes[i].material == ResourceBank.PlanetMaterial)
+					if (layer.subMeshes[i].material == ResourceBank.PlanetMaterial)
 					{
-						__instance.subMeshes.RemoveAt(i);
+						layer.subMeshes.RemoveAt(i);
 					}
 				}
 			}
@@ -1130,9 +1130,12 @@ namespace SaveOurShip2
 	[HarmonyPatch(typeof(WeatherDecider), "StartNextWeather")]
 	public static class SpaceWeatherStaysTwo
 	{
-		public static bool Prefix(WeatherManager __instance)
+		// __instance is the WeatherDecider; it was previously declared as WeatherManager, which
+		// Harmony 3 (RimWorld 1.7) rejects and which read the wrong object on earlier versions.
+		public static bool Prefix(WeatherDecider __instance)
 		{
-			if (__instance.map.IsSpace() && __instance.curWeather == ResourceBank.WeatherDefOf.OuterSpaceWeather)
+			Map map = __instance.map;
+			if (map != null && map.IsSpace() && map.weatherManager.curWeather == ResourceBank.WeatherDefOf.OuterSpaceWeather)
 			{
 				return false;
 			}
@@ -3923,7 +3926,7 @@ namespace SaveOurShip2
 		}
 	}
 
-	[HarmonyPatch(typeof(JobGiver_FightFiresNearPoint), "TryGiveJob")]
+	[HarmonyPatch("RimWorld.JobGiver_FightFiresNearPoint", "TryGiveJob")] // internal in RimWorld 1.7
 	public static class FixFireBugC
 	{
 		public static void Postfix(ref Job __result, Pawn pawn)
@@ -4826,7 +4829,8 @@ namespace SaveOurShip2
 	[HarmonyPatch(typeof(CompRefuelable), "CompGetGizmosExtra")]
 	public static class CannotControlEnemyFuel
 	{
-		public static void Postfix(CompTempControl __instance, ref IEnumerable<Gizmo> __result)
+		// Was typed CompTempControl although the patched method is on CompRefuelable; Harmony 3 rejects that.
+		public static void Postfix(CompRefuelable __instance, ref IEnumerable<Gizmo> __result)
 		{
 			if (__instance.parent.Faction != Faction.OfPlayer)
 				__result = new List<Gizmo>();

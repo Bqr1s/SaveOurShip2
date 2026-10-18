@@ -24,38 +24,60 @@ namespace SaveOurShip2
 
 	public static class StartChoosingDestinationPatch
 	{
-		private static Type GetInnerType()
+		// The lambda inside CompLaunchable.StartChoosingDestination that draws the range ring.
+		// Located by its IL (a closure method calling GenDraw.DrawWorldRadiusRing) rather than by the
+		// compiler-generated "<>c__DisplayClass41_0" / "<StartChoosingDestination>b__1" names, which
+		// change whenever RimWorld is recompiled (they differ in 1.7).
+		private static MethodInfo FindRangeRingLambda()
 		{
-			const string innerClassName = "<>c__DisplayClass41_0";
-			Type[] types = typeof(CompLaunchable).GetNestedTypes(AccessTools.all);
-			var innerType = types.FirstOrDefault(type => type.Name == innerClassName);
-			return innerType;
+			MethodInfo drawRadius = OriginalDrawRadius();
+			foreach (Type nested in typeof(CompLaunchable).GetNestedTypes(AccessTools.all))
+			{
+				if (AccessTools.DeclaredField(nested, "<>4__this") == null)
+					continue;
+				foreach (MethodInfo method in nested.GetDeclaredMethods())
+				{
+					if (!method.Name.StartsWith("<StartChoosingDestination>"))
+						continue;
+					if (PatchProcessor.ReadMethodBody(method).Any(pair => pair.Value is MethodInfo called && called == drawRadius))
+						return method;
+				}
+			}
+			return null;
 		}
+
+		private static MethodInfo OriginalDrawRadius()
+		{
+			return AccessTools.Method(typeof(GenDraw), nameof(GenDraw.DrawWorldRadiusRing), new Type[] { typeof(PlanetTile), typeof(int), typeof(Material) });
+		}
+
 		public static void Apply(Harmony harmony)
 		{
-			const string methodName = "<StartChoosingDestination>b__1";
-			Type innerType = GetInnerType();
-			List<MethodInfo> innerMethods = innerType.GetDeclaredMethods();
-			MethodInfo delegateStarChoosingDestination = innerMethods.FirstOrDefault(method => method.Name == methodName);
+			MethodInfo delegateStarChoosingDestination = FindRangeRingLambda();
+			if (delegateStarChoosingDestination == null)
+			{
+				Log.Warning("SOS2: ".Colorize(Color.cyan) + "Could not find the CompLaunchable.StartChoosingDestination range ring lambda; shuttle range ring from space will use the tile position.");
+				return;
+			}
 			harmony.Patch(delegateStarChoosingDestination, transpiler: new HarmonyMethod(typeof(StartChoosingDestinationPatch), nameof(Transpiler)));
 		}
-		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+
+		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
 		{
-			MethodInfo originalDrawRadius = AccessTools.Method(typeof(GenDraw), nameof(GenDraw.DrawWorldRadiusRing));
+			MethodInfo originalDrawRadius = OriginalDrawRadius();
 			MethodInfo patchedDrawRadius = AccessTools.Method(typeof(StartChoosingDestinationPatch), nameof(DrawWorldRadiusRingPatched));
+			// Captured CompLaunchable "this" on the closure class.
+			FieldInfo this_field = AccessTools.DeclaredField(original.DeclaringType, "<>4__this");
 			foreach (CodeInstruction instruction in instructions)
 			{
-				if (instruction.opcode == OpCodes.Call && (MethodInfo)instruction.operand == originalDrawRadius)
+				if (instruction.opcode == OpCodes.Call && instruction.operand is MethodInfo called && called == originalDrawRadius)
 				{
-					const string thisFieldName = "<>4__this";
 					// Extra argunment, this for launchable argument
-					List<FieldInfo> innerFields = GetInnerType().GetDeclaredFields();
-					FieldInfo this_field = innerFields.FirstOrDefault(field => field.Name == thisFieldName);
 					// Load reference to inner class object
 					yield return new CodeInstruction(OpCodes.Ldarg_0);
 					// Grab captured this field from inner class and load it
 					yield return new CodeInstruction(OpCodes.Ldfld, this_field);
-					yield return new CodeInstruction(OpCodes.Call, patchedDrawRadius);
+					yield return new CodeInstruction(OpCodes.Call, patchedDrawRadius).MoveLabelsFrom(instruction);
 				}
 				else
 				{
