@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <GravEngine.label>grav engine</GravEngine.label>
+  <GravEngine.description>The ultratech heart of a gravship. The grav engine generates lift by inverting and intensifying the effect of gravity in a field around itself. This engine can lift upwards, but does not produce forward thrust. It can't function far from a large gravity well like a planet, so it is useless for interplanetary travel.\n\nWhen launched, anything on substructure that's connected to the grav engine will be transported to a new map. Without a grav anchor, launching a gravship will abandon your current map. This does not apply to Player Ship, Graveyard or derelict maps for Save Our Ship 2.\n\nGlitterworld engineers use gravships to launch orbital platforms and build skyrippers. They require massive and hyper-specialized facilities to produce, making them a rare sight outside of glitterworlds.\n\nCan be installed on Save Our Ship 2 spaceship instead of gravship to make ship takeoff much cheaper and faster.</GravEngine.description>
+</LanguageData>

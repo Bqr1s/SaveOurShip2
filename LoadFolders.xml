@@ -29,4 +29,10 @@
 		<li IfModActive="Ludeon.RimWorld.Royalty">1.6/ExpansionPatches/Royalty</li>
 		<li IfModActive="Ludeon.RimWorld.Odyssey">1.6/ExpansionPatches/Odyssey</li>
 	</v1.6>
+	<v1.7>
+		<li>/</li>
+		<li>1.7</li>
+		<li IfModActive="Ludeon.RimWorld.Royalty">1.7/ExpansionPatches/Royalty</li>
+		<li IfModActive="Ludeon.RimWorld.Odyssey">1.7/ExpansionPatches/Odyssey</li>
+	</v1.7>
 </loadFolders>

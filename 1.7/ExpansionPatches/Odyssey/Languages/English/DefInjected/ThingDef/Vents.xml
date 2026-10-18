@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <ShipInside_PassiveVent.description>Exchanges heat with the coolant network, cooling or heating a ship's interior to the desired temperature.\n\nCan also heat rooms with electricity.\n\nWorks as very powerful Oxygen Pump in Odyssey space maps. That doesn't require Life Support systyem.</ShipInside_PassiveVent.description>
+</LanguageData>

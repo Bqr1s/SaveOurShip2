@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<ColorDef ParentName="StructureColorBase">
+		<defName>Coloring_ColorGradientRedA</defName>
+		<label>Color gradient red A</label>
+		<color>(200, 104, 109)</color>
+		<displayOrder>800</displayOrder>
+	</ColorDef>
+ 
+ <ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedB</defName>
+	<label>Color gradient red B</label>
+	<color>(189, 99, 103)</color>
+	<displayOrder>801</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedC</defName>
+	<label>Color gradient red C</label>
+	<color>(179, 93, 96)</color>
+	<displayOrder>802</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedD</defName>
+	<label>Color gradient red D</label>
+	<color>(168, 88, 90)</color>
+	<displayOrder>803</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedE</defName>
+	<label>Color gradient red E</label>
+	<color>(157, 82, 84)</color>
+	<displayOrder>804</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedF</defName>
+	<label>Color gradient red F</label>
+	<color>(146, 77, 78)</color>
+	<displayOrder>805</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedG</defName>
+	<label>Color gradient red G</label>
+	<color>(136, 71, 71)</color>
+	<displayOrder>806</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedH</defName>
+	<label>Color gradient red H</label>
+	<color>(125, 66, 65)</color>
+	<displayOrder>807</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedI</defName>
+	<label>Color gradient red I</label>
+	<color>(114, 60, 59)</color>
+	<displayOrder>808</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedJ</defName>
+	<label>Color gradient red J</label>
+	<color>(103, 55, 53)</color>
+	<displayOrder>809</displayOrder>
+</ColorDef>
+
+<ColorDef ParentName="StructureColorBase">
+	<defName>Coloring_ColorGradientRedK</defName>
+	<label>Color gradient red K</label>
+	<color>(93, 49, 46)</color>
+	<displayOrder>810</displayOrder>
+</ColorDef>
+
+
+    <ColorDef ParentName="StructureColorBase">
+        <defName>Coloring_ColorGradientRedL</defName>
+        <label>Color gradient red L</label>
+        <color>(82, 44, 40)</color>
+        <displayOrder>811</displayOrder>
+    </ColorDef>
+ </Defs>

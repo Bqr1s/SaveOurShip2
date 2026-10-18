@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	
+  <RecipeDef>
+    <defName>MakeAntigrainWarheadx4</defName>
+    <label>make antigrain warhead x4</label>
+    <description>Craft 4 antigrain warhead.</description>
+    <jobString>Making antigrain warheads.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Cook</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>8000</workAmount>
+    <targetCountAdjustment>20</targetCountAdjustment>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>80</count>
+      </li>
+	  <li>
+        <filter>
+          <thingDefs>
+            <li>ArchotechExoticParticles</li>
+          </thingDefs>
+        </filter>
+        <count>24</count>
+      </li>
+	  <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>8</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Steel</li>
+		<li>ArchotechExoticParticles</li>
+		<li>ComponentSpacer</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <Shell_AntigrainWarhead>4</Shell_AntigrainWarhead>
+    </products>
+    <workSkill>Crafting</workSkill>
+	<recipeUsers>
+		<li>TableMachining</li>
+	</recipeUsers>
+	<skillRequirements>
+		<Crafting>12</Crafting>
+	</skillRequirements>
+    <researchPrerequisites><li>ArchotechAntimatter</li></researchPrerequisites>
+  </RecipeDef>
+  <RecipeDef>
+    <defName>MakeHighExplosiveShellx4</defName>
+    <label>make high-explosive shell x4</label>
+    <description>Craft 4 high-explosive shell.</description>
+    <jobString>Making high-explosive shells.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Cook</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>3200</workAmount>
+    <targetCountAdjustment>20</targetCountAdjustment>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>60</count>
+      </li>
+	  <li>
+        <filter>
+          <thingDefs>
+            <li>Chemfuel</li>
+          </thingDefs>
+        </filter>
+        <count>60</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Steel</li>
+		<li>Chemfuel</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <Shell_HighExplosive>4</Shell_HighExplosive>
+    </products>
+    <workSkill>Crafting</workSkill>
+	<recipeUsers>
+		<li>TableMachining</li>
+	</recipeUsers>
+	<skillRequirements>
+		<Crafting>4</Crafting>
+	</skillRequirements>
+    <researchPrerequisites><li>Mortars</li></researchPrerequisites>
+  </RecipeDef>
+<RecipeDef>
+    <defName>MakeEMPShellx4</defName>
+    <label>make EMP shell x4</label>
+    <description>Craft 4 EMP shell.</description>
+    <jobString>Making EMP shells.</jobString>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <effectWorking>Cook</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>3200</workAmount>
+    <targetCountAdjustment>20</targetCountAdjustment>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>60</count>
+      </li>
+	  <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>8</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Steel</li>
+		<li>ComponentIndustrial</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <Shell_EMP>4</Shell_EMP>
+    </products>
+    <workSkill>Crafting</workSkill>
+	<recipeUsers>
+		<li>TableMachining</li>
+	</recipeUsers>
+	<skillRequirements>
+		<Crafting>4</Crafting>
+	</skillRequirements>
+    <researchPrerequisites><li>MicroelectronicsBasics</li></researchPrerequisites>
+  </RecipeDef>
+</Defs>
