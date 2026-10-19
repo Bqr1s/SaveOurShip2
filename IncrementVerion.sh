@@ -1,6 +1,6 @@
 #!/bin/bash
 
-file="./Source/1.6/ShipInteriorMod2.cs"
+file="./Source/1.7/ShipInteriorMod2.cs"
 
 # Extract current version string
 current=$(grep -oP 'public const string SOS2version = "\KGithubV[0-9]+\.[0-9]+\.[0-9]+' "$file")
