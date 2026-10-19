@@ -16,6 +16,8 @@ namespace SaveOurShip2
 			ShaderDatabase.Cutout, new Vector2(1, 1), Color.red, Color.red);
 			shipOneEnemy = GraphicDatabase.Get(typeof(Graphic_Single), "UI/Enemy_Icon_On_slow",
 			ShaderDatabase.Cutout, new Vector2(1, 1), Color.red, Color.red);
+			shipOneEnemyReverse = GraphicDatabase.Get(typeof(Graphic_Single), "UI/Enemy_Icon_On_slow_reverse",
+			ShaderDatabase.Cutout, new Vector2(1, 1), Color.red, Color.red);
 			shipTwoEnemy = GraphicDatabase.Get(typeof(Graphic_Single), "UI/Enemy_Icon_On_mid",
 			ShaderDatabase.Cutout, new Vector2(1, 1), Color.red, Color.red);
 			projectileEnemy = GraphicDatabase.Get(typeof(Graphic_Single), "UI/EnemyProjectile",
@@ -49,6 +51,7 @@ namespace SaveOurShip2
 		}
 		public static Graphic shipZeroEnemy;
 		public static Graphic shipOneEnemy;
+		public static Graphic shipOneEnemyReverse;
 		public static Graphic shipTwoEnemy;
 		public static Graphic projectileEnemy;
 		public static Graphic shipZero;

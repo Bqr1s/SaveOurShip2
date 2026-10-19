@@ -379,7 +379,7 @@ namespace SaveOurShip2
 				case -1:
 					Verse.Widgets.DrawTexturePart(
 						new Rect(screenHalf - 16 + range, baseY - 28, 36, 36),
-						new Rect(0, 0, -1, 1), (Texture2D)ResourceBank.shipOneEnemy.MatSingle.mainTexture);
+						new Rect(0, 0, 1, 1), (Texture2D)ResourceBank.shipOneEnemyReverse.MatSingle.mainTexture);
 					break;
 				case 1:
 					Verse.Widgets.DrawTexturePart(
