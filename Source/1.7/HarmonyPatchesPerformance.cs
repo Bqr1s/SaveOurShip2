@@ -11,40 +11,6 @@ using HarmonyLib;
 
 namespace SaveOurShip2
 {
-    // Several aletrts showed up in profiler like low food, hypothermia.
-    [HarmonyPatch(typeof(Alert), "Recalculate")]
-    public static class RareAlertUpdates
-    {
-        private static Dictionary<Alert, int> counters = new Dictionary<Alert, int>();
-        // It is expected that there will be rather few alerts active and they should be somewhat responsive
-        // to player actions and disappear when satisfied/fixed.
-        // While inactive alerts can be checked more rarely
-        private const int activeUpdateFactor = 4;
-        private const int inactiveUpdateFactor = 16;
-        public static bool Prefix(Alert __instance)
-        {
-            if (ModIntegration.IsMissileGirlActive())
-            {
-                // Do not throttle alerts, as that is done in Missile Girl too and double throttled alerts are an issue
-                // as theit timings become like several dozens of seconds to apapper, waay too noticable.
-                return true;
-            }
-            if (!counters.ContainsKey(__instance))
-            {
-                counters.Add(__instance, 0);
-            }
-            counters[__instance]++;
-            if (__instance.cachedActive)
-            {
-                return counters[__instance] % activeUpdateFactor == 0;
-            }
-            else
-            {
-                return counters[__instance] % inactiveUpdateFactor == 0;
-            }
-        }
-    }
-
     // Building_door.OpenPct is quite some math, can be optimized a lot if ticksSinceOpen is 0
     [HarmonyPatch(typeof(Building_Door), "get_OpenPct")]
     public static class FastDoorOpenPct
