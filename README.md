@@ -1,3 +1,6 @@
+Important note: this up to date GitHub version of Save Our Ship 2 works on RimWorld 1.7. Steam SOS 2 is old and doesn't work on 1.7.
+On 1.7, need to use DEV version of Vehicle Framework: https://steamcommunity.com/sharedfiles/filedetails/?id=3522907382
+
 Save Our Ship 2 is an unofficial expansion for RimWorld. Build a liveable spaceship and continue your colonists' stories in orbit - engaging in ship-to-ship combat with pirates, searching derelicts for treasure, and perhaps even discovering a phenomenal cosmic secret or two! SoS2 includes two custom endings: build the Johnson-Tanaka drive to transport your colonists to a different rimworld for a New Game+ experience, or evolve one your colonists to machine godhood using the Archotech Spore.
 
 Save Our Ship 2.8 Tactical Update
