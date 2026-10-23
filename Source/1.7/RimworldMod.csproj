@@ -38,18 +38,23 @@
 	<ItemGroup>		
 		<Reference Include="Assembly-CSharp">
 		  <HintPath>..\..\..\..\Assembly-CSharp.dll</HintPath>
+		  <Private>False</Private>
 		</Reference>		
 		<Reference Include="SmashTools">
 		  <HintPath>..\..\..\..\..\..\workshop\content\294100\3522907382\1.7\Assemblies\SmashTools.dll</HintPath>
+		  <Private>False</Private>
 		</Reference>
 		<Reference Include="UnityStubs">
 		  <HintPath>..\..\..\..\UnityStubs.dll</HintPath>
+		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Vehicles">
 		  <HintPath>..\..\..\..\..\..\workshop\content\294100\3522907382\1.7\Assemblies\Vehicles.dll</HintPath>
+		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Waylith">
 		  <HintPath>..\..\..\..\Waylith.dll</HintPath>
+		  <Private>False</Private>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
