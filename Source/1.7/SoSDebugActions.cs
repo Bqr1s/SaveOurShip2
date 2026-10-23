@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 using RimWorld;
 using Verse;
@@ -98,6 +99,20 @@ namespace SaveOurShip2
 		{
 			Map map = Find.CurrentMap;
 			ShipPainter.PaintFloorAndBuildings(map, useBuiltInTexture:false);
+		}
+		static void DummyFunctionShowingThatRecursionDetectionActuallyWorked()
+		{
+			DummyFunctionShowingThatRecursionDetectionActuallyWorked();
+		}
+
+		[DebugAction(category = sos2Category, actionType = DebugActionType.Action, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void ListRecursiveCalls()
+		{
+			IEnumerable<MethodInfo> methods = RecusrionChecker.FindDirectRecursiveMethods(Assembly.GetExecutingAssembly());
+			foreach (var method in methods)
+			{
+				Log.Error($"Method calls itself: { method.DeclaringType.Name}.{method.Name}");
+			}
 		}
 	}
 }

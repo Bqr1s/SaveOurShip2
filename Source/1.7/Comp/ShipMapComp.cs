@@ -201,40 +201,42 @@ namespace SaveOurShip2
 			}
 		}
 
-		void AccumulateToNetNew(HashSet<CompShipHeat> compBatch, ShipHeatNet net)
+		void AccumulateToNetNew(HashSet<CompShipHeat> currentBatch, ShipHeatNet net)
 		{
-			HashSet<CompShipHeat> newBatch = new HashSet<CompShipHeat>();
-			foreach (CompShipHeat comp in compBatch)
+			while (currentBatch.Any())
 			{
-				if (comp.parent == null || !comp.parent.Spawned)
-					continue;
-				comp.myNet = net;
-				net.Register(comp);
-				foreach (IntVec3 cell in GenAdj.CellsOccupiedBy(comp.parent))
+				HashSet<CompShipHeat> newBatch = new HashSet<CompShipHeat>();
+				foreach (CompShipHeat comp in currentBatch)
 				{
-					if (cell.InBounds(comp.parent.Map))
+					if (comp.parent == null || !comp.parent.Spawned)
+						continue;
+					comp.myNet = net;
+					net.Register(comp);
+					foreach (IntVec3 cell in GenAdj.CellsOccupiedBy(comp.parent))
 					{
-						grid[comp.parent.Map.cellIndices.CellToIndex(cell)] = net.GridID;
-					}
-				}
-				foreach (IntVec3 cell in GenAdj.CellsAdjacentCardinal(comp.parent))
-				{
-					if (cell.InBounds(comp.parent.Map) && grid[comp.parent.Map.cellIndices.CellToIndex(cell)] == -1)
-					{
-						foreach (Thing t in cell.GetThingList(comp.parent.Map))
+						if (cell.InBounds(comp.parent.Map))
 						{
-							if (t is Building b)
+							grid[comp.parent.Map.cellIndices.CellToIndex(cell)] = net.GridID;
+						}
+					}
+					foreach (IntVec3 cell in GenAdj.CellsAdjacentCardinal(comp.parent))
+					{
+						if (cell.InBounds(comp.parent.Map) && grid[comp.parent.Map.cellIndices.CellToIndex(cell)] == -1)
+						{
+							foreach (Thing t in cell.GetThingList(comp.parent.Map))
 							{
-								CompShipHeat heat = b.TryGetComp<CompShipHeat>();
-								if (heat != null)
-									newBatch.Add(heat);
+								if (t is Building b)
+								{
+									CompShipHeat heat = b.TryGetComp<CompShipHeat>();
+									if (heat != null)
+										newBatch.Add(heat);
+								}
 							}
 						}
 					}
 				}
+				currentBatch = newBatch;
 			}
-			if (newBatch.Any())
-				AccumulateToNetNew(newBatch, net);
 		}
 
 		private List<CompShipCachePart> roofedPartsCache = new List<CompShipCachePart>();
