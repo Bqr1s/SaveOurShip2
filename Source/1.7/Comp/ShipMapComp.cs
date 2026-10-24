@@ -1078,8 +1078,8 @@ namespace SaveOurShip2
 			}
 			if (Prefs.DevMode)
 			{
-				Log.Message($"Player buildings wealth at battle strt: {MapShipBuildingsWealth(this)}");
-				Log.Message($"Enemy buildings wealth at battle strt: {MapShipBuildingsWealth(TargetMapComp)}");
+				Log.Message($"Player buildings wealth at ship battle start: {MapShipBuildingsWealth(this)}");
+				Log.Message($"Enemy buildings wealth at ship battle start: {MapShipBuildingsWealth(TargetMapComp)}");
 			}
 
 			//callSlowTick = true;
