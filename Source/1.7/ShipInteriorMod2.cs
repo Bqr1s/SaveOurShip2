@@ -1575,29 +1575,36 @@ namespace SaveOurShip2
 							}
 							else if (b is Building_Bookcase c) //stock shelves
 							{
-								int maxBooks = 1;
-								if (wreckLevel < 2)
-									maxBooks = c.MaximumBooks;
-								else if (wreckLevel == 2)
-									maxBooks = c.MaximumBooks / 2;
-								for (int i = 0; i < Rand.RangeInclusive(0, maxBooks); i++)
+								try
 								{
-									ThingDef bookDef = ThingDefOf.TextBook;
-									const float odysseyMapChance = 0.2f;
-									if (ModsConfig.OdysseyActive && Rand.Chance(odysseyMapChance))
+									int maxBooks = 1;
+									if (wreckLevel < 2)
+										maxBooks = c.MaximumBooks;
+									else if (wreckLevel == 2)
+										maxBooks = c.MaximumBooks / 2;
+									for (int i = 0; i < Rand.RangeInclusive(0, maxBooks); i++)
 									{
-										bookDef = ThingDefOf.Map;
+										ThingDef bookDef = ThingDefOf.TextBook;
+										const float odysseyMapChance = 0.2f;
+										if (ModsConfig.OdysseyActive && Rand.Chance(odysseyMapChance))
+										{
+											bookDef = ThingDefOf.Map;
+										}
+										Book item = BookUtility.MakeBook(bookDef, ArtGenerationContext.Outsider);
+										// Anomaly bug - could generate "empty" books
+										int rerollCount = 0;
+										while (item.Title.NullOrEmpty() && rerollCount < 10)
+										{
+											rerollCount++;
+											// Stick with textbooks in case of a bug
+											item = BookUtility.MakeBook(ThingDefOf.TextBook, ArtGenerationContext.Outsider);
+										}
+										c.innerContainer.TryAdd(item, true);
 									}
-									Book item = BookUtility.MakeBook(bookDef, ArtGenerationContext.Outsider);
-									// Anomaly bug - could generate "empty" books
-									int rerollCount = 0;
-									while (item.Title.NullOrEmpty() && rerollCount < 10)
-									{
-										rerollCount++;
-										// Stick with textbooks in case of a bug
-										item = BookUtility.MakeBook(ThingDefOf.TextBook, ArtGenerationContext.Outsider);
-									}
-									c.innerContainer.TryAdd(item, true);
+								}
+								catch (Exception ex)
+								{
+									Log.Warning("Error adding books to case, trace: " + ex.StackTrace);
 								}
 							}
 							else if (b is Building_CryptosleepCasket crypto && Rand.Chance(0.05f))
