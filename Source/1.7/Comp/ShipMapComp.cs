@@ -1087,7 +1087,7 @@ namespace SaveOurShip2
 
 		public Map SpawnEnemyShipMap(PassingShip passingShip, Faction faction, bool fleet, bool bounty)
 		{
-			Map newMap = new Map();
+			Map newMap = null;
 			List<Building> cores = new List<Building>();
 			ShipDef shipDef = null;
 			NavyDef navyDef = null;
