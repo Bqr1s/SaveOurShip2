@@ -663,25 +663,40 @@ namespace SaveOurShip2
 		public float WeBeCrashing = 0;
 		public void CrashShip()
 		{
+			int explosionCount = 0;
+			int damgedPawnCount = 0;
 			foreach (IntVec3 c in OuterCells())
 			{
 				if (Rand.Chance(WeBeCrashing / 2))
+				{
 					GenExplosion.DoExplosion(c, Map, Rand.Range(3.9f, 7.9f), DamageDefOf.Bomb, null, 500);
+					++explosionCount;
+				}
 			}
 			foreach (IntVec3 c in Area)
 			{
 				if (Rand.Chance(WeBeCrashing / 4))
+				{
 					GenExplosion.DoExplosion(c, Map, Rand.Range(1.9f, 4.9f), DamageDefOf.Bomb, null, 50);
+					++explosionCount;
+				}
 			}
 			//pawns
 			foreach (Pawn p in PawnsOnShip())
 			{
 				int chance = Rand.RangeInclusive(1, 3);
 				if (Rand.Chance(WeBeCrashing) && chance == 1)
+				{
 					HealthUtility.DamageLegsUntilIncapableOfMoving(p);
+					++damgedPawnCount;
+				}
 				else if (Rand.Chance(WeBeCrashing) && chance == 2)
+				{
 					HealthUtility.DamageUntilDowned(p);
+					++damgedPawnCount;
+				}
 			}
+			Log.Message($"Ship crash happened, explosions: {explosionCount}, damaged pawns: {damgedPawnCount}");
 			WeBeCrashing = 0;
 		}
 		//AI
