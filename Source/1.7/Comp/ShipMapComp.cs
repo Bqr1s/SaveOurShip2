@@ -1282,7 +1282,7 @@ namespace SaveOurShip2
 					// be disabled because it auses some complicated bug in legacy ShipMove code.
 					// To prevent major inconvenience, try increasing eneny map size to match player map, but with certain limits
 					// Because don't want to consume too much resources with multiple enemy maps.
-					const int enemyMapAutoIncreaseLimit = 300;
+					const int enemyMapAutoIncreaseLimit = 350;
 					mapSize.x = Mathf.Max(mapSize.x, Mathf.Min(enemyMapAutoIncreaseLimit, playerMap.Size.x));
                     mapSize.z = Mathf.Max(mapSize.z, Mathf.Min(enemyMapAutoIncreaseLimit, playerMap.Size.z));
                 }
