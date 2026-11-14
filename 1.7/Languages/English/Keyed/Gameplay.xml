@@ -17,6 +17,7 @@
 	<SoS.MoveStopDesc>Reverse burn into geosynchronous orbit.</SoS.MoveStopDesc>
 	<SoS.AbandonHome>Abandon ship</SoS.AbandonHome>
 	<SoS.AbandonHomeDesc>Abandon your ship - any colonists on it will be lost!</SoS.AbandonHomeDesc>
+	<SoS.CantAbandonHomeReason>Can't abandon ship map while there is a ship in transit.</SoS.CantAbandonHomeReason>
 	<SoS.LeaveGraveyard>Abandon wreck</SoS.LeaveGraveyard>
 	<SoS.LeaveGraveyardDesc>Leave the wreck to its fate.</SoS.LeaveGraveyardDesc>
 	<!-- Verse formating will spread name over several {n} fields, so got to use 2 strings -->
@@ -241,6 +242,7 @@
 	<SoS.ScanMapDesc>View a single map from orbit</SoS.ScanMapDesc>
 	<SoS.ScanMapStop>End observation</SoS.ScanMapStop>
 	<SoS.ScanMapStopDesc>Stop observing {0}. This will cause the map to de-spawn unless colonists are present.</SoS.ScanMapStopDesc>
+	<SoS.CantStopScanTransitReason>Can't end observation while there is a ship in transit.</SoS.CantStopScanTransitReason>
 	<!-- engines -->
 	<SoS.ToggleEngines>Engage ship engines</SoS.ToggleEngines>
 	<SoS.ToggleEnginesDesc>Engage ship engines to clear hazards.</SoS.ToggleEnginesDesc>

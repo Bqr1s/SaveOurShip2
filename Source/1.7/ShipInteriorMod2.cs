@@ -602,11 +602,13 @@ namespace SaveOurShip2
 			// No squares for speed
 			return Mathf.Abs(longLatOrigin.x - longLatDest.x) + Mathf.Abs(longLatOrigin.y - longLatDest.y);
 		}
-		private static PlanetTile FindNearestOrbitTileTo(PlanetTile origin)
+
+		public static PlanetTile FindNearestOrbitTileTo(Vector2 originLongLat)
 		{
-			Vector2 originLongLat = Find.WorldGrid.LongLatOf(origin);
+			// Vector2 originLongLat = Find.WorldGrid.LongLatOf(origin);
 			HashSet<int> visitedTileIDs = new HashSet<int>();
-			PlanetTile current = Find.World.grid.Orbit.tiles.First().tile;
+			PlanetTile current = ModsConfig.OdysseyActive ? Find.World.grid.Orbit.tiles.First().tile
+														  : Find.World.grid.Surface.tiles.First().tile;
 			float currentDistance = LongLatDistance(originLongLat, Find.WorldGrid.LongLatOf(current));
 			const int maxIterations = 200;
 			for (int i =0; i < maxIterations; i++)
@@ -695,7 +697,7 @@ namespace SaveOurShip2
 			PlanetTile result = PlanetTile.Invalid;
 			if (launchOrigin != PlanetTile.Invalid)
 			{
-				result = FindNearestOrbitTileTo(launchOrigin);
+				result = FindNearestOrbitTileTo(Find.WorldGrid.LongLatOf(launchOrigin));
 				result = FindFreeTileNear(result);
 			}
 			else
@@ -801,6 +803,22 @@ namespace SaveOurShip2
 					if (mapComp.ShipMapState == ShipMapState.inCombat && map != playerShipMap)
 					{
 						return map;
+					}
+				}
+			}
+			return null;
+		}
+		public static WorldObject FindFirstShipInTransit()
+		{
+			foreach (WorldObject obj in Find.WorldObjects.AllWorldObjects.Where(
+					ob => ob.def == ResourceBank.WorldObjectDefOf.ShipOrbiting ||
+						  ob.def == ResourceBank.WorldObjectDefOf.WreckSpace))
+			{
+				if (obj is MapParent mp)
+				{
+					if (mp.HasMap && mp.Map.GetComponent<ShipMapComp>().ShipMapState == ShipMapState.inTransit)
+					{
+						return mp;
 					}
 				}
 			}
