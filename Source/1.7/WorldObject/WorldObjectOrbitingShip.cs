@@ -187,6 +187,12 @@ namespace SaveOurShip2
 						icon = ContentFinder<Texture2D>.Get("UI/ShipAbandon_Icon", true),
 						action = delegate
 						{
+							if (ShipInteriorMod2.FindFirstShipInTransit() != null)
+							{
+								Messages.Message("SoS.CantAbandonHomeReason".Translate(), MessageTypeDefOf.NegativeEvent);
+								return;
+							}
+
 							Map map = this.Map;
 							if (map == null)
 							{
@@ -213,7 +219,7 @@ namespace SaveOurShip2
 								{
 									if (stringBuilder2.Length > 0)
 									{
-										stringBuilder2.AppendLine();
+										string	Builder2.AppendLine();
 									}
 									stringBuilder2.Append("	" + item.LabelCap);
 								}
@@ -235,7 +241,9 @@ namespace SaveOurShip2
 									Destroy();
 								}));
 							}
-						}
+						},
+						disabled = ShipInteriorMod2.FindFirstShipInTransit() != null,
+						disabledReason = "SoS.CantAbandonHomeReason".Translate()
 					};
 					if (!preventMove && mapComp.ShipMapState == ShipMapState.nominal && mapComp.ShipMapState != ShipMapState.burnUpSet)
 					{
@@ -344,6 +352,38 @@ namespace SaveOurShip2
 							},
 							defaultLabel = TranslatorFormattedStringExtensions.Translate("SoS.Dev.ShipPositionReset"),
 							defaultDesc = TranslatorFormattedStringExtensions.Translate("SoS.Dev.ShipPositionResetDesc"),
+						};
+
+						yield return new Command_Action
+						{
+							action = delegate ()
+							{
+								float shortestDistance = float.MaxValue;
+								PlanetTile newTile = PlanetTile.Invalid;
+
+								PlanetLayer layer = this.Map.Tile.Layer;
+								foreach (Tile t in layer.Tiles)
+								{
+									PlanetTile tile = t.tile;
+									if (!Find.World.worldObjects.AnyWorldObjectAt(tile) && TileFinder.IsValidTileForNewSettlement(tile))
+									{
+										float distance = Vector3.Distance(Find.WorldGrid.GetTileCenter(tile), DrawPos);
+										if (shortestDistance > distance)
+										{
+											newTile = tile;
+											shortestDistance = distance;
+										}
+									}
+								}
+								if (newTile.Valid)
+								{
+									this.Tile = newTile;
+								}
+;
+							},
+							defaultLabel = TranslatorFormattedStringExtensions.Translate("Update tile"),
+							defaultDesc = TranslatorFormattedStringExtensions.Translate("Update tile occupied by spaceship," +
+										"so that it is close to current ship orbital location"),
 						};
 					}
 				}

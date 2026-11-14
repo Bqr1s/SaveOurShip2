@@ -56,6 +56,11 @@ namespace SaveOurShip2
 						icon = ContentFinder<Texture2D>.Get("UI/StopScanMap", true),
 						action = delegate
 						{
+							if (ShipInteriorMod2.FindFirstShipInTransit() != null)
+							{
+								Messages.Message("SoS.CantStopScanTransitReason".Translate(), MessageTypeDefOf.NegativeEvent);
+								return;
+							}
 							PossiblyDisposeOfObservedMap();
 							observedMap = null;
 						}
