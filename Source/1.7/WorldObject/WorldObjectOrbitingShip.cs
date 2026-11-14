@@ -110,8 +110,21 @@ namespace SaveOurShip2
 			if (orbitalMove.IsStopped())
 				return;
 
-			Theta = Theta + 0.0001f * orbitalMove.Theta;
-			Phi = Phi + 0.0001f * orbitalMove.Phi;
+			const float orbitingAnlularSpeed = 0.0003f;
+
+			Theta = Theta + orbitingAnlularSpeed * orbitalMove.Theta;
+			// In case theta ahieved very large/small values before limit fix,
+			// adjust it by 2*PI rather than clamp in other not to lose value.
+			if (Theta > Mathf.PI * 2)
+			{
+				Theta -= Mathf.PI * 2;
+			}
+			if (Theta < -Mathf.PI * 2)
+			{
+				Theta += Mathf.PI * 2;
+			}
+			Phi = Phi + orbitingAnlularSpeed * orbitalMove.Phi;
+			Phi = Mathf.Clamp(Phi, -Mathf.PI / 4f, Mathf.PI / 4f);
 
 			if (Find.TickManager.TicksGame % 60 == 0)
 			{
@@ -219,7 +232,7 @@ namespace SaveOurShip2
 								{
 									if (stringBuilder2.Length > 0)
 									{
-										string	Builder2.AppendLine();
+										stringBuilder2.AppendLine();
 									}
 									stringBuilder2.Append("	" + item.LabelCap);
 								}
