@@ -17,6 +17,8 @@
 	<SoS.MoveStopDesc>Reverse burn into geosynchronous orbit.</SoS.MoveStopDesc>
 	<SoS.AbandonHome>Abandon ship</SoS.AbandonHome>
 	<SoS.AbandonHomeDesc>Abandon your ship - any colonists on it will be lost!</SoS.AbandonHomeDesc>
+	<SoS.UpdateShipTile>Update ship tile</SoS.UpdateShipTile>
+	<SoS.UpdateShipTileDesc>date tile occupied by spaceship, so that it is close to current ship orbital location</SoS.UpdateShipTileDesc>
 	<SoS.CantAbandonHomeReason>Can't abandon ship map while there is a ship in transit.</SoS.CantAbandonHomeReason>
 	<SoS.LeaveGraveyard>Abandon wreck</SoS.LeaveGraveyard>
 	<SoS.LeaveGraveyardDesc>Leave the wreck to its fate.</SoS.LeaveGraveyardDesc>
