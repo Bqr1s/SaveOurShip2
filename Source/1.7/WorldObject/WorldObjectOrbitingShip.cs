@@ -442,6 +442,36 @@ namespace SaveOurShip2
 							mapComp.ShipMapState = ShipMapState.burnUpSet;
 						}
 					};
+					yield return new Command_Action
+					{
+						action = delegate ()
+						{
+							float shortestDistance = float.MaxValue;
+							PlanetTile newTile = PlanetTile.Invalid;
+
+							PlanetLayer layer = this.Map.Tile.Layer;
+							foreach (Tile t in layer.Tiles)
+							{
+								PlanetTile tile = t.tile;
+								if (!Find.World.worldObjects.AnyWorldObjectAt(tile) && TileFinder.IsValidTileForNewSettlement(tile))
+								{
+									float distance = Vector3.Distance(Find.WorldGrid.GetTileCenter(tile), DrawPos);
+									if (shortestDistance > distance)
+									{
+										newTile = tile;
+										shortestDistance = distance;
+									}
+								}
+							}
+							if (newTile.Valid)
+							{
+								this.Tile = newTile;
+							}
+;
+						},
+						defaultLabel = "SoS.UpdateShipTile".Translate(),
+						defaultDesc = "SoS.UpdateShipTileDesc".Translate()
+					};
 				}
 			}
 		}
